@@ -5,8 +5,7 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*",
-    "h1b-visa-analysis-files/packages/*"
+    "packages/*"
   ],
   "scripts": {
     "build": "node src/generate-report.js",

@@ -1,7 +1,0 @@
-{
-  "name": "@h1b-visa-analysis/report-components",
-  "version": "0.1.0",
-  "type": "module",
-  "main": "index.js",
-  "description": "H1B visa data and report components"
-}
