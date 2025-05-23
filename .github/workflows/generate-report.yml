@@ -7,6 +7,11 @@ on:
   repository_dispatch:
     types: [dependency-updated]
 
+# Expected secrets - helps with IDE validation
+# secrets:
+#   PAT_TOKEN:
+#     required: true
+
 jobs:
   generate:
     runs-on: ubuntu-latest
@@ -24,9 +29,11 @@ jobs:
     
     - name: Configure git for authenticated HTTPS
       run: |
+        # yamllint disable rule:line-length
         git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf ssh://git@github.com/
         git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf git@github.com:
         git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf https://github.com/
+        # yamllint enable rule:line-length
     
     - name: Install dependencies
       run: npm install

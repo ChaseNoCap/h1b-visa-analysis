@@ -1,0 +1,27 @@
+extends: default
+
+rules:
+  line-length:
+    max: 120
+    level: warning
+  
+  # Don't complain about GitHub Actions syntax
+  truthy:
+    allowed-values: ['true', 'false', 'on']
+  
+  # Allow GitHub Actions expressions
+  comments:
+    min-spaces-from-content: 1
+  
+  # Don't validate inside template expressions
+  brackets:
+    forbid: false
+
+# Ignore GitHub Actions expression syntax
+ignore: |
+  .github/workflows/*.yml
+  
+# Or if you want to keep some validation but ignore the expressions:
+# ignore: |
+#   *.yml
+#   !.github/workflows/*.yml

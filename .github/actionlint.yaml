@@ -1,0 +1,12 @@
+# actionlint configuration
+# https://github.com/rhysd/actionlint/blob/main/docs/config.md
+
+# Define self-hosted runners
+self-hosted-runner:
+  labels: []
+
+# Configure secrets that are available
+# This tells actionlint about your repository secrets
+config-variables:
+  - PAT_TOKEN
+  - GITHUB_TOKEN
