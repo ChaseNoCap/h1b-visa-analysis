@@ -165,13 +165,20 @@ All three dependency repositories:
    - Add cloned packages to .gitignore
    - Use `git rm --cached` if already tracked
 
+5. **Push rejected due to GitHub Actions auto-commits**:
+   - The workflow auto-commits with `[skip ci]` message
+   - Always pull before pushing: `git pull --rebase --autostash`
+   - This is expected behavior from the "Commit and push if changed" step
+   - These commits contain generated reports
+
 ## Development Workflow
 
 ### For Main Repository
 1. Clone dependency repos to packages/ for local development
 2. Make changes and test with `npm run build`
-3. Push changes to trigger CI/CD
-4. Check GitHub Actions for success
+3. **Before pushing**: Pull latest with `git pull --rebase --autostash`
+4. Push changes to trigger CI/CD
+5. Check GitHub Actions for success
 
 ### For Dependency Updates
 1. Make changes in the actual GitHub repos
