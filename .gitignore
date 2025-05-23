@@ -27,9 +27,5 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
-# Cloned dependency repos (for local development)
-packages/prompts-shared/
-packages/markdown-compiler/
-packages/report-components/
-packages/test-mocks/
-packages/test-helpers/
+# folder for local dependency repos
+packages/
