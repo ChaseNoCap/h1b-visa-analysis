@@ -5,8 +5,7 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*",
-    "packages/shared/*"
+    "packages/*"
   ],
   "scripts": {
     "build": "tsc && node dist/src/index.js",

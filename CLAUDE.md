@@ -95,10 +95,12 @@ h1b-visa-analysis/
 │   │   ├── fixtures/          # Test fixtures
 │   │   └── output/           # Test output (gitignored)
 │   └── unit/                  # Unit tests
-├── packages/                  # Cloned dependency repos (gitignored)
-│   ├── prompts-shared/
-│   ├── markdown-compiler/
-│   └── report-components/
+├── packages/                  # Workspace packages
+│   ├── test-mocks/            # @h1b/test-mocks package (NEW)
+│   ├── test-helpers/          # @h1b/test-helpers package (NEW)
+│   ├── prompts-shared/       # Cloned dependency
+│   ├── markdown-compiler/    # Cloned dependency
+│   └── report-components/    # Cloned dependency
 ├── dist/                      # Build output (gitignored)
 ├── logs/                      # Application logs (gitignored)
 ├── coverage/                  # Test coverage (gitignored)
@@ -235,14 +237,52 @@ This project follows the same patterns as the markdown-compiler package. Both ma
 
 For shared patterns and strategies, see `/docs/decomposition-analysis.md`.
 
-## Current Focus: @h1b/testing Package
+## Current Focus: Package Decomposition Progress
 
-**IMPORTANT**: The current primary development goal is implementing the @h1b/testing package.
+### ✅ Completed: Test Package Decomposition (May 2025)
 
-See:
-- `/docs/testing-package-implementation.md` - Implementation plan and status
-- `/docs/migration-plan.md` - Overall shared package strategy
-- `/packages/shared/testing/CLAUDE.md` - Package-specific context (when created)
+Successfully decomposed testing functionality into two focused packages:
+
+#### @h1b/test-mocks (Completed)
+- **Status**: Built, tested, 100% statement coverage
+- **Size**: ~400 lines (well within 1000 line limit)
+- **Location**: `/packages/test-mocks/`
+- **Features**: MockLogger, MockFileSystem, MockCache with assertion helpers
+- **CLAUDE.md**: Complete with context boundaries defined
+
+#### @h1b/test-helpers (Completed)
+- **Status**: Built, partially tested, needs more coverage
+- **Size**: ~500 lines (well within 1000 line limit)
+- **Location**: `/packages/test-helpers/`
+- **Features**: TestContainer, FixtureManager, async utilities, shared config
+- **CLAUDE.md**: Complete with usage patterns documented
+
+### 🔄 Next Steps in Decomposition
+
+**IMPORTANT**: Follow this sequence for continuing the decomposition:
+
+1. **Integrate Test Packages** (Current Task)
+   - Update main project to use @h1b/test-mocks and @h1b/test-helpers
+   - Remove duplicated test utilities from main codebase
+   - Update all test imports
+   - See: `/docs/migration-plan.md#integration-phase`
+
+2. **Extract Logger Package** (@h1b/logger - Week 1)
+   - Highest duplication (98% identical with markdown-compiler)
+   - Clear boundaries (ILogger interface)
+   - See: `/docs/migration-plan.md#phase-1-logger-package`
+
+3. **Extract DI Framework Package** (@h1b/di-framework - Week 2)
+   - Foundation for other packages
+   - Common interfaces and patterns
+   - See: `/docs/migration-plan.md#phase-2-di-framework-package`
+
+4. **Continue with remaining packages** per migration plan
+
+For detailed implementation steps, see:
+- `/docs/migration-plan.md` - Overall strategy and package order
+- `/docs/implementation-roadmap.md` - Concrete timeline and checkpoints
+- `/docs/decomposition-principles.md` - Guidelines to follow
 
 ## Future Enhancements
 
@@ -284,4 +324,27 @@ See:
 Every package MUST have a CLAUDE.md file. See:
 - `/docs/claude-md-template.md` - Template for new packages
 - `/docs/claude-md-guide.md` - Best practices guide
-- `/packages/shared/testing/CLAUDE.md` - Example implementation
+- `/packages/test-mocks/CLAUDE.md` - Example implementation (MockLogger, MockFileSystem, MockCache)
+- `/packages/test-helpers/CLAUDE.md` - Example implementation (Test utilities and helpers)
+
+## Key Patterns Discovered During Decomposition
+
+### 1. Package Size Control
+- Both test packages came in under 500 lines each (target was <1000)
+- Clear single responsibility made size control natural
+- When a package feels too big, it probably is
+
+### 2. Interface Segregation
+- Separate mock implementations from test utilities
+- Each mock has its own focused interface
+- Test helpers don't depend on specific mocks
+
+### 3. Minimal Dependencies
+- test-mocks: Only depends on inversify
+- test-helpers: Depends on test-mocks + vitest
+- Clear dependency direction maintained
+
+### 4. Documentation as Code
+- CLAUDE.md files define context boundaries
+- README.md provides usage examples
+- TypeScript interfaces serve as living documentation

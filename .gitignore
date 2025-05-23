@@ -31,3 +31,5 @@ Thumbs.db
 packages/prompts-shared/
 packages/markdown-compiler/
 packages/report-components/
+packages/test-mocks/
+packages/test-helpers/

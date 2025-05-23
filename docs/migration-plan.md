@@ -357,16 +357,16 @@ packages/shared/cache/
 ### 1. Setup Phase
 ```bash
 # Create package structure
-mkdir -p packages/shared/{package-name}/src
-cd packages/shared/{package-name}
+mkdir -p packages/{package-name}/src
+cd packages/{package-name}
 
 # Initialize package
 npm init -y
 npm install --save-dev typescript vitest @types/node
 
 # Copy configurations
-cp ../../../tsconfig.json .
-cp ../../../vitest.config.ts .
+cp ../../tsconfig.json .
+cp ../../vitest.config.ts .
 ```
 
 #### REQUIRED: Create CLAUDE.md
@@ -418,11 +418,49 @@ This ensures consistent context across all packages and helps maintain architect
 - Update documentation
 - Create migration guide
 
-### 4. Release Phase
+### 4. GitHub Repository Phase
+**IMPORTANT**: Following the established pattern, each package must be its own GitHub repository.
+
+#### Steps:
+1. **Initialize Git**
+   ```bash
+   cd packages/{package-name}
+   git init
+   git add .
+   git commit -m "Initial commit: {package description}"
+   ```
+
+2. **Create GitHub Repository**
+   - Create private repository on GitHub
+   - Name: `{package-name}` (e.g., `test-mocks`, `logger`)
+   - Description: Package purpose
+
+3. **Push to GitHub**
+   ```bash
+   git remote add origin https://github.com/{username}/{package-name}.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+4. **Update Main Project .gitignore**
+   Add the package directory to `.gitignore`:
+   ```gitignore
+   packages/{package-name}/
+   ```
+
+5. **Remove from Main Repo Tracking**
+   ```bash
+   cd {main-project-root}
+   git rm -r --cached packages/{package-name}
+   git add .gitignore
+   git commit -m "Move {package-name} to separate GitHub repository"
+   ```
+
+### 5. Release Phase
 - Version the package
 - Update CHANGELOG
-- Tag release
-- Update consuming projects
+- Tag release in GitHub
+- Update consuming projects to clone from GitHub
 
 ## Technical Considerations
 
@@ -430,7 +468,7 @@ This ensures consistent context across all packages and helps maintain architect
 All shared packages use the same base tsconfig:
 ```json
 {
-  "extends": "../../../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src"
@@ -544,12 +582,23 @@ During migration, consider:
 ## Next Steps
 
 1. Review and approve this plan
-2. Create shared/ directory structure
-3. Start with @h1b/testing package (priority change)
-4. Set up CI/CD for shared packages
-5. Create package documentation templates
-6. Implement event bus infrastructure
-7. Define context boundary guidelines
+2. ~~Create shared/ directory structure~~ ✅ Using flat structure
+3. ~~Start with @h1b/testing package~~ ✅ Completed as test-mocks and test-helpers
+4. Create GitHub repositories for each package
+5. Set up CI/CD for shared packages
+6. Create package documentation templates ✅ CLAUDE.md template created
+7. Implement event bus infrastructure
+8. Define context boundary guidelines
+
+## Important: GitHub Repository Pattern
+
+Each package in the monorepo follows this pattern:
+1. Developed locally in `/packages/{package-name}/`
+2. Pushed to its own GitHub repository
+3. Added to main project's `.gitignore`
+4. Cloned from GitHub for actual use
+
+This maintains clean separation while allowing local development.
 
 ## Appendix: File Mappings
 

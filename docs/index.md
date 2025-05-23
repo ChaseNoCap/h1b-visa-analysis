@@ -29,8 +29,9 @@ Welcome to the H1B Visa Analysis project documentation. This guide helps you fin
 
 #### Architecture & Design
 - [CLAUDE.md](/CLAUDE.md) - Current TypeScript/DI architecture
+- [Decomposition Progress](./decomposition-progress.md) - **NEW** Current status and next steps
 - [Migration Plan](./migration-plan.md) - Monorepo decomposition strategy
-- [Testing Package Implementation](./testing-package-implementation.md) - Current focus
+- [Testing Package Implementation](./testing-package-implementation.md) - ✅ Completed
 
 #### Implementation Guides
 - [CLAUDE.md Template](./claude-md-template.md) - For new packages
@@ -39,21 +40,26 @@ Welcome to the H1B Visa Analysis project documentation. This guide helps you fin
 ### For Architects
 
 #### Strategic Planning
+- [Decomposition Progress](./decomposition-progress.md) - **Current Status Dashboard**
 - [Migration Plan](./migration-plan.md) - Full decomposition strategy
-- [Testing Package Implementation](./testing-package-implementation.md) - Why testing first
+- [Decomposition Principles](./decomposition-principles.md) - Core design principles
+- [Testing Package Implementation](./testing-package-implementation.md) - ✅ First success story
 
-#### Future Packages
-- [@h1b/testing](./testing-package-implementation.md) - **Current Priority**
-- @h1b/logger - Planned
-- @h1b/core - Planned
-- @h1b/decorators - Planned
-- @h1b/file-system - Planned
+#### Package Status
+- [@h1b/test-mocks](../packages/test-mocks/CLAUDE.md) - ✅ Complete
+- [@h1b/test-helpers](../packages/test-helpers/CLAUDE.md) - ✅ Complete
+- @h1b/logger - **Next Priority**
+- @h1b/di-framework - Week 2
+- @h1b/file-system - Week 3
+- @h1b/events - Week 4
+- @h1b/cache - Week 5
 
 ### For AI Assistants (Claude)
 
 #### Primary Context
 1. [CLAUDE.md](/CLAUDE.md) - **Start here** - Project-specific instructions
-2. [Testing Package Implementation](./testing-package-implementation.md) - Current development focus
+2. [Decomposition Progress](./decomposition-progress.md) - **Current focus** - What to work on next
+3. [Migration Plan](./migration-plan.md) - Overall decomposition strategy
 
 #### Reference Documents
 - [CLAUDE.md Template](./claude-md-template.md) - When creating new packages
@@ -80,14 +86,15 @@ Welcome to the H1B Visa Analysis project documentation. This guide helps you fin
    - Set up PAT_TOKEN secret
    - Test with manual workflow dispatch
 
-### Implementing the @h1b/testing Package
+### Implementing the Next Package (@h1b/logger)
 
 **This is the current primary development goal.**
 
-1. Read [Testing Package Implementation](./testing-package-implementation.md)
-2. Review existing test patterns in `/tests/`
-3. Create package structure in `/packages/shared/testing/`
-4. Follow the implementation checklist in the doc
+1. Read [Decomposition Progress](./decomposition-progress.md) for current status
+2. Follow [Migration Plan](./migration-plan.md#phase-1-logger-package)
+3. Use established patterns from test packages
+4. Create package structure in `/packages/logger/`
+5. Use @h1b/test-mocks and @h1b/test-helpers for testing
 
 ### Adding a New Shared Package
 
