@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { Container } from 'inversify';
@@ -13,11 +13,11 @@ describe('ReportGenerator with Missing Dependencies', () => {
   let container: Container;
   let reportGenerator: IReportGenerator;
   const testOutputDir = path.join(__dirname, 'fixtures', 'output-missing');
-  
+
   beforeEach(async () => {
     // Create a new container for this test
     container = new Container();
-    
+
     // Create a mock dependency checker that returns missing dependencies
     const mockDependencyChecker: IDependencyChecker = {
       async checkDependency(name: string): Promise<IDependencyStatus> {
@@ -35,18 +35,20 @@ describe('ReportGenerator with Missing Dependencies', () => {
         ];
       },
     };
-    
+
     // Bind services
     container.bind<ILogger>(TYPES.ILogger).to(WinstonLogger);
-    container.bind<IDependencyChecker>(TYPES.IDependencyChecker).toConstantValue(mockDependencyChecker);
+    container
+      .bind<IDependencyChecker>(TYPES.IDependencyChecker)
+      .toConstantValue(mockDependencyChecker);
     container.bind<IReportGenerator>(TYPES.IReportGenerator).to(ReportGenerator);
-    
+
     reportGenerator = container.get<IReportGenerator>(TYPES.IReportGenerator);
-    
+
     // Create test output directory
     await fs.mkdir(testOutputDir, { recursive: true });
   });
-  
+
   afterEach(async () => {
     // Clean up test output
     try {
@@ -55,21 +57,21 @@ describe('ReportGenerator with Missing Dependencies', () => {
       // Ignore errors if directory doesn't exist
     }
   });
-  
+
   it('should handle all dependencies missing gracefully', async () => {
     const result = await reportGenerator.generate({
       outputDir: testOutputDir,
       includeTimestamp: false,
-      format: 'markdown'
+      format: 'markdown',
     });
-    
+
     // Should fail with appropriate error
     expect(result.success).toBe(false);
     expect(result.error).toBeDefined();
     expect(result.error?.message).toContain('No dependencies available');
     expect(result.outputPath).toBeUndefined();
   });
-  
+
   it('should handle partial dependencies', async () => {
     // Create a mock that returns mixed results
     const mockDependencyChecker: IDependencyChecker = {
@@ -96,22 +98,24 @@ describe('ReportGenerator with Missing Dependencies', () => {
         ];
       },
     };
-    
+
     // Re-bind with new mock
-    container.rebind<IDependencyChecker>(TYPES.IDependencyChecker).toConstantValue(mockDependencyChecker);
+    container
+      .rebind<IDependencyChecker>(TYPES.IDependencyChecker)
+      .toConstantValue(mockDependencyChecker);
     reportGenerator = container.get<IReportGenerator>(TYPES.IReportGenerator);
-    
+
     const result = await reportGenerator.generate({
       outputDir: testOutputDir,
       includeTimestamp: false,
-      format: 'markdown'
+      format: 'markdown',
     });
-    
+
     // Should succeed with partial dependencies
     expect(result.success).toBe(true);
     expect(result.outputPath).toBeDefined();
     expect(result.metadata?.dependencies).toEqual(['markdown-compiler']);
-    
+
     // Verify content shows mixed status
     const content = await fs.readFile(result.outputPath!, 'utf-8');
     expect(content).toContain('❌ prompts-shared');

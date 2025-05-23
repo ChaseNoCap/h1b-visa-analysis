@@ -2,7 +2,11 @@ import { injectable, inject } from 'inversify';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { TYPES } from '../core/constants/injection-tokens.js';
-import type { IReportGenerator, IReportOptions, IReportResult } from '../core/interfaces/IReportGenerator.js';
+import type {
+  IReportGenerator,
+  IReportOptions,
+  IReportResult,
+} from '../core/interfaces/IReportGenerator.js';
 import type { IDependencyChecker } from '../core/interfaces/IDependencyChecker.js';
 import type { ILogger } from '../core/interfaces/ILogger.js';
 
@@ -15,11 +19,7 @@ export class ReportGenerator implements IReportGenerator {
 
   async generate(options: IReportOptions = {}): Promise<IReportResult> {
     const startTime = Date.now();
-    const {
-      outputDir = 'dist',
-      includeTimestamp = true,
-      format = 'markdown'
-    } = options;
+    const { outputDir = 'dist', includeTimestamp = true, format = 'markdown' } = options;
 
     this.logger.info('Starting report generation', { options });
 
@@ -36,12 +36,10 @@ export class ReportGenerator implements IReportGenerator {
       await fs.mkdir(outputDir, { recursive: true });
 
       // Generate report content
-      const reportContent = await this.generateReportContent(dependencies);
+      const reportContent = this.generateReportContent(dependencies);
 
       // Determine output filename
-      const timestamp = includeTimestamp 
-        ? `-${new Date().toISOString().split('T')[0]}` 
-        : '';
+      const timestamp = includeTimestamp ? `-${new Date().toISOString().split('T')[0]}` : '';
       const extension = format === 'markdown' ? 'md' : format;
       const outputFilename = `h1b-report${timestamp}.${extension}`;
       const outputPath = path.join(outputDir, outputFilename);
@@ -50,10 +48,10 @@ export class ReportGenerator implements IReportGenerator {
       await fs.writeFile(outputPath, reportContent, 'utf-8');
 
       const duration = Date.now() - startTime;
-      this.logger.info('Report generation completed', { 
-        outputPath, 
+      this.logger.info('Report generation completed', {
+        outputPath,
         duration,
-        dependenciesUsed: availableDeps.map(d => d.name)
+        dependenciesUsed: availableDeps.map(d => d.name),
       });
 
       return {
@@ -67,7 +65,7 @@ export class ReportGenerator implements IReportGenerator {
       };
     } catch (error) {
       this.logger.error('Report generation failed', error as Error);
-      
+
       return {
         success: false,
         error: error as Error,
@@ -75,7 +73,9 @@ export class ReportGenerator implements IReportGenerator {
     }
   }
 
-  private async generateReportContent(dependencies: any[]): Promise<string> {
+  private generateReportContent(
+    dependencies: Array<{ name: string; available: boolean; version?: string; path?: string }>
+  ): string {
     const sections: string[] = [
       '# H1B Visa Analysis Report',
       '',

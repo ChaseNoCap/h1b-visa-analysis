@@ -10,7 +10,7 @@ async function main(): Promise<void> {
 
   try {
     logger.info('H1B Report Generator starting');
-    
+
     const result = await reportGenerator.generate({
       outputDir: 'dist',
       includeTimestamp: true,
