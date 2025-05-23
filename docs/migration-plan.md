@@ -274,6 +274,20 @@ cp ../../../tsconfig.json .
 cp ../../../vitest.config.ts .
 ```
 
+#### REQUIRED: Create CLAUDE.md
+Every package MUST have a CLAUDE.md file that provides context for Claude Code. Use the template at `/docs/claude-md-template.md` and include:
+
+1. **Package Identity** - Name, purpose, status
+2. **Monorepo Context** - Dependencies and consumers
+3. **Technical Architecture** - Interfaces and patterns
+4. **Development Guidelines** - How to work with the package
+5. **GitHub Integration** - Workflows and automation
+6. **Common Tasks** - Step-by-step guides
+7. **API Patterns** - Usage examples
+8. **Integration Examples** - How it connects to other packages
+
+This ensures consistent context across all packages and helps maintain architectural coherence.
+
 ### 2. Development Phase
 - Extract code from source projects
 - Refactor for reusability

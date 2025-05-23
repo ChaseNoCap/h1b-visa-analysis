@@ -264,3 +264,16 @@ See `docs/migration-plan.md` for overall strategy and `docs/testing-package-impl
 - Use dependency injection for all services
 - Follow interface-first design
 - Keep commit messages professional (no AI references)
+
+## CLAUDE.md Files in Monorepo
+
+Every package MUST have a CLAUDE.md file that provides context for Claude Code. This ensures:
+- Consistent patterns across all packages
+- Clear understanding of each package's role
+- Proper integration between packages
+- Maintained architectural coherence
+
+See:
+- `/docs/claude-md-template.md` - Template for new packages
+- `/docs/claude-md-guide.md` - Best practices guide
+- `/packages/shared/testing/CLAUDE.md` - Example of good CLAUDE.md
