@@ -13,6 +13,8 @@ This document outlines a concrete plan to decompose common concerns from the h1b
 
 - **[Decomposition Analysis](./decomposition-analysis.md)**: Comprehensive analysis of decomposition patterns and strategies for maintaining smaller contexts
 - **[Testing Package Implementation](./testing-package-implementation.md)**: Detailed plan for the @h1b/testing package (current priority)
+- **[Decomposition Principles](./decomposition-principles.md)**: Core principles guiding package design decisions
+- **[Implementation Roadmap](./implementation-roadmap.md)**: Concrete timeline and checkpoints for migration
 
 ## UPDATE: Priority Change (May 2025)
 
@@ -30,7 +32,7 @@ This document outlines a concrete plan to decompose common concerns from the h1b
 
 Each package should be under 500 lines with a single responsibility.
 
-See `testing-package-implementation.md` for the detailed implementation plan.
+See [`testing-package-implementation.md`](./testing-package-implementation.md) for the detailed implementation plan.
 
 ## Goals
 
@@ -68,7 +70,7 @@ Each package represents a bounded context with:
 
 ## Migration Principles
 
-Based on the [decomposition analysis](./decomposition-analysis.md), all migrations must follow these principles:
+Based on the [decomposition analysis](./decomposition-analysis.md), all migrations must follow these principles. For the complete guide, see [Decomposition Principles](./decomposition-principles.md):
 
 ### 1. Small Context Design
 - Each package focuses on ONE bounded context
@@ -368,7 +370,7 @@ cp ../../../vitest.config.ts .
 ```
 
 #### REQUIRED: Create CLAUDE.md
-Every package MUST have a CLAUDE.md file that provides context for Claude Code. Use the template at `/docs/claude-md-template.md` and include:
+Every package MUST have a CLAUDE.md file that provides context for Claude Code. Use the template at [`/docs/claude-md-template.md`](./claude-md-template.md) and include:
 
 1. **Package Identity** - Name, purpose, status
 2. **Context Boundary** - Clear definition of what's public vs internal
@@ -518,6 +520,7 @@ If issues arise:
 Based on the decomposition analysis, follow these guidelines:
 
 ### 1. Context Size Limits
+Following the guidelines in [Decomposition Principles](./decomposition-principles.md#size-limits):
 - **Public API**: Maximum 5-7 exported interfaces/functions
 - **Implementation Files**: Maximum 10-15 files per package
 - **Dependencies**: Maximum 3-5 direct dependencies

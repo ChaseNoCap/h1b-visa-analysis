@@ -47,6 +47,35 @@ This package is NOT responsible for:
 
 ## Package Context in Monorepo
 
+### Documentation Context
+
+**IMPORTANT**: Before developing in this package, understand the broader context:
+
+1. **Project Documentation Map**
+   - `/CLAUDE.md` - Main project context and goals
+   - `/docs/shared-architecture.md` - Overall architecture patterns
+   - `/docs/decomposition-principles.md` - Package design philosophy
+   - `/docs/testing-package-implementation.md` - Testing standards
+   - `/docs/claude-md-guide.md` - How to maintain context
+
+2. **Context Boundaries**
+   - This package has its own focused context
+   - Reference project docs for patterns, not implementation details
+   - Maintain minimal coupling to project specifics
+   - Focus on the package's single responsibility
+
+3. **Key Context to Inherit**
+   - TypeScript + DI patterns (from shared-architecture.md)
+   - Testing approach (from testing-package-implementation.md)
+   - Decomposition principles (from decomposition-principles.md)
+   - GitHub integration patterns (from main CLAUDE.md)
+
+4. **What NOT to Include**
+   - Project-specific business logic
+   - References to other packages' internals
+   - Assumptions about deployment context
+   - Hard dependencies on project structure
+
 ### Upstream Dependencies
 [List packages this depends on - keep minimal]
 - @h1b/core (for DI container)
@@ -59,6 +88,13 @@ This package is NOT responsible for:
 
 ### Position in Architecture
 [Explain where this fits - should be simple if package is focused]
+
+### Maintaining Context Connection
+When updating this package:
+1. Check if patterns have evolved in `/docs/shared-architecture.md`
+2. Ensure testing approaches align with `/docs/testing-package-implementation.md`
+3. Verify decomposition principles from `/docs/decomposition-principles.md`
+4. Update this CLAUDE.md if context boundaries change
 
 ## Technical Architecture
 

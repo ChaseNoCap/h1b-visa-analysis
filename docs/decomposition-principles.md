@@ -78,6 +78,10 @@ If you can't test it without mocking half the world, it's too coupled.
 
 Each has one clear purpose, can be tested independently, and could be published separately.
 
+For real examples from our monorepo, see:
+- [Testing Package Implementation](./testing-package-implementation.md#package-structure) - How we split testing into focused packages
+- [Migration Plan](./migration-plan.md#shared-packages-architecture) - Our actual package structure
+
 ### Bad Decomposition
 ```
 @h1b/core           - ??? (too vague)
@@ -150,6 +154,8 @@ When creating a new package:
 - [ ] Under 1000 lines of code
 - [ ] Has a focused public API (< 5 exports)
 - [ ] Could theoretically be published to npm as-is
+
+See [Implementation Roadmap](./implementation-roadmap.md#review-checkpoints) for how we apply these principles at each phase of the migration.
 
 ## Remember
 

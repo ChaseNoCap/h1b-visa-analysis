@@ -1,23 +1,35 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with code in this repository.
+
+## Context Building Guide
+
+### 📚 Documentation Index
+For comprehensive project context, see `/docs/README.md` - the documentation index that maps all available resources.
+
+### 🎯 Task-Specific Context
+- **Architecture Overview**: Start with `/docs/decomposition-principles.md` and `/docs/decomposition-analysis.md`
+- **Package Development**: Read `/docs/migration-plan.md` → `/docs/testing-package-implementation.md`
+- **Creating New Packages**: Follow `/docs/claude-md-template.md` and `/docs/claude-md-guide.md`
+- **GitHub Actions**: Check `/docs/automation-setup.md` for CI/CD workflows
+
+### 🔗 Decision Trail
+The project's decomposition strategy flows from:
+1. **Principles** (`/docs/decomposition-principles.md`) → defines the "why"
+2. **Analysis** (`/docs/decomposition-analysis.md`) → applies principles to this codebase
+3. **Implementation** (`/docs/migration-plan.md`) → executes the strategy
+4. **Current Focus** (`/docs/testing-package-implementation.md`) → @h1b/testing package
 
 ## Decomposition Principles
 
 **IMPORTANT**: This project follows strict decomposition principles. See `/docs/decomposition-principles.md` for the complete guide.
 
-### Key Principles for This Project:
+### Key Principles:
 1. **Single Purpose**: Each package has exactly ONE reason to exist
 2. **Clear Boundaries**: Package names clearly indicate their purpose
 3. **Size Limits**: Packages stay under 1000 lines with < 5 public exports
 4. **Dependency Direction**: Dependencies flow from specific → general
 5. **Test in Isolation**: If you can't test it alone, it's too coupled
-
-### Application in Main Project:
-- The main project orchestrates focused, single-purpose packages
-- Each dependency (prompts-shared, markdown-compiler, report-components) has one clear role
-- When adding features, prefer creating new packages over expanding existing ones
-- Avoid "kitchen sink" packages like generic utils or helpers
 
 ## Project Overview
 
@@ -63,13 +75,7 @@ npm run test:all       # Test all workspaces
 
 ## Architecture
 
-### Decomposition Strategy
-
-This project follows the decomposition patterns outlined in `docs/decomposition-analysis.md`. Key principles:
-- **Vertical Slicing**: Features are self-contained with their own interfaces, services, and tests
-- **Bounded Contexts**: Clear boundaries between different functional areas
-- **Small Context Per Project**: Each package maintains a focused, minimal scope
-- **Interface-First Design**: All interactions through well-defined contracts
+See `/docs/decomposition-analysis.md` for detailed architectural patterns and `/docs/migration-plan.md` for implementation roadmap.
 
 ### Current Project Structure
 ```
@@ -102,24 +108,12 @@ h1b-visa-analysis/
 └── .prettierrc                # Prettier configuration
 ```
 
-### Context Boundaries
-
-This package represents the **Report Generation Context** with clear boundaries:
-
-#### Public API (via index.ts)
+### Public API
+Via `index.ts`:
 - `IReportGenerator`: Main report generation interface
 - `IDependencyChecker`: Dependency validation interface
 - `TYPES`: Injection tokens for DI
 - `container`: Pre-configured DI container
-
-#### Internal Components (DO NOT DEPEND ON)
-- `ReportGenerator`: Implementation detail
-- `DependencyChecker`: Internal service
-- `WinstonLogger`: Logging implementation
-
-#### Dependencies
-- External packages: prompts-shared, markdown-compiler, report-components
-- Shared packages: @h1b/testing (when implemented)
 
 ### Dependency Injection Pattern
 
@@ -237,55 +231,18 @@ try {
 
 ## Shared Architecture with markdown-compiler
 
-This project follows the same patterns as the markdown-compiler package:
-- Same DI container setup
-- Same logger configuration
-- Same testing approach
-- Same build tools and linting
-- Same context boundary principles
+This project follows the same patterns as the markdown-compiler package. Both maintain small contexts with clear boundaries.
 
-Both projects maintain:
-- **Small Contexts**: Each package has a focused, single responsibility
-- **Clear Boundaries**: Well-defined public APIs through index.ts
-- **Vertical Slicing**: Features are self-contained units
-- **Interface Contracts**: All communication through interfaces
-
-This makes it easier to:
-- Share code between projects
-- Maintain consistency
-- Train new developers
-- Extract shared libraries later
-- Keep cognitive load low per context
-
-See `docs/decomposition-analysis.md` for detailed patterns and strategies.
+For shared patterns and strategies, see `/docs/decomposition-analysis.md`.
 
 ## Current Focus: @h1b/testing Package
 
-**IMPORTANT**: The current primary development goal is implementing the @h1b/testing package. This takes priority over all other shared packages.
+**IMPORTANT**: The current primary development goal is implementing the @h1b/testing package.
 
-### Why Testing First
-- Needed by all other shared packages
-- Establishes quality standards
-- Improves developer experience immediately
-- See `docs/testing-package-implementation.md` for full plan
-
-### Implementation Status
-- [ ] Package setup
-- [ ] Test container utilities
-- [ ] Mock implementations (Logger, FileSystem, Cache)
-- [ ] Fixture management
-- [ ] Test helpers and utilities
-- [ ] Shared configuration
-- [ ] Documentation
-
-### Other Planned Packages (On Hold)
-1. **@h1b/logger** - Logging infrastructure
-2. **@h1b/core** - DI utilities and base types
-3. **@h1b/decorators** - Reusable decorators
-4. **@h1b/file-system** - File system abstractions
-5. **@h1b/cache** - Caching implementations
-
-See `docs/migration-plan.md` for overall strategy and `docs/testing-package-implementation.md` for current focus.
+See:
+- `/docs/testing-package-implementation.md` - Implementation plan and status
+- `/docs/migration-plan.md` - Overall shared package strategy
+- `/packages/shared/testing/CLAUDE.md` - Package-specific context (when created)
 
 ## Future Enhancements
 
@@ -317,20 +274,14 @@ See `docs/migration-plan.md` for overall strategy and `docs/testing-package-impl
 - Logs rotate daily (kept for 14 days)
 - Use dependency injection for all services
 - Follow interface-first design
-- Keep commit messages professional (no AI references)
-- Maintain small context boundaries (see `docs/decomposition-analysis.md`)
+- Keep commit messages professional
+- Maintain small context boundaries
 - Only expose necessary interfaces through public API
 - Avoid cross-context dependencies
 
 ## CLAUDE.md Files in Monorepo
 
-Every package MUST have a CLAUDE.md file that provides context for Claude Code. This ensures:
-- Consistent patterns across all packages
-- Clear understanding of each package's role
-- Proper integration between packages
-- Maintained architectural coherence
-
-See:
+Every package MUST have a CLAUDE.md file. See:
 - `/docs/claude-md-template.md` - Template for new packages
 - `/docs/claude-md-guide.md` - Best practices guide
-- `/packages/shared/testing/CLAUDE.md` - Example of good CLAUDE.md
+- `/packages/shared/testing/CLAUDE.md` - Example implementation

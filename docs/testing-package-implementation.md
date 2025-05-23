@@ -4,9 +4,11 @@
 
 This document defines the implementation of the testing packages as the **current primary goal**. All development efforts should focus on completing these packages before moving to other shared libraries.
 
-**CONSOLIDATED STRUCTURE**: Based on our analysis, the testing functionality will be organized into 2 focused packages:
+**CONSOLIDATED STRUCTURE**: Based on our analysis following [decomposition principles](./decomposition-principles.md), the testing functionality will be organized into 2 focused packages:
 - **@h1b/test-mocks** - All mock implementations (logger, file system, cache)
 - **@h1b/test-helpers** - Test utilities, fixtures, and container setup
+
+For the overall migration strategy, see [Migration Plan](./migration-plan.md). For timeline and checkpoints, see [Implementation Roadmap](./implementation-roadmap.md#phase-1-testing-package-decomposition-week-1-2).
 
 ## Why Testing Packages First
 
@@ -299,9 +301,9 @@ export const sharedTestConfig = {
 
 **Tasks:**
 - [ ] Write comprehensive README
-- [ ] Create migration guide
+- [ ] Create migration guide from [Migration Plan](./migration-plan.md#migration-steps-for-each-package)
 - [ ] Add code examples
-- [ ] Document best practices
+- [ ] Document best practices following [Decomposition Principles](./decomposition-principles.md)
 
 ## Success Criteria
 
@@ -394,9 +396,9 @@ it('should complete eventually', async () => {
 
 ## Notes for Claude
 
-- This is the **current primary focus**
+- This is the **current primary focus** (see [Migration Plan](./migration-plan.md#update-priority-change-may-2025))
 - Complete these packages before moving to others
-- @h1b/test-mocks and @h1b/test-helpers are separate packages
+- @h1b/test-mocks and @h1b/test-helpers are separate packages per [decomposition principles](./decomposition-principles.md#when-to-split)
 - All code should follow established patterns
 - Maintain high test coverage (95%+)
 - Update both h1b-visa-analysis and markdown-compiler

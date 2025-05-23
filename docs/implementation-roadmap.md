@@ -4,7 +4,7 @@
 This roadmap provides concrete steps to decompose the H1B Visa Analysis monorepo into focused, reusable packages while maintaining development velocity and system stability.
 
 ## Guiding Principles
-This roadmap follows the decomposition principles defined in [`decomposition-principles.md`](./decomposition-principles.md). Each phase includes checkpoints to ensure adherence to these principles.
+This roadmap follows the decomposition principles defined in [`decomposition-principles.md`](./decomposition-principles.md). Each phase includes checkpoints to ensure adherence to these principles. For the specific testing implementation, see [`testing-package-implementation.md`](./testing-package-implementation.md).
 
 ## Immediate Actions (Next 24-48 Hours)
 
@@ -15,21 +15,21 @@ This roadmap follows the decomposition principles defined in [`decomposition-pri
 - [ ] Set up shared ESLint/Prettier configs at workspace root
 
 ### 2. Testing Package Initialization
-- [ ] Create `@h1b/testing` package structure
+- [ ] Create `@h1b/testing` package structure (see [detailed breakdown](./testing-package-implementation.md#package-structure))
 - [ ] Copy existing test utilities from main project
 - [ ] Set up package.json with proper exports
-- [ ] Create initial CLAUDE.md for the package
+- [ ] Create initial CLAUDE.md for the package (use [template](./claude-md-template.md))
 
 ## Phase 1: Testing Package Decomposition (Week 1-2)
 
 ### Goals
-Extract all testing utilities into a shared package that can be used across all H1B projects.
+Extract all testing utilities into a shared package that can be used across all H1B projects. Full implementation plan in [`testing-package-implementation.md`](./testing-package-implementation.md).
 
 ### Pre-Implementation Review
-- [ ] Review against decomposition principles checklist
+- [ ] Review against [decomposition principles checklist](./decomposition-principles.md#implementation-checklist)
 - [ ] Verify single responsibility: testing utilities only
 - [ ] Confirm no business logic included
-- [ ] Check estimated package size (<100 files)
+- [ ] Check estimated package size (<100 files) per [size limits](./decomposition-principles.md#size-limits)
 - [ ] Validate clear boundaries and interfaces
 
 ### Tasks
@@ -103,12 +103,12 @@ Extract all testing utilities into a shared package that can be used across all 
 - [ ] Update CI/CD configuration
 
 ### Post-Implementation Validation
-- [ ] Confirm package follows single responsibility principle
+- [ ] Confirm package follows [single responsibility principle](./decomposition-principles.md#single-purpose)
 - [ ] Verify all interfaces are clean and minimal
-- [ ] Check package size and complexity metrics
+- [ ] Check package size and complexity metrics against [size limits](./decomposition-principles.md#size-limits)
 - [ ] Ensure no business logic leaked into utilities
 - [ ] Validate documentation completeness
-- [ ] Review against decomposition principles scorecard
+- [ ] Review against [decomposition principles scorecard](./decomposition-principles.md#implementation-checklist)
 
 ## Phase 2: Core Infrastructure Extraction (Week 3-4)
 
