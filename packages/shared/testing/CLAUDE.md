@@ -2,6 +2,24 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with the @h1b/testing package.
 
+## Decomposition Principles
+
+**IMPORTANT**: This package follows strict decomposition principles. See `/docs/decomposition-principles.md` for the complete guide.
+
+### Key Principles Applied to @h1b/testing:
+1. **Single Purpose**: Provide testing utilities and mocks - nothing else
+2. **Clear Boundaries**: Named "testing" to unambiguously indicate its role
+3. **Size Limits**: Targeting < 500 lines, minimal public exports
+4. **Dependency Direction**: Foundation package - no @h1b dependencies
+5. **Test in Isolation**: Self-contained with its own test suite
+
+### Package-Specific Considerations:
+- This package ONLY provides testing utilities
+- It does NOT implement business logic or production code
+- Keep mocks simple and focused on testing needs
+- If a mock becomes complex, consider if the mocked interface is too complex
+- Future testing needs (e.g., E2E utilities) should be separate packages
+
 ## Package Identity
 
 **Name**: @h1b/testing  

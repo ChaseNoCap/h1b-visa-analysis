@@ -2,6 +2,23 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Decomposition Principles
+
+**IMPORTANT**: This project follows strict decomposition principles. See `/docs/decomposition-principles.md` for the complete guide.
+
+### Key Principles for This Project:
+1. **Single Purpose**: Each package has exactly ONE reason to exist
+2. **Clear Boundaries**: Package names clearly indicate their purpose
+3. **Size Limits**: Packages stay under 1000 lines with < 5 public exports
+4. **Dependency Direction**: Dependencies flow from specific → general
+5. **Test in Isolation**: If you can't test it alone, it's too coupled
+
+### Application in Main Project:
+- The main project orchestrates focused, single-purpose packages
+- Each dependency (prompts-shared, markdown-compiler, report-components) has one clear role
+- When adding features, prefer creating new packages over expanding existing ones
+- Avoid "kitchen sink" packages like generic utils or helpers
+
 ## Project Overview
 
 This is an H1B report generator monorepo that orchestrates three GitHub-based private dependencies:
@@ -46,6 +63,14 @@ npm run test:all       # Test all workspaces
 
 ## Architecture
 
+### Decomposition Strategy
+
+This project follows the decomposition patterns outlined in `docs/decomposition-analysis.md`. Key principles:
+- **Vertical Slicing**: Features are self-contained with their own interfaces, services, and tests
+- **Bounded Contexts**: Clear boundaries between different functional areas
+- **Small Context Per Project**: Each package maintains a focused, minimal scope
+- **Interface-First Design**: All interactions through well-defined contracts
+
 ### Current Project Structure
 ```
 h1b-visa-analysis/
@@ -58,7 +83,7 @@ h1b-visa-analysis/
 │   │   ├── DependencyChecker.ts
 │   │   ├── ReportGenerator.ts
 │   │   └── WinstonLogger.ts
-│   └── index.ts               # Main entry point
+│   └── index.ts               # Main entry point (PUBLIC API)
 ├── tests/                     # Test suite
 │   ├── e2e/                   # End-to-end tests
 │   │   ├── fixtures/          # Test fixtures
@@ -76,6 +101,25 @@ h1b-visa-analysis/
 ├── .eslintrc.json             # ESLint configuration
 └── .prettierrc                # Prettier configuration
 ```
+
+### Context Boundaries
+
+This package represents the **Report Generation Context** with clear boundaries:
+
+#### Public API (via index.ts)
+- `IReportGenerator`: Main report generation interface
+- `IDependencyChecker`: Dependency validation interface
+- `TYPES`: Injection tokens for DI
+- `container`: Pre-configured DI container
+
+#### Internal Components (DO NOT DEPEND ON)
+- `ReportGenerator`: Implementation detail
+- `DependencyChecker`: Internal service
+- `WinstonLogger`: Logging implementation
+
+#### Dependencies
+- External packages: prompts-shared, markdown-compiler, report-components
+- Shared packages: @h1b/testing (when implemented)
 
 ### Dependency Injection Pattern
 
@@ -198,12 +242,22 @@ This project follows the same patterns as the markdown-compiler package:
 - Same logger configuration
 - Same testing approach
 - Same build tools and linting
+- Same context boundary principles
+
+Both projects maintain:
+- **Small Contexts**: Each package has a focused, single responsibility
+- **Clear Boundaries**: Well-defined public APIs through index.ts
+- **Vertical Slicing**: Features are self-contained units
+- **Interface Contracts**: All communication through interfaces
 
 This makes it easier to:
 - Share code between projects
 - Maintain consistency
 - Train new developers
 - Extract shared libraries later
+- Keep cognitive load low per context
+
+See `docs/decomposition-analysis.md` for detailed patterns and strategies.
 
 ## Current Focus: @h1b/testing Package
 
@@ -264,6 +318,9 @@ See `docs/migration-plan.md` for overall strategy and `docs/testing-package-impl
 - Use dependency injection for all services
 - Follow interface-first design
 - Keep commit messages professional (no AI references)
+- Maintain small context boundaries (see `docs/decomposition-analysis.md`)
+- Only expose necessary interfaces through public API
+- Avoid cross-context dependencies
 
 ## CLAUDE.md Files in Monorepo
 

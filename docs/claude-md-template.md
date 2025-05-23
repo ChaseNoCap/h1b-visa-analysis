@@ -2,25 +2,55 @@
 
 This template should be used when creating any new package in the monorepo. Copy this file to `CLAUDE.md` in the package root and fill in the sections.
 
+**IMPORTANT**: Following our decomposition analysis, packages should be small, focused, and have minimal context. Each package should do ONE thing well.
+
 ```markdown
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with the [PACKAGE_NAME] package.
 
+## Decomposition Principles
+
+**IMPORTANT**: This package follows strict decomposition principles. See `/docs/decomposition-principles.md` for the complete guide.
+
+### Key Principles Applied to [PACKAGE_NAME]:
+1. **Single Purpose**: [Describe the ONE thing this package does]
+2. **Clear Boundaries**: [Explain why the name clearly indicates purpose]
+3. **Size Limits**: [Confirm target is < 1000 lines, < 5 exports]
+4. **Dependency Direction**: [List position in dependency hierarchy]
+5. **Test in Isolation**: [Confirm it can be tested independently]
+
+### Package-Specific Considerations:
+- [What this package explicitly DOES]
+- [What this package explicitly DOES NOT do]
+- [Any specific decomposition decisions for this package]
+- [When to create a new package instead of extending this one]
+
 ## Package Identity
 
 **Name**: @h1b/[PACKAGE_NAME]  
-**Purpose**: [One sentence description]  
+**Purpose**: [One sentence description - be VERY specific about the single responsibility]  
 **Status**: [Development/Stable/Deprecated]  
 **Owner**: [Team/Person responsible]  
 **Created**: [Date]  
+**Size**: [Small/Medium - aim for Small]  
+**Complexity**: [Low/Medium - aim for Low]  
+
+## Single Responsibility
+
+This package is responsible for:
+[ONE clear responsibility - if you need "and" or multiple bullets, the package is too big]
+
+This package is NOT responsible for:
+- [List what this explicitly does NOT do]
+- [Help maintain clear boundaries]
 
 ## Package Context in Monorepo
 
 ### Upstream Dependencies
-[List packages this depends on]
+[List packages this depends on - keep minimal]
 - @h1b/core (for DI container)
-- @h1b/logger (for logging)
+- [1-2 other dependencies max]
 
 ### Downstream Consumers
 [List packages that depend on this]
@@ -28,38 +58,48 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 - markdown-compiler
 
 ### Position in Architecture
-[Explain where this fits in the overall system]
+[Explain where this fits - should be simple if package is focused]
 
 ## Technical Architecture
 
 ### Core Interfaces
 ```typescript
-// List main interfaces this package exports
-export interface IMainService {
-  // ...
+// ONE main interface this package exports (keep it focused!)
+export interface I[SingleResponsibility] {
+  // 3-5 methods maximum
+  // If more, consider splitting the package
 }
 ```
 
 ### Design Patterns
-- **Dependency Injection**: All services use Inversify
-- **Interface-First**: Define contracts before implementations
+- **Single Responsibility**: One clear purpose
+- **Minimal Dependencies**: 2-3 max
+- **Interface-First**: One main interface
 - **Async by Default**: All I/O operations are async
-- [Package-specific patterns]
+- [Package-specific patterns - keep simple]
 
 ### Key Technologies
 - TypeScript (strict mode)
-- Inversify (DI)
-- [Package-specific tech]
+- Inversify (DI) - only if truly needed
+- [1-2 package-specific tech max]
 
 ## Development Guidelines
 
-### Code Organization
+### Code Organization (Keep It Small!)
 ```
 src/
-├── interfaces/     # Public contracts
-├── implementations/# Concrete classes
-├── decorators/     # If applicable
-├── utils/          # Helper functions
+├── interface.ts    # THE main interface (singular)
+├── implementation.ts # THE implementation
+├── errors.ts       # Package-specific errors (if any)
+├── types.ts        # Shared types (if any)
+└── index.ts        # Public exports
+```
+
+For slightly larger packages:
+```
+src/
+├── interfaces/     # 2-3 interfaces MAX
+├── implementations/# 2-3 classes MAX
 ├── errors/         # Custom errors
 └── index.ts        # Public exports
 ```
@@ -71,10 +111,11 @@ src/
 - Errors: `ServiceNameError`
 
 ### Testing Requirements
-- Minimum 90% coverage
-- Unit tests for all public methods
-- Integration tests for complex flows
+- Minimum 90% coverage (should be easy with focused packages)
+- Unit tests for the ONE main interface
+- Integration tests only if absolutely needed
 - Use @h1b/testing utilities
+- Small packages = simpler tests!
 
 ## GitHub Integration
 
@@ -186,29 +227,54 @@ const service = createService({
 - [Dependencies to watch]
 - [Upgrade considerations]
 
+## Decomposition Guidelines
+
+### Signs Your Package is Too Big
+- More than 3-4 interfaces
+- More than 500 lines of code
+- Needs extensive documentation
+- Has multiple responsibilities
+- Complex dependency graph
+- Hard to test in isolation
+- Context file is getting long
+
+### When to Split a Package
+If you find yourself:
+- Using "and" to describe its purpose
+- Creating subdirectories for organization
+- Having unrelated utilities together
+- Mixing different concerns
+- Writing complex integration tests
+
+Consider splitting into smaller, focused packages!
+
 ## Important Patterns
 
 ### DO
-- Use dependency injection
-- Return Result types
-- Log all operations
-- Handle errors gracefully
-- Write comprehensive tests
+- Keep packages SMALL and focused
+- One interface, one responsibility
+- Minimal dependencies (2-3 max)
+- Simple, clear naming
+- Easy to test in isolation
+- Quick to understand
 
 ### DON'T
+- Create "utils" packages (too vague)
+- Mix unrelated functionality
+- Over-engineer simple things
+- Create deep dependency chains
+- Make packages that do everything
 - Use console.log (use ILogger)
-- Throw untyped errors
-- Make synchronous I/O calls
-- Hardcode dependencies
-- Skip tests
 
 ## Questions to Ask When Developing
-1. Is this following the established patterns?
-2. Are all interfaces defined?
-3. Is error handling comprehensive?
-4. Are tests adequate?
-5. Is it properly integrated with logging?
-6. Does it use DI correctly?
+1. Does this package do ONE thing?
+2. Can I describe it without using "and"?
+3. Is it under 500 lines of code?
+4. Does it have 3 or fewer dependencies?
+5. Can I test it in complete isolation?
+6. Would a new developer understand it in 5 minutes?
+7. Is the interface simple (3-5 methods)?
+8. Could this be split into smaller packages?
 
 ## Related Documentation
 - Main monorepo: `/CLAUDE.md`

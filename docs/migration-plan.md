@@ -2,7 +2,17 @@
 
 ## Executive Summary
 
-This document outlines a concrete plan to decompose common concerns from the h1b-visa-analysis and markdown-compiler projects into shared packages. The migration will improve code reuse, consistency, and maintainability across the monorepo.
+This document outlines a concrete plan to decompose common concerns from the h1b-visa-analysis and markdown-compiler projects into shared packages. The migration will improve code reuse, consistency, and maintainability across the monorepo while maintaining small, focused contexts per project.
+
+**Note on Decorators**: Decorators are intentionally kept with their related functionality rather than in a separate package. This keeps related code together and reduces cross-package dependencies:
+- Logging decorators (e.g., LogMethod) are part of @h1b/logger
+- Caching decorators (e.g., Cacheable, InvalidateCache) are part of @h1b/cache
+- Future validation decorators would be part of a potential @h1b/validation package
+
+## Related Documents
+
+- **[Decomposition Analysis](./decomposition-analysis.md)**: Comprehensive analysis of decomposition patterns and strategies for maintaining smaller contexts
+- **[Testing Package Implementation](./testing-package-implementation.md)**: Detailed plan for the @h1b/testing package (current priority)
 
 ## UPDATE: Priority Change (May 2025)
 
@@ -10,6 +20,15 @@ This document outlines a concrete plan to decompose common concerns from the h1b
 - Ensure quality of all subsequent shared packages
 - Provide immediate value to developers
 - Establish testing patterns from the start
+
+**CRITICAL UPDATE**: Based on decomposition analysis, @h1b/testing is TOO BIG and should be split into:
+- @h1b/test-container (DI setup)
+- @h1b/mock-logger (logger mocks)
+- @h1b/mock-fs (file system mocks)
+- @h1b/test-fixtures (fixture loading)
+- @h1b/test-utils (async helpers)
+
+Each package should be under 500 lines with a single responsibility.
 
 See `testing-package-implementation.md` for the detailed implementation plan.
 
@@ -20,22 +39,64 @@ See `testing-package-implementation.md` for the detailed implementation plan.
 3. **Enable Code Sharing** - Create reusable packages
 4. **Maintain Backward Compatibility** - No breaking changes
 5. **Improve Developer Experience** - Single source of truth
+6. **Maintain Small Contexts** - Each package focused on a single bounded context
+7. **Support Vertical Slicing** - Enable feature-based organization
 
 ## Shared Packages Architecture
 
 ```
 packages/
 ├── shared/
-│   ├── logger/           # @h1b/logger
-│   ├── core/            # @h1b/core
-│   ├── testing/         # @h1b/testing
-│   ├── decorators/      # @h1b/decorators
-│   ├── file-system/     # @h1b/file-system
-│   └── cache/           # @h1b/cache
-├── markdown-compiler/
-├── prompts-shared/
-└── report-components/
+│   ├── logger/           # @h1b/logger - Logging context (includes logging decorators)
+│   ├── di-framework/    # @h1b/di-framework - Dependency injection utilities
+│   ├── testing/         # @h1b/testing - Testing context
+│   ├── file-system/     # @h1b/file-system - File operations context
+│   ├── cache/           # @h1b/cache - Caching context (includes cache decorators)
+│   └── events/          # @h1b/events - Event bus for decoupling
+├── markdown-compiler/    # Markdown processing context
+├── prompts-shared/      # AI workflows context
+└── report-components/   # Report content context
 ```
+
+### Context Boundaries
+
+Each package represents a bounded context with:
+- **Clear Public API**: Only necessary interfaces exported
+- **Internal Implementation**: Hidden from consumers
+- **Explicit Dependencies**: Declared through DI container
+- **Event Integration**: Optional event-driven communication
+
+## Migration Principles
+
+Based on the [decomposition analysis](./decomposition-analysis.md), all migrations must follow these principles:
+
+### 1. Small Context Design
+- Each package focuses on ONE bounded context
+- Minimize public API surface area
+- Hide implementation details completely
+- Use adapters for cross-context communication
+
+### 2. Vertical Feature Slicing (When Applicable)
+For packages with multiple features, organize by feature rather than technical layer:
+```
+package/
+├── src/
+│   ├── feature-a/        # Complete feature including interfaces, services, tests
+│   ├── feature-b/        # Another complete feature
+│   └── shared/           # Only truly shared code
+```
+
+### 3. Event-Driven Decoupling
+When contexts need to communicate without tight coupling:
+- Use domain events for notifications
+- Implement event bus for loose coupling
+- Document all events in context boundaries
+
+### 4. Anti-Corruption Layers
+Protect contexts from external changes:
+- Create adapters for external APIs
+- Transform external models to internal ones
+- Isolate third-party dependencies
 
 ## Phase 1: Logger Package (Week 1)
 
@@ -48,24 +109,33 @@ packages/
 packages/shared/logger/
 ├── src/
 │   ├── interfaces/
-│   │   └── ILogger.ts
+│   │   └── ILogger.ts          # Public API
 │   ├── implementations/
-│   │   ├── WinstonLogger.ts
-│   │   └── ConsoleLogger.ts
+│   │   ├── WinstonLogger.ts    # Internal
+│   │   └── ConsoleLogger.ts    # Internal
+│   ├── decorators/             # Logging decorators included here
+│   │   └── LogMethod.ts        # Public API
 │   ├── factories/
-│   │   └── createLogger.ts
-│   └── index.ts
+│   │   └── createLogger.ts     # Public API
+│   └── index.ts                # Explicit exports only
 ├── tests/
+├── CLAUDE.md                   # Context documentation
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
+
+#### Context Boundary
+- **Public**: ILogger interface, createLogger factory, LogMethod decorator
+- **Internal**: All implementations, configuration details
+- **Events**: None (logging is synchronous)
 
 #### Tasks
 - [ ] Create package structure
 - [ ] Extract ILogger interface from both projects
 - [ ] Move WinstonLogger implementation
 - [ ] Add ConsoleLogger for testing
+- [ ] Extract LogMethod decorator from markdown-compiler
 - [ ] Create factory function
 - [ ] Write comprehensive tests
 - [ ] Update both projects to use @h1b/logger
@@ -88,15 +158,15 @@ const config: ILoggerConfig = {
 const logger = new WinstonLogger(config);
 ```
 
-## Phase 2: Core Package (Week 2)
+## Phase 2: DI Framework Package (Week 2)
 
-### Package: @h1b/core
+### Package: @h1b/di-framework
 
 **Why Second**: Foundation for other packages, establishes patterns
 
 #### Structure
 ```
-packages/shared/core/
+packages/shared/di-framework/
 ├── src/
 │   ├── di/
 │   │   ├── container.ts
@@ -140,35 +210,33 @@ export interface IDisposable {
 }
 ```
 
-## Phase 3: Decorators Package (Week 3)
+## Phase 3: File System Package (Week 3)
 
-### Package: @h1b/decorators
+### Package: @h1b/file-system
 
-**Why Third**: Unique to markdown-compiler, high value for all packages
+**Why Third**: Used by multiple services, good abstraction
 
 #### Structure
 ```
-packages/shared/decorators/
+packages/shared/file-system/
 ├── src/
-│   ├── cache/
-│   │   ├── Cacheable.ts
-│   │   ├── InvalidateCache.ts
-│   │   └── CacheManager.ts
-│   ├── logging/
-│   │   └── LogMethod.ts
-│   ├── validation/
-│   │   ├── Validate.ts
-│   │   └── validators.ts
+│   ├── interfaces/
+│   │   └── IFileSystem.ts
+│   ├── implementations/
+│   │   ├── NodeFileSystem.ts
+│   │   └── MemoryFileSystem.ts
+│   ├── utils/
+│   │   └── pathUtils.ts
 │   └── index.ts
 ```
 
 #### Tasks
-- [ ] Extract cache decorators from markdown-compiler
-- [ ] Extract logging decorator
-- [ ] Extract validation decorators
-- [ ] Create decorator utilities
-- [ ] Add to h1b-visa-analysis
-- [ ] Write decorator tests
+- [ ] Extract IFileSystem interface
+- [ ] Move implementations
+- [ ] Add path utilities
+- [ ] Create stream support
+- [ ] Write comprehensive tests
+- [ ] Update consumers
 
 ## Phase 4: Testing Package (Week 4)
 
@@ -200,62 +268,87 @@ packages/shared/testing/
 - [ ] Create test helpers
 - [ ] Document testing patterns
 
-## Phase 5: File System Package (Week 5)
+## Phase 5: Events Package (Week 5)
 
-### Package: @h1b/file-system
+### Package: @h1b/events
 
-**Why Fifth**: Used by multiple services, good abstraction
+**Why Fifth**: Enables decoupling between contexts, simpler than cache
 
 #### Structure
 ```
-packages/shared/file-system/
+packages/shared/events/
 ├── src/
 │   ├── interfaces/
-│   │   └── IFileSystem.ts
+│   │   ├── IEventBus.ts        # Public API
+│   │   └── IDomainEvent.ts     # Public API
 │   ├── implementations/
-│   │   ├── NodeFileSystem.ts
-│   │   └── MemoryFileSystem.ts
-│   ├── utils/
-│   │   └── pathUtils.ts
+│   │   ├── EventBus.ts         # Internal
+│   │   └── AsyncEventBus.ts    # Internal
+│   ├── decorators/
+│   │   └── EventHandler.ts     # Public API
 │   └── index.ts
+├── tests/
+├── CLAUDE.md
+└── package.json
 ```
 
+#### Context Boundary
+- **Public**: IEventBus, IDomainEvent, EventHandler decorator
+- **Internal**: EventBus implementations
+- **Purpose**: Enable loose coupling between bounded contexts
+
 #### Tasks
-- [ ] Extract IFileSystem interface
-- [ ] Move implementations
-- [ ] Add path utilities
-- [ ] Create stream support
-- [ ] Write comprehensive tests
-- [ ] Update consumers
+- [ ] Define event interfaces
+- [ ] Implement synchronous event bus
+- [ ] Add async event support
+- [ ] Create event handler decorator
+- [ ] Add event replay capability
+- [ ] Document event patterns
 
 ## Phase 6: Cache Package (Week 6)
 
 ### Package: @h1b/cache
 
-**Why Last**: Builds on decorators, most complex
+**Why Sixth**: Builds on events for invalidation, includes cache decorators
 
 #### Structure
 ```
 packages/shared/cache/
 ├── src/
 │   ├── interfaces/
-│   │   └── ICache.ts
+│   │   └── ICache.ts           # Public API
 │   ├── implementations/
-│   │   ├── MemoryCache.ts
-│   │   └── RedisCache.ts
+│   │   ├── MemoryCache.ts      # Internal
+│   │   └── RedisCache.ts       # Internal (future)
 │   ├── strategies/
-│   │   ├── LRU.ts
-│   │   └── TTL.ts
+│   │   ├── LRU.ts              # Internal
+│   │   └── TTL.ts              # Internal
+│   ├── decorators/              # Cache decorators live here
+│   │   ├── Cacheable.ts
+│   │   ├── InvalidateCache.ts
+│   │   └── CacheManager.ts
+│   ├── events/
+│   │   └── CacheEvents.ts      # Cache invalidation events
 │   └── index.ts
+├── tests/
+├── CLAUDE.md
+└── package.json
 ```
+
+#### Context Boundary
+- **Public**: ICache interface, cache decorators (Cacheable, InvalidateCache)
+- **Internal**: All implementations and strategies
+- **Events**: CACHE_INVALIDATED, CACHE_CLEARED
 
 #### Tasks
 - [ ] Define cache interfaces
 - [ ] Implement memory cache
-- [ ] Add Redis support (future)
 - [ ] Create cache strategies
-- [ ] Integrate with decorators
+- [ ] Extract cache decorators from markdown-compiler
+- [ ] Integrate with event bus for invalidation
+- [ ] Add Redis support (future)
 - [ ] Performance testing
+
 
 ## Migration Steps for Each Package
 
@@ -278,13 +371,34 @@ cp ../../../vitest.config.ts .
 Every package MUST have a CLAUDE.md file that provides context for Claude Code. Use the template at `/docs/claude-md-template.md` and include:
 
 1. **Package Identity** - Name, purpose, status
-2. **Monorepo Context** - Dependencies and consumers
-3. **Technical Architecture** - Interfaces and patterns
-4. **Development Guidelines** - How to work with the package
-5. **GitHub Integration** - Workflows and automation
-6. **Common Tasks** - Step-by-step guides
-7. **API Patterns** - Usage examples
-8. **Integration Examples** - How it connects to other packages
+2. **Context Boundary** - Clear definition of what's public vs internal
+3. **Monorepo Context** - Dependencies and consumers
+4. **Technical Architecture** - Interfaces and patterns
+5. **Event Integration** - Events published/consumed (if any)
+6. **Development Guidelines** - How to work with the package
+7. **GitHub Integration** - Workflows and automation
+8. **Common Tasks** - Step-by-step guides
+9. **API Patterns** - Usage examples with explicit exports
+10. **Integration Examples** - How it connects to other packages
+
+### Context Boundary Template
+```markdown
+## Context Boundary
+
+This package is part of the [Context Name] bounded context.
+
+### Public API
+- Interface1: Description
+- Factory1: Description
+- Type1: Description
+
+### Internal Components (DO NOT DEPEND ON)
+- Implementation1: Why it's internal
+- Service1: Implementation detail
+
+### Events
+- EVENT_NAME: When fired and payload structure
+```
 
 This ensures consistent context across all packages and helps maintain architectural coherence.
 
@@ -388,22 +502,51 @@ If issues arise:
 
 ## Timeline
 
-| Week | Package | Priority | Risk |
-|------|---------|----------|------|
-| 1 | @h1b/logger | High | Low |
-| 2 | @h1b/core | High | Medium |
-| 3 | @h1b/decorators | Medium | Medium |
-| 4 | @h1b/testing | Medium | Low |
-| 5 | @h1b/file-system | Low | Low |
-| 6 | @h1b/cache | Low | High |
+| Week | Package | Priority | Risk | Context Focus |
+|------|---------|----------|------|---------------|
+| 1 | @h1b/testing | Highest | Low | Testing utilities context |
+| 2 | @h1b/logger | High | Low | Logging context (includes logging decorators) |
+| 3 | @h1b/di-framework | High | Medium | Dependency injection utilities |
+| 4 | @h1b/file-system | Medium | Low | File operations context |
+| 5 | @h1b/events | Medium | Low | Event-driven communication |
+| 6 | @h1b/cache | Low | High | Caching context (includes cache decorators) |
+
+**Note**: Testing package moved to Week 1 as per priority change.
+
+## Maintaining Small Contexts During Migration
+
+Based on the decomposition analysis, follow these guidelines:
+
+### 1. Context Size Limits
+- **Public API**: Maximum 5-7 exported interfaces/functions
+- **Implementation Files**: Maximum 10-15 files per package
+- **Dependencies**: Maximum 3-5 direct dependencies
+- **Test Coverage**: Minimum 90% focusing on public API
+
+### 2. Migration Checkpoints
+Before completing each package migration:
+- [ ] Verify all exports are intentional (no accidental exposure)
+- [ ] Ensure no circular dependencies between contexts
+- [ ] Document all integration points
+- [ ] Create adapters for cross-context communication
+- [ ] Test context in isolation
+
+### 3. Refactoring Opportunities
+During migration, consider:
+- Splitting large interfaces into focused ones
+- Extracting sub-contexts if package grows too large
+- Using events instead of direct dependencies
+- Creating facade patterns for complex APIs
 
 ## Next Steps
 
 1. Review and approve this plan
 2. Create shared/ directory structure
-3. Start with @h1b/logger package
+3. Start with @h1b/testing package (priority change)
 4. Set up CI/CD for shared packages
 5. Create package documentation templates
+6. Implement event bus infrastructure
+7. Define context boundary guidelines
 
 ## Appendix: File Mappings
 
@@ -413,13 +556,15 @@ If issues arise:
 - `/packages/markdown-compiler/src/services/WinstonLogger.ts` → (remove, use shared)
 - `/packages/markdown-compiler/src/core/interfaces/ILogger.ts` → (remove, use shared)
 
-### Core Package Sources
-- `/src/core/constants/injection-tokens.ts` → `@h1b/core/src/di/types.ts`
-- `/src/core/container/container.ts` → `@h1b/core/src/di/container.ts`
+### DI Framework Package Sources
+- `/src/core/constants/injection-tokens.ts` → `@h1b/di-framework/src/di/types.ts`
+- `/src/core/container/container.ts` → `@h1b/di-framework/src/di/container.ts`
 - Similar files from markdown-compiler
 
-### Decorators Package Sources
-- `/packages/markdown-compiler/src/core/decorators/*.ts` → `@h1b/decorators/src/*`
-- New decorators to be added to h1b-visa-analysis
+### Decorator Sources
+- `/packages/markdown-compiler/src/core/decorators/LogMethod.ts` → `@h1b/logger/src/decorators/LogMethod.ts`
+- `/packages/markdown-compiler/src/core/decorators/Cacheable.ts` → `@h1b/cache/src/decorators/Cacheable.ts`
+- `/packages/markdown-compiler/src/core/decorators/InvalidateCache.ts` → `@h1b/cache/src/decorators/InvalidateCache.ts`
+- Future validation decorators would go in a potential `@h1b/validation` package
 
 This migration plan provides a clear path forward with minimal risk and maximum benefit.

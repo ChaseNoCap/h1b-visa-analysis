@@ -4,46 +4,129 @@
 
 This guide helps developers understand and use the shared packages in the H1B monorepo.
 
+**IMPORTANT**: Based on our decomposition analysis, all packages should be SMALL and FOCUSED. Each package should:
+- Do ONE thing well
+- Be under 500 lines of code
+- Have 2-3 dependencies maximum
+- Be understandable in 5 minutes
+
+## Package Naming Convention
+
+Packages use clear prefixes to indicate their purpose:
+- `@h1b/test-*` - Testing utilities (mocks, helpers, fixtures)
+- `@h1b/*` - Core functionality (no prefix needed)
+
 ## Package Structure
 
 All shared packages follow a consistent structure:
 
+### For Small Packages (Preferred):
 ```
 packages/shared/{package-name}/
 ├── src/
-│   ├── interfaces/      # Public interfaces
-│   ├── implementations/ # Concrete implementations
-│   ├── utils/          # Helper functions
+│   ├── interface.ts    # THE main interface
+│   ├── implementation.ts # THE implementation
+│   ├── types.ts        # Shared types (if needed)
+│   └── index.ts        # Exports
+├── tests/              # Simple test file(s)
+├── package.json        # Minimal dependencies
+├── tsconfig.json       # Extends base config
+├── CLAUDE.md          # REQUIRED context file
+└── README.md          # One-page documentation
+```
+
+### For Slightly Larger Packages (Use Sparingly):
+```
+packages/shared/{package-name}/
+├── src/
+│   ├── interfaces/     # 2-3 interfaces MAX
+│   ├── implementations/ # 2-3 classes MAX
 │   └── index.ts        # Main exports
 ├── tests/              # Test files
-├── dist/               # Compiled output (gitignored)
-├── package.json        # Package configuration
-├── tsconfig.json       # TypeScript config
-├── vitest.config.ts    # Test configuration
-└── README.md           # Package documentation
+├── CLAUDE.md          # REQUIRED context file
+└── README.md          # Package documentation
 ```
+
+## Package Design Principles
+
+### Small is Beautiful
+- **Target**: <500 lines of code per package
+- **Interfaces**: 1 main interface, 3-5 methods max
+- **Dependencies**: 2-3 maximum
+- **Understanding**: New dev should grasp it in 5 minutes
+
+### Single Responsibility
+- One package = One job
+- If you use "and" to describe it, split it
+- No "utils" or "helpers" packages (too vague)
+- Clear, specific naming
+
+### Examples of Good vs Bad Packages
+
+**Good** ✅
+- @h1b/mock-logger - Mock implementation of ILogger
+- @h1b/test-fixtures - Load test fixtures from disk
+- @h1b/async-retry - Retry async operations
+
+**Bad** ❌
+- @h1b/testing - Too broad, does too many things
+- @h1b/utils - Vague, becomes a dumping ground
+- @h1b/core - What is "core"? Be specific!
 
 ## Available Packages
 
-### @h1b/logger (Ready)
-- **Purpose**: Centralized logging with Winston
-- **Status**: Structure created, ready for implementation
-- **Usage**: `import { createLogger } from '@h1b/logger'`
+### Testing Packages (Priority 1 - Consolidated by Purpose)
 
-### @h1b/core (Planned)
-- **Purpose**: Core utilities and DI helpers
-- **Status**: Week 2 of migration plan
-- **Usage**: `import { Container, IResult } from '@h1b/core'`
+#### @h1b/test-mocks (Planned)
+- **Purpose**: All mock implementations for testing
+- **Size**: ~600 lines
+- **Includes**:
+  - MockLogger - In-memory logger for tests
+  - MockFileSystem - In-memory file system
+  - MockCache - In-memory cache
+- **Usage**: 
+  ```typescript
+  import { MockLogger, MockFileSystem, MockCache } from '@h1b/test-mocks';
+  ```
 
-### @h1b/decorators (Planned)
-- **Purpose**: Reusable TypeScript decorators
-- **Status**: Week 3 of migration plan
-- **Usage**: `import { Cacheable, LogMethod } from '@h1b/decorators'`
+#### @h1b/test-helpers (Planned)
+- **Purpose**: Test setup and utilities
+- **Size**: ~550 lines
+- **Includes**:
+  - Test container setup and utilities
+  - Fixture loading and management
+  - Async test helpers (waitFor, measureTime)
+  - Common test patterns
+- **Usage**: 
+  ```typescript
+  import { createTestContainer, loadFixture, waitFor } from '@h1b/test-helpers';
+  ```
 
-### @h1b/testing (Planned)
-- **Purpose**: Test utilities and mocks
-- **Status**: Week 4 of migration plan
-- **Usage**: `import { createTestContainer } from '@h1b/testing'`
+### Other Packages
+
+#### @h1b/logger (Ready)
+- **Purpose**: Centralized logging with Winston and logging decorators
+- **Size**: ~500 lines
+- **Includes**:
+  - Winston logger factory
+  - ILogger interface
+  - @LogMethod decorator
+  - @LogClass decorator
+  - Log level configuration
+- **Usage**: 
+  ```typescript
+  import { createLogger, LogMethod } from '@h1b/logger';
+  ```
+
+#### @h1b/di-framework (Planned)
+- **Purpose**: Dependency injection utilities and container setup
+- **Size**: ~400 lines
+- **Includes**:
+  - Container factory functions
+  - Common injection tokens
+  - DI helper decorators
+  - Type definitions for DI
+- **Usage**: `import { createContainer, TYPES } from '@h1b/di-framework'`
 
 ### @h1b/file-system (Planned)
 - **Purpose**: File system abstractions
@@ -51,9 +134,19 @@ packages/shared/{package-name}/
 - **Usage**: `import { IFileSystem } from '@h1b/file-system'`
 
 ### @h1b/cache (Planned)
-- **Purpose**: Caching implementations
+- **Purpose**: Caching implementations and cache decorators
+- **Size**: ~450 lines
+- **Includes**:
+  - MemoryCache implementation
+  - ICache interface
+  - @Cacheable decorator
+  - @CacheInvalidate decorator
+  - Cache key generators
 - **Status**: Week 6 of migration plan
-- **Usage**: `import { MemoryCache } from '@h1b/cache'`
+- **Usage**: 
+  ```typescript
+  import { MemoryCache, Cacheable } from '@h1b/cache';
+  ```
 
 ## Using Shared Packages
 

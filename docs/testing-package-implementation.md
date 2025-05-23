@@ -1,62 +1,138 @@
-# @h1b/testing Package Implementation Plan
+# Testing Packages Implementation Plan
 
 ## Current Focus
 
-This document defines the implementation of the @h1b/testing package as the **current primary goal**. All development efforts should focus on completing this package before moving to other shared libraries.
+This document defines the implementation of the testing packages as the **current primary goal**. All development efforts should focus on completing these packages before moving to other shared libraries.
 
-## Why Testing Package First (Revised Priority)
+**CONSOLIDATED STRUCTURE**: Based on our analysis, the testing functionality will be organized into 2 focused packages:
+- **@h1b/test-mocks** - All mock implementations (logger, file system, cache)
+- **@h1b/test-helpers** - Test utilities, fixtures, and container setup
 
-After reviewing the codebase, the testing package should be implemented **first** because:
+## Why Testing Packages First
+
+After reviewing the codebase, the testing packages should be implemented **first** because:
 
 1. **Immediate Value**: Every other shared package will need tests
 2. **Foundation**: Establishes testing patterns for all future packages
 3. **Risk Reduction**: Ensures high quality for shared code
 4. **Developer Experience**: Makes testing easier from day one
 
-## Package Intent
+## Package Structure
 
-The @h1b/testing package will:
-- **Centralize** all testing utilities and mocks
-- **Standardize** testing patterns across the monorepo
-- **Accelerate** test development with ready-to-use utilities
-- **Improve** test quality and coverage
+### @h1b/test-mocks
+- **Purpose**: Mock implementations for all common interfaces
+- **Contents**:
+  - MockLogger (ILogger implementation)
+  - MockFileSystem (IFileSystem implementation)
+  - MockCache (ICache implementation)
+- **Dependencies**: Interface packages (@h1b/logger, @h1b/file-system, @h1b/cache)
+
+### @h1b/test-helpers  
+- **Purpose**: Test utilities and setup helpers
+- **Contents**:
+  - TestContainerBuilder (DI container for tests)
+  - FixtureManager (Test data management)
+  - Async utilities (waitFor, measureTime, etc.)
+  - Setup helpers (test setup/teardown)
+  - Shared vitest configuration
+- **Dependencies**: inversify, vitest, node built-ins
 
 ## Complete Task Breakdown
 
 ### Phase 1: Package Setup (Day 1)
 
-#### Tasks:
+#### @h1b/test-mocks Setup:
 - [ ] Create package directory structure
   ```bash
-  mkdir -p packages/shared/testing/src/{container,mocks,fixtures,config,utils}
-  mkdir -p packages/shared/testing/tests
+  mkdir -p packages/shared/test-mocks/src/{logger,file-system,cache}
+  mkdir -p packages/shared/test-mocks/tests
   ```
 
 - [ ] Initialize package.json
   ```json
   {
-    "name": "@h1b/testing",
+    "name": "@h1b/test-mocks",
     "version": "0.1.0",
-    "description": "Shared testing utilities for H1B monorepo",
+    "description": "Mock implementations for H1B monorepo testing",
     "type": "module",
     "main": "dist/index.js",
     "types": "dist/index.d.ts"
   }
   ```
 
-- [ ] Set up TypeScript configuration
-  - Extend base tsconfig
-  - Configure for library output
-
-- [ ] Install dependencies
+#### @h1b/test-helpers Setup:
+- [ ] Create package directory structure
   ```bash
-  npm install --save-dev vitest @vitest/coverage-v8 sinon @types/sinon
-  npm install inversify reflect-metadata
+  mkdir -p packages/shared/test-helpers/src/{container,fixtures,utils,config}
+  mkdir -p packages/shared/test-helpers/tests
   ```
 
-### Phase 2: Test Container Implementation (Day 2)
+- [ ] Initialize package.json
+  ```json
+  {
+    "name": "@h1b/test-helpers",
+    "version": "0.1.0",
+    "description": "Test utilities and helpers for H1B monorepo",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts"
+  }
+  ```
 
-#### File: `src/container/TestContainer.ts`
+- [ ] Set up TypeScript configuration for both packages
+- [ ] Install dependencies for each package
+
+### Phase 2: @h1b/test-mocks Implementation (Day 2-3)
+
+#### MockLogger Implementation
+**File:** `packages/shared/test-mocks/src/logger/MockLogger.ts`
+
+**Tasks:**
+- [ ] Implement ILogger interface
+- [ ] Add call tracking
+- [ ] Add assertion helpers
+- [ ] Support child loggers
+
+**Features:**
+```typescript
+export class MockLogger implements ILogger {
+  calls: LogCall[] = [];
+  
+  // Track all calls
+  info(message: string, context?: ILogContext): void {
+    this.calls.push({ level: 'info', message, context, timestamp: new Date() });
+  }
+  
+  // Assertion helpers
+  hasLogged(level: LogLevel, message: string | RegExp): boolean;
+  getCallsMatching(filter: (call: LogCall) => boolean): LogCall[];
+  clear(): void;
+}
+```
+
+#### MockFileSystem Implementation
+**File:** `packages/shared/test-mocks/src/file-system/MockFileSystem.ts`
+
+**Tasks:**
+- [ ] Implement IFileSystem interface
+- [ ] Add in-memory file storage
+- [ ] Support directories
+- [ ] Add file watching simulation
+- [ ] Create seed method
+
+#### MockCache Implementation
+**File:** `packages/shared/test-mocks/src/cache/MockCache.ts`
+
+**Tasks:**
+- [ ] Create generic cache mock
+- [ ] Track cache hits/misses
+- [ ] Support TTL simulation
+- [ ] Add debugging helpers
+
+### Phase 3: @h1b/test-helpers Core Implementation (Day 4-5)
+
+#### Test Container Implementation
+**File:** `packages/shared/test-helpers/src/container/TestContainer.ts`
 
 **Tasks:**
 - [ ] Create TestContainerBuilder class
@@ -86,70 +162,10 @@ export interface ITestContainer {
 }
 ```
 
-### Phase 3: Mock Implementations (Day 3-4)
-
-#### File: `src/mocks/MockLogger.ts`
-
-**Tasks:**
-- [ ] Implement ILogger interface
-- [ ] Add call tracking
-- [ ] Add assertion helpers
-- [ ] Support child loggers
-
-**Features:**
-```typescript
-export class MockLogger implements ILogger {
-  calls: LogCall[] = [];
-  
-  // Track all calls
-  info(message: string, context?: ILogContext): void {
-    this.calls.push({ level: 'info', message, context, timestamp: new Date() });
-  }
-  
-  // Assertion helpers
-  hasLogged(level: LogLevel, message: string | RegExp): boolean;
-  getCallsMatching(filter: (call: LogCall) => boolean): LogCall[];
-  clear(): void;
-}
-```
-
-#### File: `src/mocks/MockFileSystem.ts`
-
-**Tasks:**
-- [ ] Implement IFileSystem interface
-- [ ] Add in-memory file storage
-- [ ] Support directories
-- [ ] Add file watching simulation
-- [ ] Create seed method
-
-**Features:**
-```typescript
-export class MockFileSystem implements IFileSystem {
-  private files: Map<string, string> = new Map();
-  private watchers: Map<string, Function[]> = new Map();
-  
-  // Seed test data
-  seed(files: Record<string, string>): void;
-  
-  // Simulate file changes
-  triggerChange(path: string): void;
-  
-  // Get all operations
-  getOperations(): FileOperation[];
-}
-```
-
-#### File: `src/mocks/MockCache.ts`
-
-**Tasks:**
-- [ ] Create generic cache mock
-- [ ] Track cache hits/misses
-- [ ] Support TTL simulation
-- [ ] Add debugging helpers
-
 ### Phase 4: Fixture Management (Day 5)
 
-#### File: `src/fixtures/FixtureManager.ts`
+#### Fixture Manager Implementation
+**File:** `packages/shared/test-helpers/src/fixtures/FixtureManager.ts`
 
 **Tasks:**
 - [ ] Implement fixture loading
@@ -176,9 +192,10 @@ export class FixtureManager {
 }
 ```
 
-### Phase 5: Test Utilities (Day 6)
+### Phase 5: Test Utilities Implementation (Day 6)
 
-#### File: `src/utils/TestHelpers.ts`
+#### Test Helpers Implementation
+**File:** `packages/shared/test-helpers/src/utils/TestHelpers.ts`
 
 **Tasks:**
 - [ ] Create async wait helpers
@@ -213,7 +230,8 @@ export async function measureTime<T>(
 ): Promise<{ result: T; duration: number }>;
 ```
 
-#### File: `src/utils/SetupHelpers.ts`
+#### Setup Helpers Implementation
+**File:** `packages/shared/test-helpers/src/utils/SetupHelpers.ts`
 
 **Tasks:**
 - [ ] Create test setup function
@@ -239,7 +257,8 @@ export function setupTest(options?: ITestSetupOptions): ITestSetup;
 
 ### Phase 6: Shared Configuration (Day 7)
 
-#### File: `src/config/vitest.shared.ts`
+#### Vitest Configuration
+**File:** `packages/shared/test-helpers/src/config/vitest.shared.ts`
 
 **Tasks:**
 - [ ] Extract common vitest config
@@ -253,7 +272,7 @@ export const sharedTestConfig = {
   test: {
     globals: true,
     environment: 'node',
-    setupFiles: ['reflect-metadata', '@h1b/testing/setup'],
+    setupFiles: ['reflect-metadata', '@h1b/test-helpers/setup'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
@@ -286,21 +305,33 @@ export const sharedTestConfig = {
 
 ## Success Criteria
 
-The @h1b/testing package is complete when:
+The testing packages are complete when:
 
-1. **All mocks implemented** - Logger, FileSystem, Cache
-2. **Container utilities working** - Easy test setup
-3. **Fixtures manageable** - Load and cleanup test data
-4. **Helpers documented** - Clear examples
-5. **95% test coverage** - Package fully tested
-6. **Both projects updated** - Using shared testing
-7. **Documentation complete** - README and guides
+1. **@h1b/test-mocks**:
+   - All mock implementations complete (Logger, FileSystem, Cache)
+   - Each mock has comprehensive assertion helpers
+   - 95% test coverage achieved
+   - Package published to npm registry
+
+2. **@h1b/test-helpers**:
+   - Container utilities working smoothly
+   - Fixture management operational
+   - All async helpers implemented
+   - Shared configuration exported
+   - 95% test coverage achieved
+   - Package published to npm registry
+
+3. **Integration**:
+   - Both h1b-visa-analysis and markdown-compiler updated
+   - All tests migrated to use new packages
+   - Documentation complete with examples
 
 ## Usage Examples
 
 ### Basic Test Setup
 ```typescript
-import { setupTest, MockLogger } from '@h1b/testing';
+import { setupTest } from '@h1b/test-helpers';
+import { MockLogger } from '@h1b/test-mocks';
 
 describe('MyService', () => {
   const { container, mocks, cleanup } = setupTest({
@@ -320,7 +351,7 @@ describe('MyService', () => {
 
 ### Fixture Testing
 ```typescript
-import { FixtureManager } from '@h1b/testing';
+import { FixtureManager } from '@h1b/test-helpers';
 
 describe('MarkdownProcessor', () => {
   const fixtures = new FixtureManager(__dirname);
@@ -335,7 +366,7 @@ describe('MarkdownProcessor', () => {
 
 ### Async Testing
 ```typescript
-import { waitFor, measureTime } from '@h1b/testing';
+import { waitFor, measureTime } from '@h1b/test-helpers';
 
 it('should complete eventually', async () => {
   const service = new SlowService();
@@ -353,30 +384,47 @@ it('should complete eventually', async () => {
 
 ## Implementation Order
 
-1. **TestContainer** - Core functionality
-2. **MockLogger** - Most used mock
-3. **Test Helpers** - Improve test writing
-4. **MockFileSystem** - Complex but valuable
-5. **FixtureManager** - Nice to have
-6. **Shared Config** - Final touch
+1. **Package Setup** - Initialize both packages with proper structure
+2. **@h1b/test-mocks** - Implement all mocks first (most dependencies)
+3. **TestContainer** - Core functionality for @h1b/test-helpers
+4. **Test Utilities** - Async helpers and setup functions
+5. **FixtureManager** - Fixture loading capabilities
+6. **Shared Config** - Export reusable vitest configuration
+7. **Integration** - Update both projects to use new packages
 
 ## Notes for Claude
 
 - This is the **current primary focus**
-- Complete this package before moving to others
+- Complete these packages before moving to others
+- @h1b/test-mocks and @h1b/test-helpers are separate packages
 - All code should follow established patterns
-- Maintain high test coverage
-- Update both projects to use this package
-- Document everything clearly
+- Maintain high test coverage (95%+)
+- Update both h1b-visa-analysis and markdown-compiler
+- Document everything clearly with examples
 
 ## Validation Checklist
 
+### @h1b/test-mocks
 - [ ] Package structure created
-- [ ] All interfaces defined
-- [ ] Mock implementations complete
-- [ ] Test utilities working
-- [ ] Configuration shared
-- [ ] Tests written (95%+ coverage)
+- [ ] MockLogger implemented with assertions
+- [ ] MockFileSystem with in-memory storage
+- [ ] MockCache with hit/miss tracking
+- [ ] All interfaces properly typed
+- [ ] 95%+ test coverage
+- [ ] Package published to registry
+
+### @h1b/test-helpers
+- [ ] Package structure created
+- [ ] TestContainer with DI setup
+- [ ] FixtureManager for test data
+- [ ] Async utilities (waitFor, measureTime)
+- [ ] Setup helpers for test isolation
+- [ ] Shared vitest configuration
+- [ ] 95%+ test coverage
+- [ ] Package published to registry
+
+### Integration
+- [ ] Both projects updated to use packages
+- [ ] All tests migrated
 - [ ] Documentation complete
-- [ ] Both projects updated
 - [ ] User has validated implementation

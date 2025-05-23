@@ -3,11 +3,14 @@
 Use this checklist when creating any new package in the monorepo.
 
 ## Pre-Creation Planning
-- [ ] Define clear package purpose (one sentence)
-- [ ] Identify upstream dependencies
+- [ ] Define clear package purpose (one sentence WITHOUT "and")
+- [ ] Ensure single responsibility (can you describe it in 5 words?)
+- [ ] Verify it's small enough (<500 lines target)
+- [ ] Identify upstream dependencies (2-3 MAX)
 - [ ] Identify downstream consumers
 - [ ] Determine position in architecture
 - [ ] Choose appropriate package name (@h1b/xxx)
+- [ ] **STOP**: Could this be 2-3 smaller packages instead?
 
 ## Package Setup
 
@@ -127,24 +130,30 @@ src/
 
 ## Common Mistakes to Avoid
 
-1. **Forgetting CLAUDE.md** - This provides essential context
-2. **Skipping interfaces** - Always define contracts first
-3. **Missing exports** - Ensure index.ts exports everything
-4. **Poor error handling** - Use typed errors
-5. **No integration examples** - Show how it connects
-6. **Inadequate testing** - Aim for high coverage
-7. **Console.log usage** - Use ILogger instead
-8. **Hardcoded dependencies** - Use dependency injection
+1. **Creating packages that are too big** - Keep them under 500 lines
+2. **Multiple responsibilities** - One package, one job
+3. **Too many dependencies** - 2-3 maximum
+4. **"Utils" packages** - Too vague, split by specific purpose
+5. **Deep folder structures** - Keep it flat and simple
+6. **Forgetting CLAUDE.md** - This provides essential context
+7. **Skipping interfaces** - Always define contracts first
+8. **Missing exports** - Ensure index.ts exports everything
+9. **Poor error handling** - Use typed errors
+10. **Console.log usage** - Use ILogger instead
+11. **Over-engineering** - Simple is better than clever
 
 ## Success Criteria
 
 A package is ready when:
+- ✅ Does ONE thing well (single responsibility)
+- ✅ Under 500 lines of code (small is beautiful)
+- ✅ Has 2-3 dependencies maximum
 - ✅ CLAUDE.md provides complete context
-- ✅ All interfaces are defined
-- ✅ Tests pass with 90%+ coverage
-- ✅ Documentation is comprehensive
+- ✅ One main interface defined (keep it simple)
+- ✅ Tests pass with 90%+ coverage (easy with small packages)
+- ✅ Documentation fits on one page
+- ✅ Can be understood in 5 minutes
 - ✅ Follows all monorepo patterns
-- ✅ Integrates with other packages
 - ✅ Claude Code can work with it effectively
 
 ## Remember
