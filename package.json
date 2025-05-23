@@ -1,0 +1,24 @@
+{
+  "name": "h1b-report-generator",
+  "version": "0.1.0",
+  "description": "Final H1B report generator using prompts-shared, markdown-compiler, and report-components",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "node src/generate-report.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "update-deps": "npm update prompts-shared markdown-compiler report-components"
+  },
+  "keywords": [
+    "h1b",
+    "report",
+    "generator"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "prompts-shared": "github:ChaseNoCap/prompts-shared",
+    "markdown-compiler": "github:ChaseNoCap/markdown-compiler",
+    "report-components": "github:ChaseNoCap/report-components"
+  }
+}

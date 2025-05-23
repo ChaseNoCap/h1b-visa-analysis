@@ -1,0 +1,11 @@
+{
+  "name": "@h1b-visa-analysis/report-generator",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "@h1b-visa-analysis/prompts-shared": "workspace:*",
+    "@h1b-visa-analysis/markdown-compiler": "workspace:*",
+    "@h1b-visa-analysis/report-components": "workspace:*"
+  }
+}
