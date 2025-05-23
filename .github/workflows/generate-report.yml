@@ -1,0 +1,45 @@
+name: Generate H1B Report
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [dependency-updated]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Update GitHub dependencies
+      run: npm run update-deps
+    
+    - name: Generate report
+      run: npm run build
+    
+    - name: Upload report artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: h1b-report
+        path: dist/report.md
+    
+    - name: Commit and push if changed
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add -A
+        git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update generated report [skip ci]" && git push)

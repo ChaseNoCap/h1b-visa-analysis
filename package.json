@@ -1,18 +1,24 @@
 {
-  "name": "h1b-report-generator",
+  "name": "h1b-visa-analysis",
   "version": "0.1.0",
-  "description": "Final H1B report generator using prompts-shared, markdown-compiler, and report-components",
-  "main": "src/index.js",
+  "description": "H1B visa analysis monorepo",
+  "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/*",
+    "h1b-visa-analysis-files/packages/*"
+  ],
   "scripts": {
     "build": "node src/generate-report.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:all": "npm run build --workspaces --if-present",
+    "test": "npm test --workspaces --if-present",
     "update-deps": "npm update prompts-shared markdown-compiler report-components"
   },
   "keywords": [
     "h1b",
     "report",
-    "generator"
+    "generator",
+    "monorepo"
   ],
   "author": "",
   "license": "MIT",
