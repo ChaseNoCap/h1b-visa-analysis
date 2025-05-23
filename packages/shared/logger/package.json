@@ -1,0 +1,54 @@
+{
+  "name": "@h1b/logger",
+  "version": "0.1.0",
+  "description": "Shared logging infrastructure for H1B monorepo",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./interfaces": {
+      "types": "./dist/interfaces/index.d.ts",
+      "import": "./dist/interfaces/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean"
+  },
+  "keywords": [
+    "logger",
+    "winston",
+    "logging",
+    "h1b"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@vitest/coverage-v8": "^0.34.0",
+    "typescript": "^5.3.0",
+    "vitest": "^0.34.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

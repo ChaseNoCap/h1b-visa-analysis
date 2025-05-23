@@ -11,212 +11,256 @@ This is an H1B report generator monorepo that orchestrates three GitHub-based pr
 
 The project automatically generates reports when dependencies update via GitHub Actions.
 
+## Current Architecture (TypeScript + DI)
+
+As of May 2025, this project has been migrated to TypeScript with dependency injection, matching the architecture of the markdown-compiler package.
+
+### Tech Stack
+- **TypeScript** with ES2022 modules and strict mode
+- **Inversify** for dependency injection with decorators
+- **Winston** for logging with daily rotation
+- **Vitest** for testing (unit and E2E)
+- **ESLint + Prettier** for code quality
+
 ## Key Commands
 
 ```bash
 # Install dependencies
 npm install
 
-# Generate report (outputs to dist/)
+# Build and generate report (outputs to dist/)
 npm run build
 
-# Update all GitHub dependencies (not needed with local development)
-npm run update-deps
+# Development
+npm run build:watch     # Watch mode for TypeScript
+npm run test           # Run tests
+npm run test:watch     # Watch mode for tests
+npm run coverage       # Generate coverage report
+npm run lint           # Lint code
+npm run typecheck      # Type check without building
 
-# Run build across all workspaces
-npm run build:all
-
-# Run tests across all workspaces
-npm test
+# Workspace commands
+npm run build:all      # Build all workspaces
+npm run test:all       # Test all workspaces
 ```
 
 ## Architecture
 
-### Current Monorepo Structure (Simplified)
+### Current Project Structure
 ```
 h1b-visa-analysis/
-├── .github/
-│   ├── workflows/
-│   │   └── generate-report.yml # Main workflow for report generation
-│   └── actionlint.yaml         # Linting config for GitHub Actions
-├── .vscode/
-│   └── settings.json           # VSCode configuration
-├── src/                        # Main report generator
-│   ├── generate-report.js      # Report generation with dependency status
-│   └── index.js               # Placeholder
-├── packages/                   # Cloned dependency repos (gitignored)
-│   ├── prompts-shared/        # Local clone for development
-│   ├── markdown-compiler/     # Local clone for development
-│   └── report-components/     # Local clone for development
-├── dist/                      # Generated reports (gitignored)
-├── docs/                      # Documentation
-│   ├── automation-setup.md    # CI/CD setup guide
-│   ├── pat-token-setup.md     # PAT token configuration
-│   ├── dependency-setup-instructions.md  # Dependency repo setup
-│   └── setup-summary.md       # What we accomplished
-├── .gitignore                 # Excludes dist/, packages/*, node_modules
-├── .yamllint.yml              # YAML linting rules
-├── package.json               # Workspace configuration
-├── package-lock.json          # Dependency lock file
-└── README.md                  # Project overview
+├── src/                        # TypeScript source
+│   ├── core/                  # Core infrastructure
+│   │   ├── constants/         # Injection tokens
+│   │   ├── container/         # DI container setup
+│   │   └── interfaces/        # TypeScript interfaces
+│   ├── services/              # Injectable services
+│   │   ├── DependencyChecker.ts
+│   │   ├── ReportGenerator.ts
+│   │   └── WinstonLogger.ts
+│   └── index.ts               # Main entry point
+├── tests/                     # Test suite
+│   ├── e2e/                   # End-to-end tests
+│   │   ├── fixtures/          # Test fixtures
+│   │   └── output/           # Test output (gitignored)
+│   └── unit/                  # Unit tests
+├── packages/                  # Cloned dependency repos (gitignored)
+│   ├── prompts-shared/
+│   ├── markdown-compiler/
+│   └── report-components/
+├── dist/                      # Build output (gitignored)
+├── logs/                      # Application logs (gitignored)
+├── coverage/                  # Test coverage (gitignored)
+├── tsconfig.json              # TypeScript configuration
+├── vitest.config.ts           # Test configuration
+├── .eslintrc.json             # ESLint configuration
+└── .prettierrc                # Prettier configuration
 ```
 
-### Workflow Pattern
-1. **Dependency Check**: Verifies all dependencies are available
-2. **Status Report**: Shows which dependencies are loaded
-3. **Future Integration**: Ready for full report compilation
-4. **Safe Stubbing**: Maintains working CI/CD while developing
+### Dependency Injection Pattern
 
-## NPM Workspaces Configuration
+The project uses Inversify for dependency injection:
 
-The project uses npm workspaces for local development:
-```json
-{
-  "workspaces": [
-    "packages/*"
-  ]
+```typescript
+// Define interfaces
+export interface ILogger { ... }
+export interface IReportGenerator { ... }
+
+// Create injection tokens
+export const TYPES = {
+  ILogger: Symbol.for('ILogger'),
+  IReportGenerator: Symbol.for('IReportGenerator'),
+};
+
+// Injectable services
+@injectable()
+export class ReportGenerator implements IReportGenerator {
+  constructor(
+    @inject(TYPES.ILogger) private logger: ILogger
+  ) {}
 }
+
+// Container setup
+const container = new Container();
+container.bind<ILogger>(TYPES.ILogger).to(WinstonLogger);
 ```
 
-### Local Development Setup
-1. Clone dependency repos into `packages/` directory
-2. They're automatically linked via npm workspaces
-3. Changes in packages are immediately reflected
-4. The repos in `packages/` are gitignored
+## Testing Strategy
 
-## GitHub Actions Setup
+### E2E Tests
+- Located in `tests/e2e/`
+- Test full report generation flow
+- Include error scenarios (missing dependencies)
+- Output to `tests/e2e/output/` (gitignored)
 
-### Key Workflow: generate-report.yml
-- **Triggers**: push to main, workflow_dispatch, repository_dispatch
-- **Authentication**: Uses PAT_TOKEN for private repo access
-- **Auto-commit**: Commits changes with `[skip ci]` to prevent loops
-- **Artifacts**: Uploads generated reports
+### Unit Tests
+- Located in `tests/unit/`
+- Test individual services in isolation
+- Use mocks for dependencies
+- High coverage target (80%+)
 
-### Critical Configuration for Private Repos
-```yaml
-- name: Configure git for authenticated HTTPS
-  run: |
-    # yamllint disable rule:line-length
-    git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf ssh://git@github.com/
-    git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf git@github.com:
-    git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf https://github.com/
-    # yamllint enable rule:line-length
+### Running Tests
+```bash
+npm test              # Run all tests
+npm test -- --watch   # Watch mode
+npm run coverage      # With coverage report
 ```
 
-## Dependency Repositories
+## Logging Configuration
 
-All three dependency repositories:
-- Are **private** GitHub repositories
-- Have their own GitHub Actions workflows
-- Send notifications when updated
-- Can be cloned locally for development
+Winston logger with:
+- Console output (colorized)
+- Daily rotating file logs in `logs/`
+- JSON format for structured logging
+- Context-aware child loggers
+- Environment-based log levels
 
-### Repository Contents
-- `prompts-shared`: Contains memory bank, context files, workflows
-- `markdown-compiler`: Has full markdown processing with ::include support
-- `report-components`: Contains H1B research markdown files
+## GitHub Actions Integration
 
-## Linting and IDE Configuration
+### Workflows
+- `generate-report.yml`: Main workflow for report generation
+- Triggers on push, manual dispatch, or dependency updates
+- Uses PAT_TOKEN for private repo access
+- Auto-commits generated reports
 
-### VSCode Settings (.vscode/settings.json)
-- Configures GitHub Actions schema validation
-- Sets up YAML file associations
-- Helps suppress false positive warnings about secrets
-
-### Linting Files
-- `.yamllint.yml`: YAML linting configuration
-- `.github/actionlint.yaml`: GitHub Actions specific linting
-
-## Important Patterns & Learnings
-
-### What Works
-1. **Stub First**: Keep generate-report.js simple until dependencies stabilize
-2. **Local Clones**: Clone repos to packages/ for development, gitignore them
-3. **Workspace Links**: npm workspaces automatically link local packages
-4. **Git Config**: Must configure git in CI/CD for private repo access
-5. **Linting Config**: VSCode and yamllint configs help with false warnings
-
-### What Doesn't Work
-1. **workspace:* protocol**: Use version numbers instead
-2. **SSH URLs in CI**: GitHub Actions needs HTTPS with PAT token
-3. **Nested Git Repos**: Always gitignore cloned repos in packages/
-
-### Security Notes
-- **PAT_TOKEN**: Required in all repos (main + dependencies)
-- **Scopes Needed**: repo, workflow
-- **Git Config**: Use x-access-token format for HTTPS auth
-- **No Secrets in Code**: All secrets via GitHub secrets
-
-## Common Issues & Solutions
-
-1. **npm install fails in GitHub Actions**: 
-   - Check PAT_TOKEN is set
-   - Verify git config commands are before npm install
-   
-2. **Workflow syntax errors**: 
-   - Use `|` for multi-line run commands
-   - Add yamllint disable comments for long lines
-   
-3. **IDE warnings about secrets**:
-   - Normal for GitHub Actions files
-   - Configured linting to minimize false positives
-   
-4. **Nested git repo warnings**:
-   - Add cloned packages to .gitignore
-   - Use `git rm --cached` if already tracked
-
-5. **Push rejected due to GitHub Actions auto-commits**:
-   - The workflow auto-commits with `[skip ci]` message
-   - Always pull before pushing: `git pull --rebase --autostash`
-   - This is expected behavior from the "Commit and push if changed" step
-   - These commits contain generated reports
+### Linting Configuration
+- `.github/actionlint.yaml`: GitHub Actions linting
+- `.vscode/settings.json`: VSCode integration
+- `.yamllint.yml`: YAML file linting
 
 ## Development Workflow
 
-### For Main Repository
-1. Clone dependency repos to packages/ for local development
-2. Make changes and test with `npm run build`
-3. **Before pushing**: Pull latest with `git pull --rebase --autostash`
+### Local Development
+1. Clone dependency repos to `packages/`
+2. Make changes and test with `npm test`
+3. Build with `npm run build`
+4. Check types with `npm run typecheck`
+
+### Before Pushing
+1. Run `npm test` to ensure tests pass
+2. Run `npm run lint` to check code style
+3. Pull latest: `git pull --rebase --autostash`
 4. Push changes to trigger CI/CD
-5. Check GitHub Actions for success
 
-### For Dependency Updates
-1. Make changes in the actual GitHub repos
-2. Push to trigger notify-parent workflow
-3. Main repo automatically rebuilds
-4. Download artifacts from Actions tab
+## Common Patterns
 
-## Commit Message Guidelines
-
-**IMPORTANT**: When creating commit messages:
-- Never include references to AI assistants, Claude, or any AI tools
-- Write commit messages as if you (the developer) wrote them directly
-- Use standard Git commit conventions
-- Focus on what changed and why, not how it was created
-- Use professional, first-person language when appropriate
-
-### Good Commit Message Examples:
-```
-Add GitHub Actions workflow for automated builds
-
-Fix npm workspace configuration for private repos
-
-Update documentation with setup instructions
+### Service Implementation
+```typescript
+@injectable()
+export class MyService implements IMyService {
+  constructor(
+    @inject(TYPES.ILogger) private logger: ILogger,
+    @inject(TYPES.IOtherService) private other: IOtherService
+  ) {}
+  
+  async doWork(): Promise<Result> {
+    this.logger.info('Starting work');
+    // Implementation
+  }
+}
 ```
 
-### Bad Commit Message Examples:
+### Error Handling
+```typescript
+try {
+  const result = await service.doWork();
+  return { success: true, result };
+} catch (error) {
+  logger.error('Operation failed', error as Error);
+  return { success: false, error: error as Error };
+}
 ```
-Generated with Claude Code ❌
-AI-assisted commit ❌
-Claude helped create this ❌
-```
 
-## Testing & Validation
+## Shared Architecture with markdown-compiler
 
-Currently the project:
-- ✅ Builds successfully locally and in CI/CD
-- ✅ Shows dependency status in generated report
-- ✅ Auto-commits and uploads artifacts
-- ✅ Handles private repo authentication
+This project follows the same patterns as the markdown-compiler package:
+- Same DI container setup
+- Same logger configuration
+- Same testing approach
+- Same build tools and linting
 
-Future enhancements will integrate the actual markdown compilation.
+This makes it easier to:
+- Share code between projects
+- Maintain consistency
+- Train new developers
+- Extract shared libraries later
+
+## Current Focus: @h1b/testing Package
+
+**IMPORTANT**: The current primary development goal is implementing the @h1b/testing package. This takes priority over all other shared packages.
+
+### Why Testing First
+- Needed by all other shared packages
+- Establishes quality standards
+- Improves developer experience immediately
+- See `docs/testing-package-implementation.md` for full plan
+
+### Implementation Status
+- [ ] Package setup
+- [ ] Test container utilities
+- [ ] Mock implementations (Logger, FileSystem, Cache)
+- [ ] Fixture management
+- [ ] Test helpers and utilities
+- [ ] Shared configuration
+- [ ] Documentation
+
+### Other Planned Packages (On Hold)
+1. **@h1b/logger** - Logging infrastructure
+2. **@h1b/core** - DI utilities and base types
+3. **@h1b/decorators** - Reusable decorators
+4. **@h1b/file-system** - File system abstractions
+5. **@h1b/cache** - Caching implementations
+
+See `docs/migration-plan.md` for overall strategy and `docs/testing-package-implementation.md` for current focus.
+
+## Future Enhancements
+
+1. **Integration with markdown-compiler**: Use the actual markdown processing
+2. **PDF Generation**: Add PDF output format
+3. **Web UI**: Create a web interface for report generation
+4. **Performance Monitoring**: Add metrics and tracing
+
+## Troubleshooting
+
+### TypeScript Errors
+- Run `npm run typecheck` to see all errors
+- Check that all imports use `.js` extension (for ES modules)
+- Ensure decorators are enabled in tsconfig.json
+
+### Test Failures
+- Check logs in `logs/` directory
+- Ensure test fixtures exist
+- Clear test output: `rm -rf tests/e2e/output`
+
+### Build Issues
+- Clean build: `npm run clean && npm run build`
+- Check Node version (requires 16+)
+- Verify all dependencies installed
+
+## Important Notes
+
+- All test outputs are gitignored
+- Logs rotate daily (kept for 14 days)
+- Use dependency injection for all services
+- Follow interface-first design
+- Keep commit messages professional (no AI references)

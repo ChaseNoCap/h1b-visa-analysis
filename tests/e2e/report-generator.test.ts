@@ -156,7 +156,7 @@ describe('ReportGenerator E2E Tests', () => {
   describe('Integration Output', () => {
     it('should generate a complete test report file', async () => {
       const result = await reportGenerator.generate({
-        outputDir: path.join(__dirname, '..'),
+        outputDir: path.join(__dirname, 'output'),
         includeTimestamp: false,
         format: 'markdown'
       });
