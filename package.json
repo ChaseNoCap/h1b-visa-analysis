@@ -8,9 +8,18 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "node src/generate-report.js",
+    "build": "tsc && node dist/src/index.js",
+    "build:watch": "tsc --watch",
     "build:all": "npm run build --workspaces --if-present",
-    "test": "npm test --workspaces --if-present",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:all": "npm test --workspaces --if-present",
+    "coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
     "update-deps": "npm update prompts-shared markdown-compiler report-components"
   },
   "keywords": [
@@ -21,5 +30,24 @@
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "reflect-metadata": "^0.2.1",
+    "inversify": "^6.0.2",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/sinon": "^17.0.2",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "prettier": "^3.1.0",
+    "sinon": "^17.0.1",
+    "typescript": "^5.3.0",
+    "vitest": "^0.34.0",
+    "@vitest/coverage-v8": "^0.34.0"
+  }
 }

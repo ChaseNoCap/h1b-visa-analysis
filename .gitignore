@@ -3,8 +3,15 @@ node_modules/
 
 # Build outputs
 dist/
+*.tsbuildinfo
+
+# Test outputs
+tests/e2e/output/
+tests/**/*.md
+coverage/
 
 # Logs
+logs/
 *.log
 npm-debug.log*
 
