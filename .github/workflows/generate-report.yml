@@ -22,11 +22,11 @@ jobs:
         node-version: '18'
         cache: 'npm'
     
-    - name: Configure git for HTTPS
+    - name: Configure git for authenticated HTTPS
       run: |
-        git config --global url."https://".insteadOf git://
-        git config --global url."https://github.com/".insteadOf git@github.com:
-        git config --global url."https://".insteadOf ssh://git@
+        git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf ssh://git@github.com/
+        git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf git@github.com:
+        git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf https://github.com/
     
     - name: Install dependencies
       run: npm install
