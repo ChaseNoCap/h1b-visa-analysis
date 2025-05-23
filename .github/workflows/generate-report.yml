@@ -16,15 +16,17 @@ jobs:
       with:
         token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
     
-    - name: Configure git for HTTPS
-      run: |
-        git config --global url."https://github.com/".insteadOf git@github.com:
-    
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
+    
+    - name: Configure git for HTTPS
+      run: |
+        git config --global url."https://".insteadOf git://
+        git config --global url."https://github.com/".insteadOf git@github.com:
+        git config --global url."https://".insteadOf ssh://git@
     
     - name: Install dependencies
       run: npm install
