@@ -20,7 +20,7 @@ npm install
 # Generate report (outputs to dist/)
 npm run build
 
-# Update all GitHub dependencies
+# Update all GitHub dependencies (not needed with local development)
 npm run update-deps
 
 # Run build across all workspaces
@@ -32,96 +32,152 @@ npm test
 
 ## Architecture
 
-### Monorepo Structure
+### Current Monorepo Structure (Simplified)
 ```
 h1b-visa-analysis/
-├── .github/workflows/      # GitHub Actions automation
-│   └── generate-report.yml # Main workflow for report generation
-├── src/                    # Main report generator
-│   ├── generate-report.js  # Report generation logic (main entry point)
-│   └── index.js           # Placeholder
-├── packages/              # Local workspace packages (future use)
-├── h1b-visa-analysis-files/packages/  # Current workspace packages
-│   ├── prompts-shared/    # Local dev version
-│   ├── markdown-compiler/ # Local dev version
-│   ├── report-components/ # Local dev version
-│   └── report-generator/  # Orchestration package
-├── dist/                  # Generated reports (gitignored)
-├── docs/                  # Documentation
+├── .github/
+│   ├── workflows/
+│   │   └── generate-report.yml # Main workflow for report generation
+│   └── actionlint.yaml         # Linting config for GitHub Actions
+├── .vscode/
+│   └── settings.json           # VSCode configuration
+├── src/                        # Main report generator
+│   ├── generate-report.js      # Report generation with dependency status
+│   └── index.js               # Placeholder
+├── packages/                   # Cloned dependency repos (gitignored)
+│   ├── prompts-shared/        # Local clone for development
+│   ├── markdown-compiler/     # Local clone for development
+│   └── report-components/     # Local clone for development
+├── dist/                      # Generated reports (gitignored)
+├── docs/                      # Documentation
 │   ├── automation-setup.md    # CI/CD setup guide
 │   ├── pat-token-setup.md     # PAT token configuration
-│   └── dependency-setup-instructions.md  # Dependency repo setup
-└── scripts/               # Setup scripts (can be removed after use)
+│   ├── dependency-setup-instructions.md  # Dependency repo setup
+│   └── setup-summary.md       # What we accomplished
+├── .gitignore                 # Excludes dist/, packages/*, node_modules
+├── .yamllint.yml              # YAML linting rules
+├── package.json               # Workspace configuration
+├── package-lock.json          # Dependency lock file
+└── README.md                  # Project overview
 ```
 
 ### Workflow Pattern
-1. **Context Loading**: Loads configurations from `prompts-shared`
-2. **Content Fetching**: Pulls latest from `report-components`
-3. **Compilation**: Uses `markdown-compiler` to process content
-4. **Generation**: Outputs final report to `dist/report.md`
+1. **Dependency Check**: Verifies all dependencies are available
+2. **Status Report**: Shows which dependencies are loaded
+3. **Future Integration**: Ready for full report compilation
+4. **Safe Stubbing**: Maintains working CI/CD while developing
 
 ## NPM Workspaces Configuration
 
-The project uses npm workspaces to manage local packages:
-- Workspace packages are defined in `package.json` under `workspaces`
-- Dependencies between workspace packages use version numbers (not `workspace:*`)
-- GitHub dependencies are installed alongside workspace packages
+The project uses npm workspaces for local development:
+```json
+{
+  "workspaces": [
+    "packages/*"
+  ]
+}
+```
+
+### Local Development Setup
+1. Clone dependency repos into `packages/` directory
+2. They're automatically linked via npm workspaces
+3. Changes in packages are immediately reflected
+4. The repos in `packages/` are gitignored
 
 ## GitHub Actions Setup
 
 ### Key Workflow: generate-report.yml
-- Triggers on: push to main, workflow_dispatch, repository_dispatch
-- Uses PAT_TOKEN for accessing private GitHub dependencies
-- Configures git to use authenticated HTTPS for npm install
-- Uploads generated reports as artifacts
+- **Triggers**: push to main, workflow_dispatch, repository_dispatch
+- **Authentication**: Uses PAT_TOKEN for private repo access
+- **Auto-commit**: Commits changes with `[skip ci]` to prevent loops
+- **Artifacts**: Uploads generated reports
 
 ### Critical Configuration for Private Repos
 ```yaml
 - name: Configure git for authenticated HTTPS
   run: |
+    # yamllint disable rule:line-length
     git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf ssh://git@github.com/
     git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf git@github.com:
     git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf https://github.com/
+    # yamllint enable rule:line-length
 ```
 
 ## Dependency Repositories
 
-All three dependency repositories are **private** and require:
-1. Basic npm package structure (package.json, index.js)
-2. GitHub Actions workflow to notify parent repo on updates
-3. PAT_TOKEN secret for cross-repo communication
+All three dependency repositories:
+- Are **private** GitHub repositories
+- Have their own GitHub Actions workflows
+- Send notifications when updated
+- Can be cloned locally for development
 
-### Repository Structure
-Each dependency repo contains:
-- `package.json` - NPM package metadata
-- `index.js` - Main export file
-- `.github/workflows/notify-parent.yml` - Automation workflow
-- `README.md` - Basic documentation
+### Repository Contents
+- `prompts-shared`: Contains memory bank, context files, workflows
+- `markdown-compiler`: Has full markdown processing with ::include support
+- `report-components`: Contains H1B research markdown files
 
-## Important Notes
+## Linting and IDE Configuration
 
-- **Private Repos**: All dependencies are private; PAT_TOKEN is required
-- **ES Modules**: The project uses ES modules (`"type": "module"`)
-- **No Test Framework**: Currently no test framework is configured
-- **Git Config**: GitHub Actions requires special git config for private repo access
-- **Secrets Required**:
-  - Main repo: `PAT_TOKEN` (with repo and workflow scopes)
-  - Dependency repos: `PAT_TOKEN` (same token)
+### VSCode Settings (.vscode/settings.json)
+- Configures GitHub Actions schema validation
+- Sets up YAML file associations
+- Helps suppress false positive warnings about secrets
+
+### Linting Files
+- `.yamllint.yml`: YAML linting configuration
+- `.github/actionlint.yaml`: GitHub Actions specific linting
+
+## Important Patterns & Learnings
+
+### What Works
+1. **Stub First**: Keep generate-report.js simple until dependencies stabilize
+2. **Local Clones**: Clone repos to packages/ for development, gitignore them
+3. **Workspace Links**: npm workspaces automatically link local packages
+4. **Git Config**: Must configure git in CI/CD for private repo access
+5. **Linting Config**: VSCode and yamllint configs help with false warnings
+
+### What Doesn't Work
+1. **workspace:* protocol**: Use version numbers instead
+2. **SSH URLs in CI**: GitHub Actions needs HTTPS with PAT token
+3. **Nested Git Repos**: Always gitignore cloned repos in packages/
+
+### Security Notes
+- **PAT_TOKEN**: Required in all repos (main + dependencies)
+- **Scopes Needed**: repo, workflow
+- **Git Config**: Use x-access-token format for HTTPS auth
+- **No Secrets in Code**: All secrets via GitHub secrets
 
 ## Common Issues & Solutions
 
-1. **npm install fails in GitHub Actions**: Ensure PAT_TOKEN is set and git config is correct
-2. **Workflow syntax errors**: Use `|` for multi-line run commands in YAML
-3. **Dependencies not updating**: Check PAT_TOKEN in dependency repos
-4. **Submodule warnings**: Remove any temp directories before committing
+1. **npm install fails in GitHub Actions**: 
+   - Check PAT_TOKEN is set
+   - Verify git config commands are before npm install
+   
+2. **Workflow syntax errors**: 
+   - Use `|` for multi-line run commands
+   - Add yamllint disable comments for long lines
+   
+3. **IDE warnings about secrets**:
+   - Normal for GitHub Actions files
+   - Configured linting to minimize false positives
+   
+4. **Nested git repo warnings**:
+   - Add cloned packages to .gitignore
+   - Use `git rm --cached` if already tracked
 
 ## Development Workflow
 
-1. Make changes to dependency repos
-2. Push to trigger notification workflow
-3. Parent repo automatically rebuilds report
-4. Check Actions tab for build status
-5. Download report artifact if needed
+### For Main Repository
+1. Clone dependency repos to packages/ for local development
+2. Make changes and test with `npm run build`
+3. Push changes to trigger CI/CD
+4. Check GitHub Actions for success
+
+### For Dependency Updates
+1. Make changes in the actual GitHub repos
+2. Push to trigger notify-parent workflow
+3. Main repo automatically rebuilds
+4. Download artifacts from Actions tab
 
 ## Commit Message Guidelines
 
@@ -147,3 +203,13 @@ Generated with Claude Code ❌
 AI-assisted commit ❌
 Claude helped create this ❌
 ```
+
+## Testing & Validation
+
+Currently the project:
+- ✅ Builds successfully locally and in CI/CD
+- ✅ Shows dependency status in generated report
+- ✅ Auto-commits and uploads artifacts
+- ✅ Handles private repo authentication
+
+Future enhancements will integrate the actual markdown compilation.

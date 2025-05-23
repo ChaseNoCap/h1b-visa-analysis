@@ -42,6 +42,7 @@
 - ✅ Created `src/generate-report.js` that outputs to `dist/`
 - ✅ Placeholder content ready for enhancement
 - ✅ ES modules configuration
+- ✅ Removed obsolete `h1b-visa-analysis-files` directory
 
 ## Key Learnings
 
@@ -59,7 +60,6 @@
 - `docs/pat-token-setup.md`
 - `docs/dependency-setup-instructions.md`
 - `.gitignore`
-- Setup scripts (temporary, can be removed)
 
 ### Modified Files
 - `package.json` - Added workspaces, scripts

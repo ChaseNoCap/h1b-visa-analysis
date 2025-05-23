@@ -26,18 +26,24 @@ This project orchestrates three GitHub dependencies:
 
 ```
 h1b-visa-analysis/
-├── .github/workflows/      # GitHub Actions automation
-├── src/                    # Main report generator
-│   └── generate-report.js  # Report generation logic
-├── packages/               # Local workspace packages (future)
-├── h1b-visa-analysis-files/packages/  # Current workspace packages
-│   ├── prompts-shared/     # AI workflow configurations
-│   ├── markdown-compiler/  # Markdown processing
-│   ├── report-components/  # H1B research content
-│   └── report-generator/   # Report orchestration
-├── dist/                   # Generated reports (gitignored)
-└── docs/                   # Documentation
-    └── automation-setup.md # CI/CD setup guide
+├── .github/                # GitHub configuration
+│   ├── workflows/         # GitHub Actions automation
+│   └── actionlint.yaml    # Actions linting config
+├── .vscode/               # VSCode settings
+├── src/                   # Main report generator
+│   ├── generate-report.js # Report generation logic
+│   └── index.js          # Entry point placeholder
+├── packages/              # Local development packages (gitignored)
+├── dist/                  # Generated reports (gitignored)
+├── docs/                  # Documentation
+│   ├── automation-setup.md            # CI/CD setup guide
+│   ├── pat-token-setup.md            # PAT token guide
+│   ├── dependency-setup-instructions.md # Dependency setup
+│   └── setup-summary.md              # Setup accomplishments
+├── .gitignore            # Git ignore rules
+├── .yamllint.yml         # YAML linting config
+├── package.json          # Project configuration
+└── README.md             # This file
 ```
 
 ## 🔄 Workflow
@@ -58,6 +64,22 @@ See [docs/automation-setup.md](docs/automation-setup.md) for detailed setup inst
 
 ## 🛠️ Development
 
+### Local Development Setup
+
+To work with the dependency packages locally:
+
+```bash
+# Clone the dependency repos for local development
+cd packages
+git clone https://github.com/ChaseNoCap/prompts-shared.git
+git clone https://github.com/ChaseNoCap/markdown-compiler.git
+git clone https://github.com/ChaseNoCap/report-components.git
+cd ..
+
+# Install dependencies (links local packages automatically)
+npm install
+```
+
 ### Workspace Commands
 
 ```bash
@@ -76,8 +98,8 @@ npm install
 - `npm run build` - Generate the H1B report
 - `npm run build:all` - Build all workspace packages
 - `npm test` - Run tests across workspaces
-- `npm run update-deps` - Update GitHub dependencies
+- `npm run update-deps` - Update GitHub dependencies (for CI/CD)
 
 ## 📄 License
 
-MIT# Test trigger
+MIT
