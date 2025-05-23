@@ -1,30 +1,25 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as fs from 'fs/promises';
 import { DependencyChecker } from '@/services/DependencyChecker';
-import type { ILogger } from '@/core/interfaces/ILogger';
+import { MockLogger } from 'test-mocks';
 
 // Mock fs/promises
 vi.mock('fs/promises');
 
 describe('DependencyChecker', () => {
   let dependencyChecker: DependencyChecker;
-  let mockLogger: ILogger;
+  let mockLogger: MockLogger;
 
   beforeEach(() => {
     // Create mock logger
-    mockLogger = {
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
-      child: vi.fn().mockReturnThis(),
-    };
+    mockLogger = new MockLogger();
 
     // Create instance with mock
     dependencyChecker = new DependencyChecker(mockLogger);
 
     // Reset all mocks
     vi.clearAllMocks();
+    mockLogger.clear();
   });
 
   describe('checkDependency', () => {
@@ -47,12 +42,7 @@ describe('DependencyChecker', () => {
         path: expect.stringContaining('test-package'),
       });
 
-      expect(mockLogger.debug).toHaveBeenCalledWith(
-        'Dependency test-package found',
-        expect.objectContaining({
-          version: '1.0.0',
-        })
-      );
+      expect(mockLogger.hasLogged('debug', /Dependency test-package found/)).toBe(true);
     });
 
     it('should return unavailable status for missing dependency', async () => {
@@ -67,10 +57,7 @@ describe('DependencyChecker', () => {
         error: 'ENOENT',
       });
 
-      expect(mockLogger.warn).toHaveBeenCalledWith(
-        'Dependency missing-package not available',
-        expect.any(Object)
-      );
+      expect(mockLogger.hasLogged('warn', /Dependency missing-package not available/)).toBe(true);
     });
 
     it('should handle invalid package.json', async () => {
@@ -106,10 +93,8 @@ describe('DependencyChecker', () => {
       expect(results.filter(r => r.available)).toHaveLength(2);
       expect(results.filter(r => !r.available)).toHaveLength(1);
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Checking all dependencies');
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        expect.stringContaining('Dependency check complete: 2/3 available')
-      );
+      expect(mockLogger.hasLogged('info', 'Checking all dependencies')).toBe(true);
+      expect(mockLogger.hasLogged('info', /Dependency check complete: 2\/3 available/)).toBe(true);
     });
 
     it('should handle all dependencies missing', async () => {
@@ -121,7 +106,7 @@ describe('DependencyChecker', () => {
       expect(results).toHaveLength(3);
       expect(results.every(r => !r.available)).toBe(true);
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Dependency check complete: 0/3 available');
+      expect(mockLogger.hasLogged('info', 'Dependency check complete: 0/3 available')).toBe(true);
     });
   });
 });

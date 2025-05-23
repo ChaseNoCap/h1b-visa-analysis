@@ -5,10 +5,12 @@ import { container } from '@/core/container/container';
 import { TYPES } from '@/core/constants/injection-tokens';
 import type { IReportGenerator } from '@/core/interfaces/IReportGenerator';
 import type { IDependencyChecker } from '@/core/interfaces/IDependencyChecker';
+// import { FixtureManager, setupTest } from 'test-helpers';
 
 describe('ReportGenerator E2E Tests', () => {
   let reportGenerator: IReportGenerator;
   let dependencyChecker: IDependencyChecker;
+  // let fixtures: FixtureManager;
   const testOutputDir = path.join(__dirname, 'fixtures', 'output');
 
   beforeEach(async () => {
@@ -16,12 +18,16 @@ describe('ReportGenerator E2E Tests', () => {
     reportGenerator = container.get<IReportGenerator>(TYPES.IReportGenerator);
     dependencyChecker = container.get<IDependencyChecker>(TYPES.IDependencyChecker);
 
+    // Set up fixture manager
+    // fixtures = new FixtureManager(__dirname);
+
     // Create test output directory
     await fs.mkdir(testOutputDir, { recursive: true });
   });
 
   afterEach(async () => {
-    // Clean up test output
+    // Clean up test output and fixtures
+    // await fixtures.cleanup();
     try {
       await fs.rm(testOutputDir, { recursive: true, force: true });
     } catch {

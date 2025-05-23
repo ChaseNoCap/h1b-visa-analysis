@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import { Container } from 'inversify';
 import { TYPES } from '@/core/constants/injection-tokens';
 import type { IReportGenerator } from '@/core/interfaces/IReportGenerator';
 import type { IDependencyChecker, IDependencyStatus } from '@/core/interfaces/IDependencyChecker';
-import type { ILogger } from '@/core/interfaces/ILogger';
 import { ReportGenerator } from '@/services/ReportGenerator';
+// import { createTestContainer, FixtureManager } from 'test-helpers';
+import { Container } from 'inversify';
+import type { ILogger } from '@/core/interfaces/ILogger';
 import { WinstonLogger } from '@/services/WinstonLogger';
 
 describe('ReportGenerator with Missing Dependencies', () => {
