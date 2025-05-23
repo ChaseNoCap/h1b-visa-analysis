@@ -110,10 +110,10 @@ describe('ReportGenerator E2E Tests', () => {
       expect(result.outputPath).toContain(nonExistentBase);
     });
 
-    it('should provide meaningful error when no dependencies available', async () => {
+    it('should provide meaningful error when no dependencies available', () => {
       // This test would need a mock or a way to simulate no dependencies
       // For now, we'll just verify the error handling structure exists
-      expect(reportGenerator.generate).toBeDefined();
+      expect(typeof reportGenerator.generate).toBe('function');
     });
   });
 

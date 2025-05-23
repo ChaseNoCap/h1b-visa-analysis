@@ -20,19 +20,19 @@ describe('ReportGenerator with Missing Dependencies', () => {
 
     // Create a mock dependency checker that returns missing dependencies
     const mockDependencyChecker: IDependencyChecker = {
-      async checkDependency(name: string): Promise<IDependencyStatus> {
-        return {
+      checkDependency(name: string): Promise<IDependencyStatus> {
+        return Promise.resolve({
           name,
           available: false,
           error: 'Dependency not found',
-        };
+        });
       },
-      async checkAllDependencies(): Promise<IDependencyStatus[]> {
-        return [
+      checkAllDependencies(): Promise<IDependencyStatus[]> {
+        return Promise.resolve([
           { name: 'prompts-shared', available: false, error: 'Not found' },
           { name: 'markdown-compiler', available: false, error: 'Not found' },
           { name: 'report-components', available: false, error: 'Not found' },
-        ];
+        ]);
       },
     };
 
@@ -75,27 +75,27 @@ describe('ReportGenerator with Missing Dependencies', () => {
   it('should handle partial dependencies', async () => {
     // Create a mock that returns mixed results
     const mockDependencyChecker: IDependencyChecker = {
-      async checkDependency(name: string): Promise<IDependencyStatus> {
+      checkDependency(name: string): Promise<IDependencyStatus> {
         if (name === 'markdown-compiler') {
-          return {
+          return Promise.resolve({
             name,
             available: true,
             version: '0.1.0',
             path: '/test/path',
-          };
+          });
         }
-        return {
+        return Promise.resolve({
           name,
           available: false,
           error: 'Dependency not found',
-        };
+        });
       },
-      async checkAllDependencies(): Promise<IDependencyStatus[]> {
-        return [
+      checkAllDependencies(): Promise<IDependencyStatus[]> {
+        return Promise.resolve([
           { name: 'prompts-shared', available: false, error: 'Not found' },
           { name: 'markdown-compiler', available: true, version: '0.1.0', path: '/test/path' },
           { name: 'report-components', available: false, error: 'Not found' },
-        ];
+        ]);
       },
     };
 
