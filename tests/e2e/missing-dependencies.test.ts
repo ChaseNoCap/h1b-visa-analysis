@@ -7,7 +7,8 @@ import type { IDependencyChecker, IDependencyStatus } from '@/core/interfaces/ID
 import { ReportGenerator } from '@/services/ReportGenerator';
 // import { createTestContainer, FixtureManager } from 'test-helpers';
 import { ContainerBuilder, Container } from 'di-framework';
-import { WinstonLogger } from 'logger';
+import { WinstonLogger } from '@chasenogap/logger';
+import { NodeFileSystem } from 'file-system';
 
 describe('ReportGenerator with Missing Dependencies', () => {
   let container: Container;
@@ -36,6 +37,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
     // Create a new container for this test
     container = await new ContainerBuilder()
       .addBinding(TYPES.ILogger, WinstonLogger, 'Singleton')
+      .addBinding(TYPES.IFileSystem, NodeFileSystem, 'Singleton')
       .addConstant(TYPES.IDependencyChecker, mockDependencyChecker)
       .addBinding(TYPES.IReportGenerator, ReportGenerator)
       .build();
@@ -99,6 +101,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
     // Create a new container with the updated mock
     container = await new ContainerBuilder()
       .addBinding(TYPES.ILogger, WinstonLogger, 'Singleton')
+      .addBinding(TYPES.IFileSystem, NodeFileSystem, 'Singleton')
       .addConstant(TYPES.IDependencyChecker, mockDependencyChecker)
       .addBinding(TYPES.IReportGenerator, ReportGenerator)
       .build();

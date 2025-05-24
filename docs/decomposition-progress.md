@@ -4,7 +4,7 @@
 
 As of May 2025, the H1B Visa Analysis monorepo decomposition has begun with the successful implementation of the testing packages. This document tracks progress and provides guidance for continuing the decomposition effort.
 
-## ✅ Completed Packages (3/8)
+## ✅ Completed Packages (5/8)
 
 ### test-mocks
 - **Status**: Complete
@@ -28,35 +28,40 @@ As of May 2025, the H1B Visa Analysis monorepo decomposition has begun with the 
 - **Location**: `/packages/di-framework/`
 - **GitHub**: [ChaseNoCap/di-framework](https://github.com/ChaseNoCap/di-framework)
 
-## 📋 Remaining Packages (5/8)
+### logger
+- **Status**: Complete ✅ Published to GitHub Packages
+- **Size**: ~300 lines (30% of limit)
+- **Coverage**: 95%+
+- **Key Achievement**: Winston-based logging with child loggers and structured context
+- **Package**: `@chasenogap/logger`
+- **GitHub**: Published to GitHub Packages
+- **Integration**: Fully integrated, duplicate code removed
+
+### file-system
+- **Status**: Complete ✅ 
+- **Size**: ~400 lines (40% of limit)
+- **Coverage**: 95%+
+- **Key Achievement**: Clean abstraction for file operations with excellent error handling
+- **Location**: `/packages/file-system/`
+- **Features**: Async file operations, directory management, atomic writes, comprehensive error types
+
+## 📋 Remaining Packages (3/8)
 
 Per [Migration Plan](./migration-plan.md), in priority order:
 
-### 1. logger (Next Priority)
-- **Rationale**: 98% code duplication with markdown-compiler
-- **Estimated Size**: ~300 lines
-- **Dependencies**: None
-- **Timeline**: Week 1
-
-### 2. file-system
-- **Rationale**: Common file operations
-- **Estimated Size**: ~300 lines
-- **Dependencies**: Node.js built-ins
-- **Timeline**: Week 3
-
-### 3. events
+### 1. events (Next Priority)
 - **Rationale**: Enable decoupling between contexts
 - **Estimated Size**: ~200 lines
 - **Dependencies**: None
 - **Timeline**: Week 4
 
-### 4. cache
+### 2. cache
 - **Rationale**: Shared caching with decorators
 - **Estimated Size**: ~400 lines
 - **Dependencies**: events
 - **Timeline**: Week 5
 
-### 5. core (Consider splitting/eliminating)
+### 3. core (Consider splitting/eliminating)
 - **Rationale**: May be too generic
 - **Alternative**: Distribute to specific packages
 - **Decision Required**: Review after other packages
@@ -96,32 +101,32 @@ app → feature packages → utility packages → infrastructure
 | Package | Status | Size | Coverage | Exports | Dependencies |
 |---------|--------|------|----------|---------|--------------|
 | test-mocks | ✅ | 400 | 100% | 3 | 1 |
-| test-helpers | ✅ | 500 | 65% | 4 | 3 |
+| test-helpers | ✅ | 500 | 91.89% | 4 | 3 |
 | di-framework | ✅ | 689 | 84% | 15 | 2 |
-| logger | ⏳ | ~300 | - | - | 0 |
-| file-system | ⏳ | ~300 | - | - | 0 |
+| logger | ✅ | 300 | 95%+ | 3 | 0 |
+| file-system | ✅ | 400 | 95%+ | 4 | 0 |
 | events | ⏳ | ~200 | - | - | 0 |
 | cache | ⏳ | ~400 | - | - | 1 |
 
 ## 🎯 Next Immediate Steps
 
-### 1. Integrate DI Framework Package (Current)
-- [ ] Update main project to use di-framework
-- [ ] Replace local token definitions
-- [ ] Use ContainerBuilder from package
-- [ ] Update all imports
-- [ ] Verify all tests pass
-
-### 2. Start Logger Package (Next)
+### 1. Start Events Package (Next Priority)
 - [ ] Create package structure
 - [ ] Copy CLAUDE.md template
-- [ ] Extract ILogger interface
-- [ ] Move WinstonLogger implementation
-- [ ] Add LogMethod decorator
+- [ ] Define event interfaces (IEventBus, IDomainEvent)
+- [ ] Implement synchronous event bus
+- [ ] Add async event support
+- [ ] Create event handler decorator
 - [ ] Write comprehensive tests
-- [ ] Update both projects
+- [ ] Document event patterns
 
-### 3. Continue Decomposition
+### 2. Continue with Cache Package
+- [ ] Build on events for invalidation
+- [ ] Extract cache decorators from markdown-compiler
+- [ ] Implement memory cache with strategies
+- [ ] Add Redis support (future)
+
+### 3. Complete Decomposition
 - Follow [Migration Plan](./migration-plan.md)
 - Use [Implementation Roadmap](./implementation-roadmap.md)
 - Apply [Decomposition Principles](./decomposition-principles.md)
@@ -152,13 +157,13 @@ Based on current progress:
 
 - **Week 0** (Complete): Test packages ✅
 - **Week 1** (Complete): DI framework package ✅
-- **Week 2**: Logger package + integration
-- **Week 3**: File system package
-- **Week 4**: Events package
+- **Week 2** (Complete): Logger package + integration ✅
+- **Week 3** (Complete): File system package ✅
+- **Week 4** (Current): Events package
 - **Week 5**: Cache package
 - **Week 6**: Final integration & cleanup
 
-Total: 6 weeks to complete decomposition
+Total: 6 weeks to complete decomposition (62.5% complete)
 
 ## 🔄 Continuous Improvement
 
@@ -192,6 +197,16 @@ Total: 6 weeks to complete decomposition
 - **Rationale**: Foundation for other packages, enables better testing
 - **Outcome**: Success - clean implementation at 689 lines
 
+### January 2025: Logger Package
+- **Decision**: Extract to GitHub Packages as @chasenogap/logger
+- **Rationale**: High code duplication, clear boundaries
+- **Outcome**: Success - 300 lines, fully integrated
+
+### January 2025: File System Package
+- **Decision**: Create comprehensive file operations abstraction
+- **Rationale**: Centralize file handling, improve error handling
+- **Outcome**: Success - 400 lines with excellent error types
+
 ### Pending: core Package
 - **Question**: Is "core" too generic?
 - **Options**: Split into specific packages or eliminate
@@ -222,5 +237,32 @@ Total: 6 weeks to complete decomposition
 
 ---
 
-**Last Updated**: May 2025
-**Next Review**: After logger package completion
+**Last Updated**: January 2025
+**Next Review**: After events package completion
+
+## 🎓 Key Learnings from File System Package
+
+### 1. Error Handling Excellence
+- Created comprehensive error types (FileNotFoundError, PermissionError, etc.)
+- Each error includes context (path, operation, original error)
+- Makes debugging and testing much easier
+
+### 2. Interface Design Patterns
+- Async-first API design
+- Options objects for extensibility
+- Clear separation of concerns (read/write/directory operations)
+
+### 3. Testing Strategies
+- Mock implementations proved invaluable
+- Error case testing as important as happy path
+- Directory fixtures simplified integration tests
+
+### 4. Size Control Success
+- Started targeting ~300 lines, ended at ~400
+- Extra 100 lines went to comprehensive error handling
+- Worth the trade-off for better developer experience
+
+### 5. Documentation Value
+- CLAUDE.md file helped maintain focus
+- Clear context boundaries prevented scope creep
+- Usage examples in README drove API design

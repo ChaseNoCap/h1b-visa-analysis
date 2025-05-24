@@ -37,8 +37,15 @@ async function main(): Promise<void> {
 // Public API exports
 export { TYPES } from './core/constants/injection-tokens.js';
 export { containerPromise } from './core/container/container.js';
-export type { IReportGenerator, IReportOptions, IReportResult } from './core/interfaces/IReportGenerator.js';
-export type { IDependencyChecker, IDependencyStatus } from './core/interfaces/IDependencyChecker.js';
+export type {
+  IReportGenerator,
+  IReportOptions,
+  IReportResult,
+} from './core/interfaces/IReportGenerator.js';
+export type {
+  IDependencyChecker,
+  IDependencyStatus,
+} from './core/interfaces/IDependencyChecker.js';
 
 // Run if this is the main module
 if (import.meta.url === `file://${process.argv[1]}`) {

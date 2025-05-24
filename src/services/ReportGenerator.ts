@@ -1,6 +1,4 @@
 import { injectable, inject } from 'inversify';
-import * as path from 'path';
-import * as fs from 'fs/promises';
 import { TYPES } from '../core/constants/injection-tokens.js';
 import { success, failure } from 'di-framework';
 import type {
@@ -11,14 +9,16 @@ import type {
 } from '../core/interfaces/IReportGenerator.js';
 import type { IDependencyChecker } from '../core/interfaces/IDependencyChecker.js';
 import type { ILogger } from 'logger';
+import type { IFileSystem } from 'file-system';
 
 @injectable()
 export class ReportGenerator implements IReportGenerator {
   private readonly logger: ILogger;
-  
+
   constructor(
     @inject(TYPES.ILogger) logger: ILogger,
-    @inject(TYPES.IDependencyChecker) private readonly dependencyChecker: IDependencyChecker
+    @inject(TYPES.IDependencyChecker) private readonly dependencyChecker: IDependencyChecker,
+    @inject(TYPES.IFileSystem) private readonly fileSystem: IFileSystem
   ) {
     this.logger = logger.child({ service: 'ReportGenerator' });
   }
@@ -29,21 +29,21 @@ export class ReportGenerator implements IReportGenerator {
     const { outputDir = 'dist', includeTimestamp = true, format = 'markdown' } = options;
     const opLogger = this.logger.child({ operation: 'generate', requestId });
 
-    opLogger.info('Starting report generation', { 
+    opLogger.info('Starting report generation', {
       options,
       defaults: { outputDir, format, includeTimestamp },
-      requestId
+      requestId,
     });
 
     try {
       // Check dependencies
       const dependencies = await this.dependencyChecker.checkAllDependencies();
       const availableDeps = dependencies.filter(d => d.available);
-      
+
       opLogger.debug('Dependency check complete', {
         total: dependencies.length,
         available: availableDeps.length,
-        missing: dependencies.filter(d => !d.available).map(d => d.name)
+        missing: dependencies.filter(d => !d.available).map(d => d.name),
       });
 
       if (availableDeps.length === 0) {
@@ -52,7 +52,7 @@ export class ReportGenerator implements IReportGenerator {
       }
 
       // Create output directory
-      await fs.mkdir(outputDir, { recursive: true });
+      await this.fileSystem.createDirectory(outputDir);
 
       // Generate report content
       const reportContent = this.generateReportContent(dependencies);
@@ -61,20 +61,20 @@ export class ReportGenerator implements IReportGenerator {
       const timestamp = includeTimestamp ? `-${new Date().toISOString().split('T')[0]}` : '';
       const extension = format === 'markdown' ? 'md' : format;
       const outputFilename = `h1b-report${timestamp}.${extension}`;
-      const outputPath = path.join(outputDir, outputFilename);
+      const outputPath = this.fileSystem.join(outputDir, outputFilename);
 
       // Write report
-      await fs.writeFile(outputPath, reportContent, 'utf-8');
+      await this.fileSystem.writeFile(outputPath, reportContent);
 
       const duration = Date.now() - startTime;
-      const fileStats = await fs.stat(outputPath);
-      
+      const fileStats = await this.fileSystem.getStats(outputPath);
+
       opLogger.info('Report generation completed', {
         outputPath,
         duration,
         dependenciesUsed: availableDeps.map(d => d.name),
         fileSize: fileStats.size,
-        requestId
+        requestId,
       });
 
       return success<IReportData>({
@@ -88,12 +88,12 @@ export class ReportGenerator implements IReportGenerator {
     } catch (error) {
       const err = error as Error;
       const duration = Date.now() - startTime;
-      
+
       this.logger.error('Report generation failed', err);
       this.logger.debug('Failure details', {
         duration,
         options,
-        stack: err.stack
+        stack: err.stack,
       });
 
       return failure<IReportData>(error as Error);

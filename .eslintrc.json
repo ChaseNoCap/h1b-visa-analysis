@@ -18,6 +18,7 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/require-await": "off",
     "prettier/prettier": "error"
   },
   "ignorePatterns": ["dist", "node_modules", "*.js", "vitest.config.ts", "packages/**/*"]

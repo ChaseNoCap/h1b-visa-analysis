@@ -20,7 +20,7 @@ export class DependencyChecker implements IDependencyChecker {
   async checkDependency(name: string): Promise<IDependencyStatus> {
     const depLogger = this.logger.child({ dependency: name });
     const startTime = Date.now();
-    
+
     try {
       const packagePath = path.join(process.cwd(), 'packages', name);
       const packageJsonPath = path.join(packagePath, 'package.json');
@@ -35,7 +35,7 @@ export class DependencyChecker implements IDependencyChecker {
       depLogger.debug('Dependency found', {
         path: packagePath,
         version: packageJson.version ?? 'unknown',
-        checkDuration: Date.now() - startTime
+        checkDuration: Date.now() - startTime,
       });
 
       return {
@@ -46,10 +46,10 @@ export class DependencyChecker implements IDependencyChecker {
       };
     } catch (error) {
       const err = error as Error;
-      depLogger.warn('Dependency not available', { 
+      depLogger.warn('Dependency not available', {
         message: err.message,
         code: (err as any).code,
-        checkDuration: Date.now() - startTime
+        checkDuration: Date.now() - startTime,
       });
 
       return {
@@ -64,10 +64,10 @@ export class DependencyChecker implements IDependencyChecker {
     const operationId = `dep-check-${Date.now()}`;
     const opLogger = this.logger.child({ operation: 'checkAll', operationId });
     const startTime = Date.now();
-    
+
     opLogger.info('Starting dependency check', {
       dependencies: this.dependencies,
-      count: this.dependencies.length
+      count: this.dependencies.length,
     });
 
     const results = await Promise.all(this.dependencies.map(dep => this.checkDependency(dep)));
@@ -81,7 +81,7 @@ export class DependencyChecker implements IDependencyChecker {
       total,
       missing: missing.map(d => d.name),
       duration: Date.now() - startTime,
-      operationId
+      operationId,
     });
 
     return results;

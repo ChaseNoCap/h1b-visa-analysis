@@ -29,7 +29,8 @@ Welcome to the H1B Visa Analysis project documentation. This guide helps you fin
 
 #### Architecture & Design
 - [CLAUDE.md](/CLAUDE.md) - Current TypeScript/DI architecture
-- [Decomposition Progress](./decomposition-progress.md) - **NEW** Current status and next steps
+- [Decomposition Progress](./decomposition-progress.md) - **Current status** (5/8 packages complete)
+- [Decomposition Learnings](./decomposition-learnings.md) - **NEW** Insights and patterns discovered
 - [Migration Plan](./migration-plan.md) - Monorepo decomposition strategy
 - [Testing Package Implementation](./testing-package-implementation.md) - ✅ Completed
 
@@ -40,18 +41,19 @@ Welcome to the H1B Visa Analysis project documentation. This guide helps you fin
 ### For Architects
 
 #### Strategic Planning
-- [Decomposition Progress](./decomposition-progress.md) - **Current Status Dashboard**
+- [Decomposition Progress](./decomposition-progress.md) - **Current Status Dashboard** (62.5% complete)
+- [Decomposition Learnings](./decomposition-learnings.md) - **Insights from 5 completed packages**
 - [Migration Plan](./migration-plan.md) - Full decomposition strategy
 - [Decomposition Principles](./decomposition-principles.md) - Core design principles
 - [Testing Package Implementation](./testing-package-implementation.md) - ✅ First success story
 
 #### Package Status
-- [test-mocks](../packages/test-mocks/CLAUDE.md) - ✅ Complete
-- [test-helpers](../packages/test-helpers/CLAUDE.md) - ✅ Complete
-- logger - **Next Priority**
-- di-framework - Week 2
-- file-system - Week 3
-- events - Week 4
+- [test-mocks](../packages/test-mocks/CLAUDE.md) - ✅ Complete (100% coverage)
+- [test-helpers](../packages/test-helpers/CLAUDE.md) - ✅ Complete (91.89% coverage)
+- [di-framework](../packages/di-framework/CLAUDE.md) - ✅ Complete (84% coverage)
+- logger - ✅ Published to GitHub Packages
+- [file-system](../packages/file-system/CLAUDE.md) - ✅ Complete (95%+ coverage)
+- events - **Next Priority** (Week 4)
 - cache - Week 5
 
 ### For AI Assistants (Claude)
@@ -86,15 +88,15 @@ Welcome to the H1B Visa Analysis project documentation. This guide helps you fin
    - Set up PAT_TOKEN secret
    - Test with manual workflow dispatch
 
-### Implementing the Next Package (logger)
+### Implementing the Next Package (events)
 
 **This is the current primary development goal.**
 
 1. Read [Decomposition Progress](./decomposition-progress.md) for current status
-2. Follow [Migration Plan](./migration-plan.md#phase-1-logger-package)
-3. Use established patterns from test packages
-4. Create package structure in `/packages/logger/`
-5. Use test-mocks and test-helpers for testing
+2. Follow [Migration Plan](./migration-plan.md#phase-5-events-package-week-4---current)
+3. Use established patterns from completed packages
+4. Create package structure in `/packages/events/`
+5. Enable loose coupling between bounded contexts
 
 ### Adding a New Shared Package
 
@@ -184,7 +186,8 @@ All documentation follows these principles:
 ## 🚧 Work in Progress
 
 ### Current Focus
-- **testing package** - See [implementation doc](./testing-package-implementation.md)
+- **events package** - Enable decoupling between contexts
+- See [Decomposition Progress](./decomposition-progress.md) for details
 
 ### Coming Soon
 - Integration with actual markdown-compiler

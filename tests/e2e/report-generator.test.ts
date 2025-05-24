@@ -1,10 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import * as path from 'path';
-import * as fs from 'fs/promises';
 import { containerPromise } from '@/core/container/container';
 import { TYPES } from '@/core/constants/injection-tokens';
 import type { IReportGenerator } from '@/core/interfaces/IReportGenerator';
 import type { IDependencyChecker } from '@/core/interfaces/IDependencyChecker';
+import type { IFileSystem } from 'file-system';
 import type { Container } from 'di-framework';
 // import { FixtureManager, setupTest } from 'test-helpers';
 
@@ -12,27 +11,29 @@ describe('ReportGenerator E2E Tests', () => {
   let container: Container;
   let reportGenerator: IReportGenerator;
   let dependencyChecker: IDependencyChecker;
+  let fileSystem: IFileSystem;
   // let fixtures: FixtureManager;
-  const testOutputDir = path.join(__dirname, 'fixtures', 'output');
+  const testOutputDir = 'tests/e2e/fixtures/output';
 
   beforeEach(async () => {
     // Use real implementations from container
     container = await containerPromise;
     reportGenerator = container.get<IReportGenerator>(TYPES.IReportGenerator);
     dependencyChecker = container.get<IDependencyChecker>(TYPES.IDependencyChecker);
+    fileSystem = container.get<IFileSystem>(TYPES.IFileSystem);
 
     // Set up fixture manager
     // fixtures = new FixtureManager(__dirname);
 
     // Create test output directory
-    await fs.mkdir(testOutputDir, { recursive: true });
+    await fileSystem.createDirectory(testOutputDir);
   });
 
   afterEach(async () => {
     // Clean up test output and fixtures
     // await fixtures.cleanup();
     try {
-      await fs.rm(testOutputDir, { recursive: true, force: true });
+      await fileSystem.removeDirectory(testOutputDir);
     } catch {
       // Ignore errors if directory doesn't exist
     }
@@ -52,14 +53,11 @@ describe('ReportGenerator E2E Tests', () => {
       expect(result.data?.metadata?.dependencies).toBeInstanceOf(Array);
 
       // Verify file was created
-      const fileExists = await fs
-        .access(result.data!.outputPath)
-        .then(() => true)
-        .catch(() => false);
+      const fileExists = await fileSystem.exists(result.data!.outputPath);
       expect(fileExists).toBe(true);
 
       // Read and verify content
-      const content = await fs.readFile(result.data!.outputPath, 'utf-8');
+      const content = await fileSystem.readFile(result.data!.outputPath);
       expect(content).toContain('# H1B Visa Analysis Report');
       expect(content).toContain('## Dependency Status');
     });
@@ -96,7 +94,7 @@ describe('ReportGenerator E2E Tests', () => {
         includeTimestamp: false,
       });
 
-      const content = await fs.readFile(result.data!.outputPath, 'utf-8');
+      const content = await fileSystem.readFile(result.data!.outputPath);
 
       // Should show status for each dependency
       expect(content).toMatch(/[✅❌] prompts-shared/);
@@ -107,7 +105,7 @@ describe('ReportGenerator E2E Tests', () => {
 
   describe('Error Handling', () => {
     it('should handle missing output directory gracefully', async () => {
-      const nonExistentBase = path.join(testOutputDir, 'deep', 'nested', 'path');
+      const nonExistentBase = fileSystem.join(testOutputDir, 'deep', 'nested', 'path');
 
       const result = await reportGenerator.generate({
         outputDir: nonExistentBase,
@@ -134,7 +132,7 @@ describe('ReportGenerator E2E Tests', () => {
         format: 'markdown',
       });
 
-      const content = await fs.readFile(result.data!.outputPath, 'utf-8');
+      const content = await fileSystem.readFile(result.data!.outputPath);
 
       // Verify markdown structure
       expect(content).toMatch(/^# .+/m); // Has h1 heading
@@ -166,7 +164,7 @@ describe('ReportGenerator E2E Tests', () => {
   describe('Integration Output', () => {
     it('should generate a complete test report file', async () => {
       const result = await reportGenerator.generate({
-        outputDir: path.join(__dirname, 'output'),
+        outputDir: 'tests/e2e/output',
         includeTimestamp: false,
         format: 'markdown',
       });
@@ -179,7 +177,7 @@ describe('ReportGenerator E2E Tests', () => {
       console.log('Dependencies found:', result.data?.metadata?.dependencies);
 
       // Verify we can read the generated report
-      const content = await fs.readFile(result.data!.outputPath, 'utf-8');
+      const content = await fileSystem.readFile(result.data!.outputPath);
       expect(content.length).toBeGreaterThan(0);
     });
   });
