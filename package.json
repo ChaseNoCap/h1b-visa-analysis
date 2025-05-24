@@ -9,7 +9,8 @@
     "packages/test-mocks",
     "packages/test-helpers",
     "packages/file-system",
-    "packages/cache"
+    "packages/cache",
+    "packages/report-templates"
   ],
   "scripts": {
     "build": "tsc && node dist/src/index.js",
@@ -39,6 +40,7 @@
     "event-system": "file:./packages/event-system",
     "file-system": "file:./packages/file-system",
     "cache": "file:./packages/cache",
+    "report-templates": "file:./packages/report-templates",
     "@chasenogap/logger": "^1.0.0",
     "reflect-metadata": "^0.2.1",
     "inversify": "^6.0.2"

@@ -2,6 +2,8 @@ import { injectable, inject } from 'inversify';
 import { Emits, Traces, setEventBus } from 'event-system';
 import { TYPES } from '../core/constants/injection-tokens.js';
 import { success, failure } from 'di-framework';
+import { createTemplateContainer, TEMPLATE_TYPES } from 'report-templates';
+import type { IReportBuilder } from 'report-templates';
 import type {
   IReportGenerator,
   IReportOptions,
@@ -16,6 +18,8 @@ import type { IEventBus } from 'event-system';
 @injectable()
 export class ReportGenerator implements IReportGenerator {
   private readonly logger: ILogger;
+  private templateContainer = createTemplateContainer();
+  private reportBuilder: IReportBuilder;
 
   constructor(
     @inject(TYPES.ILogger) logger: ILogger,
@@ -24,6 +28,7 @@ export class ReportGenerator implements IReportGenerator {
     @inject(TYPES.IEventBus) eventBus: IEventBus
   ) {
     this.logger = logger.child({ service: 'ReportGenerator' });
+    this.reportBuilder = this.templateContainer.get<IReportBuilder>(TEMPLATE_TYPES.IReportBuilder);
     setEventBus(this, eventBus);
   }
 
@@ -114,37 +119,41 @@ export class ReportGenerator implements IReportGenerator {
   private generateReportContent(
     dependencies: Array<{ name: string; available: boolean; version?: string; path?: string }>
   ): string {
-    const sections: string[] = [
-      '# H1B Visa Analysis Report',
-      '',
-      `Generated on: ${new Date().toISOString()}`,
-      '',
-      '## Dependency Status',
-      '',
-    ];
+    this.reportBuilder.clear();
+    
+    // Build report using the fluent API
+    this.reportBuilder
+      .addHeader('H1B Visa Analysis Report', {
+        generatedOn: new Date().toISOString(),
+        format: 'markdown'
+      })
+      .addSection('Dependency Status', this.buildDependencyList(dependencies));
 
-    // Add dependency status
-    for (const dep of dependencies) {
-      const status = dep.available ? '✅' : '❌';
-      const version = dep.version ? ` (v${dep.version})` : '';
-      sections.push(`- ${status} ${dep.name}${version}`);
-    }
-
-    sections.push('', '## Report Content', '');
-
-    // TODO: Integrate actual content from dependencies
+    // Add report content section
     const availableDeps = dependencies.filter(d => d.available);
     if (availableDeps.length > 0) {
-      sections.push('*Content generation from dependencies will be implemented here*');
-      sections.push('');
-      sections.push('### Available Components:');
-      for (const dep of availableDeps) {
-        sections.push(`- ${dep.name}: ${dep.path}`);
-      }
+      this.reportBuilder
+        .addSection('Report Content', '*Content generation from dependencies will be implemented here*')
+        .addSection('Available Components', '', 3)
+        .addList(availableDeps.map(dep => `${dep.name}: ${dep.path || 'N/A'}`));
     } else {
-      sections.push('⚠️ No dependencies available for content generation');
+      this.reportBuilder
+        .addSection('Report Content', '⚠️ No dependencies available for content generation');
     }
 
-    return sections.join('\n');
+    return this.reportBuilder.build();
+  }
+
+  private buildDependencyList(dependencies: Array<{ name: string; available: boolean; version?: string; path?: string }>): string {
+    const depList = dependencies.map(dep => {
+      const status = dep.available ? '✅' : '❌';
+      const version = dep.version ? ` (v${dep.version})` : '';
+      return `${status} ${dep.name}${version}`;
+    });
+    
+    // Create a temporary builder for just the list
+    const listBuilder = this.templateContainer.get<IReportBuilder>(TEMPLATE_TYPES.IReportBuilder);
+    listBuilder.addList(depList);
+    return listBuilder.build();
   }
 }
