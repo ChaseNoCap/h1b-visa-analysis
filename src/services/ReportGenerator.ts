@@ -14,23 +14,40 @@ import type { ILogger } from 'logger';
 
 @injectable()
 export class ReportGenerator implements IReportGenerator {
+  private readonly logger: ILogger;
+  
   constructor(
-    @inject(TYPES.ILogger) private readonly logger: ILogger,
+    @inject(TYPES.ILogger) logger: ILogger,
     @inject(TYPES.IDependencyChecker) private readonly dependencyChecker: IDependencyChecker
-  ) {}
+  ) {
+    this.logger = logger.child({ service: 'ReportGenerator' });
+  }
 
   async generate(options: IReportOptions = {}): Promise<IReportResult> {
     const startTime = Date.now();
+    const requestId = `report-${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const { outputDir = 'dist', includeTimestamp = true, format = 'markdown' } = options;
+    const opLogger = this.logger.child({ operation: 'generate', requestId });
 
-    this.logger.info('Starting report generation', { options });
+    opLogger.info('Starting report generation', { 
+      options,
+      defaults: { outputDir, format, includeTimestamp },
+      requestId
+    });
 
     try {
       // Check dependencies
       const dependencies = await this.dependencyChecker.checkAllDependencies();
       const availableDeps = dependencies.filter(d => d.available);
+      
+      opLogger.debug('Dependency check complete', {
+        total: dependencies.length,
+        available: availableDeps.length,
+        missing: dependencies.filter(d => !d.available).map(d => d.name)
+      });
 
       if (availableDeps.length === 0) {
+        opLogger.warn('No dependencies available for report generation');
         throw new Error('No dependencies available for report generation');
       }
 
@@ -50,10 +67,14 @@ export class ReportGenerator implements IReportGenerator {
       await fs.writeFile(outputPath, reportContent, 'utf-8');
 
       const duration = Date.now() - startTime;
-      this.logger.info('Report generation completed', {
+      const fileStats = await fs.stat(outputPath);
+      
+      opLogger.info('Report generation completed', {
         outputPath,
         duration,
         dependenciesUsed: availableDeps.map(d => d.name),
+        fileSize: fileStats.size,
+        requestId
       });
 
       return success<IReportData>({
@@ -65,7 +86,15 @@ export class ReportGenerator implements IReportGenerator {
         },
       });
     } catch (error) {
-      this.logger.error('Report generation failed', error as Error);
+      const err = error as Error;
+      const duration = Date.now() - startTime;
+      
+      this.logger.error('Report generation failed', err);
+      this.logger.debug('Failure details', {
+        duration,
+        options,
+        stack: err.stack
+      });
 
       return failure<IReportData>(error as Error);
     }

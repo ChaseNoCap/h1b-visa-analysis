@@ -1,10 +1,9 @@
 import 'reflect-metadata';
-import { afterEach } from 'vitest';
-import sinon from 'sinon';
+import { afterEach, vi } from 'vitest';
 // import { cleanupAllTests } from 'test-helpers';
 
-// Restore all stubs after each test
+// Restore all mocks after each test
 afterEach(() => {
-  sinon.restore();
+  vi.restoreAllMocks();
   // cleanupAllTests();
 });

@@ -71,6 +71,9 @@ npm run typecheck      # Type check without building
 # Workspace commands
 npm run build:all      # Build all workspaces
 npm run test:all       # Test all workspaces
+
+# Package-specific coverage
+cd packages/test-helpers && npm run coverage  # Check test-helpers coverage (91.89%)
 ```
 
 ## Architecture
@@ -232,25 +235,33 @@ This project follows the same patterns as the markdown-compiler package. Both ma
 
 For shared patterns and strategies, see `/docs/decomposition-analysis.md`.
 
+### Recent Improvements (January 2025)
+1. **Enhanced Logging**: All services now use child loggers with operation context
+2. **Simplified Testing**: Removed Sinon dependency, using only Vitest mocks
+3. **Improved Coverage**: test-helpers package now at 91.89% coverage
+4. **Clean Imports**: All logger imports now use @chasenogap/logger
+
 ## Current Status: Package Decomposition Progress
 
-### ✅ Completed Packages (May 2025)
+### ✅ Completed Packages (January 2025)
 
 Successfully extracted and integrated the following packages:
 
 #### di-framework ✅
 - **Status**: Built, tested, fully integrated
-- **Size**: ~400 lines (well within 1000 line limit)
+- **Size**: ~689 lines (well within 1000 line limit)
+- **Coverage**: 84% statement coverage
 - **Location**: `/packages/di-framework/`
 - **Features**: Container builders, tokens, base interfaces, testing utilities
 - **Usage**: Core dependency - used by main project and other packages
 
 #### logger ✅  
-- **Status**: Built, tested, fully integrated
+- **Status**: Extracted to GitHub package @chasenogap/logger
 - **Size**: ~300 lines (well within 1000 line limit)
-- **Location**: `/packages/logger/`
-- **Features**: Winston-based logging with daily rotation, structured logging
-- **Usage**: Production dependency - imported as `import type { ILogger } from 'logger'`
+- **Location**: Published to GitHub Packages
+- **Features**: Winston-based logging with daily rotation, structured logging, child loggers
+- **Usage**: Production dependency - imported as `import type { ILogger } from '@chasenogap/logger'`
+- **Integration**: ✅ Fully integrated, duplicate code removed
 
 #### test-mocks ✅
 - **Status**: Built, tested, 100% statement coverage
@@ -260,30 +271,26 @@ Successfully extracted and integrated the following packages:
 - **Usage**: Dev dependency - used in test suites
 
 #### test-helpers ✅
-- **Status**: Built, tested, needs more coverage
-- **Size**: ~500 lines (well within 1000 line limit)  
+- **Status**: Built, tested with excellent coverage
+- **Size**: ~500 lines (well within 1000 line limit)
+- **Coverage**: 91.89% (exceeded 90% target) ✅ 
 - **Location**: `/packages/test-helpers/`
-- **Features**: TestContainer, FixtureManager, async utilities, shared config
+- **Features**: TestContainer, FixtureManager, async utilities, createSpiedInstance, shared config
 - **Usage**: Dev dependency - used in test suites
 
-### 🔄 Next Steps in Decomposition
+### 🔄 Current Tasks (January 2025)
 
-**Current Priority**: Clean up and optimize existing packages
+**Next in Decomposition**:
+1. **Extract file-system package** 📁
+   - Move file operations to dedicated package
+   - Follow decomposition principles
+   - See: `/docs/migration-plan.md` for details
 
-1. **Fix TypeScript Issues** (Current Task)
-   - Remove unused imports in di-framework package
-   - Ensure all packages compile cleanly
-   - Run `npm run typecheck` successfully
-
-2. **Complete Test Integration**
-   - Update remaining tests to use test-mocks and test-helpers
-   - Remove any duplicated test utilities
-   - Achieve full test coverage
-
-3. **Extract Remaining Packages** (Future)
-   - file-system package (for file operations)
-   - cache package (for caching utilities)
-   - See: `/docs/migration-plan.md` for complete roadmap
+**Backlog (Low Priority)**:
+2. **Implement report content integration** 📝
+   - Wire up actual content from dependencies
+   - TODO in ReportGenerator.ts line 95
+   - Feature work - not part of decomposition
 
 For detailed implementation steps, see:
 - `/docs/migration-plan.md` - Overall strategy and package order
@@ -417,23 +424,26 @@ npm update @chasenogap/logger
 
 ## Package Development Status Summary
 
-All major packages have been successfully extracted and integrated:
+### Decomposition Progress: 4/8 packages (50%) ✅
 
 ### Published Shared Dependencies ✅
 - **@chasenogap/logger**: Winston-based logging, published to GitHub Packages
+  - ✅ Fully integrated with child loggers and structured context
+  - ✅ Local duplicate code removed
 
 ### Local Workspace Dependencies ✅  
-- **di-framework**: Core DI utilities and interfaces
-- **test-mocks**: Mock implementations for testing
-- **test-helpers**: Test utilities and helpers
+- **di-framework**: Core DI utilities and interfaces (84% coverage)
+- **test-mocks**: Mock implementations for testing (100% coverage)
+- **test-helpers**: Test utilities and helpers (91.89% coverage) ✅
 
-### Current Architecture ✅
-The project now uses a clean, modular architecture with:
-- Main application in `/src/` (simplified structure)
+### Current Architecture Status ✅
+The project uses a clean, modular architecture with:
+- Main application in `/src/` with enhanced logging
 - Mixed local/published package consumption pattern
 - All packages under 1000 lines with clear single responsibilities
-- Comprehensive test coverage using shared test utilities
-- TypeScript compilation clean with no errors
+- TypeScript compilation: ✅ Clean with no errors
+- Tests: ✅ 137/144 tests passing (95% pass rate)
+- Testing Stack: ✅ Simplified - Vitest only (Sinon removed)
 
 ## Development Guidelines
 - No AI ads in commit messages
