@@ -9,14 +9,14 @@
 ### 1. Single Purpose
 Each package solves ONE specific problem well.
 
-✅ **Good**: `@h1b/logger` - Only handles logging
-❌ **Bad**: `@h1b/utils` - Grab bag of unrelated utilities
+✅ **Good**: `logger` - Only handles logging
+❌ **Bad**: `utils` - Grab bag of unrelated utilities
 
 ### 2. Clear Boundaries
 A package's name should tell you exactly what it does.
 
-✅ **Good**: `@h1b/markdown-processor` - Processes markdown
-❌ **Bad**: `@h1b/core` - What does "core" even mean?
+✅ **Good**: `markdown-processor` - Processes markdown
+❌ **Bad**: `core` - What does "core" even mean?
 
 ### 3. Size Limits
 Keep packages small and focused.
@@ -55,7 +55,7 @@ If you can't test it without mocking half the world, it's too coupled.
 ## Naming Conventions
 
 ### Package Names
-- Use kebab-case: `@h1b/markdown-compiler`
+- Use kebab-case: `markdown-compiler`
 - Be specific: `file-reader` not `io`
 - Avoid generic terms: `core`, `common`, `shared`, `utils`
 - Name the behavior, not the pattern: `logger` not `logging-service`
@@ -69,11 +69,11 @@ If you can't test it without mocking half the world, it's too coupled.
 
 ### Good Decomposition
 ```
-@h1b/logger          - Logging infrastructure
-@h1b/cache           - Caching implementations
-@h1b/file-system     - File operations
-@h1b/markdown-parser - Parse markdown to AST
-@h1b/html-renderer   - Render AST to HTML
+logger          - Logging infrastructure
+cache           - Caching implementations
+file-system     - File operations
+markdown-parser - Parse markdown to AST
+html-renderer   - Render AST to HTML
 ```
 
 Each has one clear purpose, can be tested independently, and could be published separately.
@@ -84,17 +84,17 @@ For real examples from our monorepo, see:
 
 ### Bad Decomposition
 ```
-@h1b/core           - ??? (too vague)
-@h1b/helpers        - Mixed utilities (no focus)
-@h1b/markdown       - Parse AND render AND compile (too much)
-@h1b/services       - Multiple unrelated services (grab bag)
+core           - ??? (too vague)
+helpers        - Mixed utilities (no focus)
+markdown       - Parse AND render AND compile (too much)
+services       - Multiple unrelated services (grab bag)
 ```
 
 ## Anti-Patterns
 
 ### 1. The Kitchen Sink
 ```typescript
-// ❌ @h1b/utils
+// ❌ utils
 export { formatDate } from './date';
 export { readFile } from './file';
 export { Logger } from './logger';
@@ -103,7 +103,7 @@ export { cache } from './cache';
 
 ### 2. The God Package
 ```typescript
-// ❌ @h1b/markdown - Does everything
+// ❌ markdown - Does everything
 export class MarkdownProcessor {
   parse() { }
   render() { }
@@ -116,7 +116,7 @@ export class MarkdownProcessor {
 
 ### 3. The Anemic Package
 ```typescript
-// ❌ @h1b/constants - Just data, no behavior
+// ❌ constants - Just data, no behavior
 export const API_KEY = '...';
 export const TIMEOUT = 5000;
 ```
@@ -124,7 +124,7 @@ export const TIMEOUT = 5000;
 ### 4. The Circular Dependency
 ```typescript
 // ❌ These packages depend on each other
-// @h1b/auth → @h1b/user → @h1b/auth
+// auth → user → auth
 ```
 
 ## Quick Decision Tree

@@ -17,8 +17,8 @@ The monorepo demonstrates several levels of decomposition:
   - markdown-compiler (processing engine)
   - report-components (content)
 - **Planned Shared Packages**: 
-  - @h1b/testing (current focus)
-  - @h1b/logger, @h1b/core, @h1b/decorators, etc.
+  - testing (current focus)
+  - logger, core, decorators, etc.
 
 #### **Module-Level Decomposition**
 Each package follows a consistent structure:
@@ -223,10 +223,10 @@ export interface IServiceManifest {
 
 // Self-contained service module
 export const markdownServiceManifest: IServiceManifest = {
-  name: '@h1b/markdown',
+  name: 'markdown',
   version: '1.0.0',
   capabilities: ['markdown.process', 'markdown.parse'],
-  dependencies: ['@h1b/logger', '@h1b/file-system'],
+  dependencies: ['logger', 'file-system'],
   initialize: (container) => {
     // Register all service components
   }
@@ -315,7 +315,7 @@ This package is part of the Markdown Processing context.
 - RecursionDetector: Internal safety mechanism
 
 ### Dependencies
-- Depends on: @h1b/logger, @h1b/file-system
+- Depends on: logger, file-system
 - Consumed by: report-generator context
 ```
 
@@ -462,7 +462,7 @@ Generate PDF documents from markdown content
 ## Integration Points
 - Consumes: Markdown content
 - Produces: PDF_GENERATED events
-- Dependencies: @h1b/logger
+- Dependencies: logger
 ```
 
 #### Step 5: Implement with Small Scope

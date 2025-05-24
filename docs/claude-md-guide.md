@@ -18,7 +18,7 @@ Every CLAUDE.md must include these sections:
 
 ### 1. Package Identity
 ```markdown
-**Name**: @h1b/package-name  
+**Name**: package-name  
 **Purpose**: One clear sentence about what this does  
 **Status**: Development/Stable/Deprecated  
 **Owner**: Team or person responsible  
@@ -112,7 +112,7 @@ Always include realistic code examples:
 const service = new Service();
 
 // ✅ Good: Shows real usage
-import { createService } from '@h1b/package';
+import { createService } from 'package';
 import { container } from '@/core/container';
 
 const service = createService({
@@ -127,7 +127,7 @@ const service = createService({
 Show how packages work together:
 
 ```markdown
-### Integration with @h1b/logger
+### Integration with logger
 All services use the shared logger for consistency:
 
 ```typescript
@@ -138,11 +138,11 @@ constructor(
 }
 ```
 
-### Integration with @h1b/testing
+### Integration with testing
 Tests use shared mocks and utilities:
 
 ```typescript
-import { setupTest, MockLogger } from '@h1b/testing';
+import { setupTest, MockLogger } from 'testing';
 
 const { container, mocks } = setupTest({
   useMocks: ['logger', 'cache']
@@ -197,7 +197,7 @@ See: `/CLAUDE.md` (main project)
 ### 2. Missing Integration Details
 ```markdown
 ❌ "Uses standard logging"
-✅ "Uses @h1b/logger with structured logging. All operations logged at INFO level with performance metrics"
+✅ "Uses logger with structured logging. All operations logged at INFO level with performance metrics"
 ```
 
 ### 3. Outdated Examples

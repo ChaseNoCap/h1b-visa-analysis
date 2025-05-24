@@ -64,9 +64,9 @@ h1b-visa-analysis/
 
 1. Fix logger package module resolution issues
 2. Continue with remaining packages:
-   - @h1b/file-system
-   - @h1b/events
-   - @h1b/cache
+   - file-system
+   - events
+   - cache
 
 ## Maintenance
 

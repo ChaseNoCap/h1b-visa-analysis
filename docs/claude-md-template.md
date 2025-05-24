@@ -28,7 +28,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 
 ## Package Identity
 
-**Name**: @h1b/[PACKAGE_NAME]  
+**Name**: [PACKAGE_NAME]  
 **Purpose**: [One sentence description - be VERY specific about the single responsibility]  
 **Status**: [Development/Stable/Deprecated]  
 **Owner**: [Team/Person responsible]  
@@ -78,7 +78,7 @@ This package is NOT responsible for:
 
 ### Upstream Dependencies
 [List packages this depends on - keep minimal]
-- @h1b/core (for DI container)
+- core (for DI container)
 - [1-2 other dependencies max]
 
 ### Downstream Consumers
@@ -150,7 +150,7 @@ src/
 - Minimum 90% coverage (should be easy with focused packages)
 - Unit tests for the ONE main interface
 - Integration tests only if absolutely needed
-- Use @h1b/testing utilities
+- Use testing utilities
 - Small packages = simpler tests!
 
 ## GitHub Integration
@@ -169,13 +169,13 @@ src/
 
 ### Adding a New Feature
 1. Define interface first
-2. Write tests using @h1b/testing
+2. Write tests using testing
 3. Implement feature
 4. Update exports in index.ts
 5. Document in README
 
 ### Debugging Issues
-1. Check logs (uses @h1b/logger)
+1. Check logs (uses logger)
 2. Run tests in watch mode
 3. Use VSCode debugger
 4. [Package-specific debugging]
@@ -230,7 +230,7 @@ export type Result<T> =
 
 ### With Main Project
 ```typescript
-import { createService } from '@h1b/[package]';
+import { createService } from '[package]';
 
 const service = createService({
   logger: container.get(TYPES.ILogger)

@@ -6,21 +6,21 @@ As of May 2025, the H1B Visa Analysis monorepo decomposition has begun with the 
 
 ## ✅ Completed Packages (3/8)
 
-### @h1b/test-mocks
+### test-mocks
 - **Status**: Complete
 - **Size**: ~400 lines (40% of limit)
 - **Coverage**: 100%
 - **Key Achievement**: Clean mock implementations with assertion helpers
 - **Location**: `/packages/test-mocks/`
 
-### @h1b/test-helpers
+### test-helpers
 - **Status**: Complete (needs more test coverage)
 - **Size**: ~500 lines (50% of limit)
 - **Coverage**: ~65% (functional but needs improvement)
 - **Key Achievement**: Reusable test utilities and container setup
 - **Location**: `/packages/test-helpers/`
 
-### @h1b/di-framework
+### di-framework
 - **Status**: Complete ✅ Published to GitHub
 - **Size**: ~689 lines (69% of limit)
 - **Coverage**: 84%
@@ -32,31 +32,31 @@ As of May 2025, the H1B Visa Analysis monorepo decomposition has begun with the 
 
 Per [Migration Plan](./migration-plan.md), in priority order:
 
-### 1. @h1b/logger (Next Priority)
+### 1. logger (Next Priority)
 - **Rationale**: 98% code duplication with markdown-compiler
 - **Estimated Size**: ~300 lines
 - **Dependencies**: None
 - **Timeline**: Week 1
 
-### 2. @h1b/file-system
+### 2. file-system
 - **Rationale**: Common file operations
 - **Estimated Size**: ~300 lines
 - **Dependencies**: Node.js built-ins
 - **Timeline**: Week 3
 
-### 3. @h1b/events
+### 3. events
 - **Rationale**: Enable decoupling between contexts
 - **Estimated Size**: ~200 lines
 - **Dependencies**: None
 - **Timeline**: Week 4
 
-### 4. @h1b/cache
+### 4. cache
 - **Rationale**: Shared caching with decorators
 - **Estimated Size**: ~400 lines
-- **Dependencies**: @h1b/events
+- **Dependencies**: events
 - **Timeline**: Week 5
 
-### 5. @h1b/core (Consider splitting/eliminating)
+### 5. core (Consider splitting/eliminating)
 - **Rationale**: May be too generic
 - **Alternative**: Distribute to specific packages
 - **Decision Required**: Review after other packages
@@ -82,8 +82,8 @@ Per [Migration Plan](./migration-plan.md), in priority order:
 ```
 app → feature packages → utility packages → infrastructure
          ↓                    ↓                ↓
-    @h1b/report        @h1b/file-system   @h1b/logger
-                       @h1b/cache         @h1b/events
+    report        file-system   logger
+                       cache         events
 ```
 
 ### 5. Test Coverage Standards
@@ -95,18 +95,18 @@ app → feature packages → utility packages → infrastructure
 
 | Package | Status | Size | Coverage | Exports | Dependencies |
 |---------|--------|------|----------|---------|--------------|
-| @h1b/test-mocks | ✅ | 400 | 100% | 3 | 1 |
-| @h1b/test-helpers | ✅ | 500 | 65% | 4 | 3 |
-| @h1b/di-framework | ✅ | 689 | 84% | 15 | 2 |
-| @h1b/logger | ⏳ | ~300 | - | - | 0 |
-| @h1b/file-system | ⏳ | ~300 | - | - | 0 |
-| @h1b/events | ⏳ | ~200 | - | - | 0 |
-| @h1b/cache | ⏳ | ~400 | - | - | 1 |
+| test-mocks | ✅ | 400 | 100% | 3 | 1 |
+| test-helpers | ✅ | 500 | 65% | 4 | 3 |
+| di-framework | ✅ | 689 | 84% | 15 | 2 |
+| logger | ⏳ | ~300 | - | - | 0 |
+| file-system | ⏳ | ~300 | - | - | 0 |
+| events | ⏳ | ~200 | - | - | 0 |
+| cache | ⏳ | ~400 | - | - | 1 |
 
 ## 🎯 Next Immediate Steps
 
 ### 1. Integrate DI Framework Package (Current)
-- [ ] Update main project to use @h1b/di-framework
+- [ ] Update main project to use di-framework
 - [ ] Replace local token definitions
 - [ ] Use ContainerBuilder from package
 - [ ] Update all imports
@@ -141,7 +141,7 @@ app → feature packages → utility packages → infrastructure
 - Avoiding over-engineering
 
 ### 🚫 What to Avoid
-- Generic package names (@h1b/core, @h1b/utils)
+- Generic package names (core, utils)
 - Circular dependencies
 - Premature abstraction
 - Breaking existing functionality
@@ -192,7 +192,7 @@ Total: 6 weeks to complete decomposition
 - **Rationale**: Foundation for other packages, enables better testing
 - **Outcome**: Success - clean implementation at 689 lines
 
-### Pending: @h1b/core Package
+### Pending: core Package
 - **Question**: Is "core" too generic?
 - **Options**: Split into specific packages or eliminate
 - **Decision**: Defer until other packages complete

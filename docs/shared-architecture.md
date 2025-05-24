@@ -189,7 +189,7 @@ Services that could be extracted to shared libraries:
 
 Based on current usage, these packages could be extracted:
 
-### @h1b/logger
+### logger
 ```json
 {
   "dependencies": {
@@ -199,7 +199,7 @@ Based on current usage, these packages could be extracted:
 }
 ```
 
-### @h1b/testing
+### testing
 ```json
 {
   "dependencies": {
@@ -210,7 +210,7 @@ Based on current usage, these packages could be extracted:
 }
 ```
 
-### @h1b/cache
+### cache
 ```json
 {
   "dependencies": {
@@ -219,7 +219,7 @@ Based on current usage, these packages could be extracted:
 }
 ```
 
-### @h1b/di-core
+### di-core
 ```json
 {
   "dependencies": {

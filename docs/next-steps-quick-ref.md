@@ -9,7 +9,7 @@ npm install # Ensure packages are linked
 
 # Update imports in tests
 # FROM: import { mockLogger } from './mocks';
-# TO:   import { MockLogger } from '@h1b/test-mocks';
+# TO:   import { MockLogger } from 'test-mocks';
 ```
 
 Key files to update:
@@ -17,7 +17,7 @@ Key files to update:
 - `/tests/e2e/missing-dependencies.test.ts`
 - `/tests/setup.ts`
 
-### 2. Start @h1b/logger Package (NEXT)
+### 2. Start logger Package (NEXT)
 
 #### Quick Setup Commands
 ```bash
@@ -91,7 +91,7 @@ npm run coverage
 
 # Link packages locally
 npm link # in package directory
-npm link @h1b/[package-name] # in consuming project
+npm link [package-name] # in consuming project
 ```
 
 ## ⚡ Pro Tips
@@ -118,12 +118,12 @@ npm link @h1b/[package-name] # in consuming project
 
 ## 🎬 Next Package Preview
 
-### @h1b/logger (Week 1)
+### logger (Week 1)
 - **Size**: ~300 lines
 - **Exports**: ILogger, createLogger, LogMethod
 - **Dependencies**: winston, winston-daily-rotate-file
 
-### @h1b/di-framework (Week 2)
+### di-framework (Week 2)
 - **Size**: ~400 lines
 - **Exports**: Base interfaces, container helpers
 - **Dependencies**: inversify, reflect-metadata

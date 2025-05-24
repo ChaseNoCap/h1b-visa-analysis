@@ -5,8 +5,8 @@
 This document defined the implementation of the testing packages which have now been **successfully completed**.
 
 **FINAL STRUCTURE**: Following [decomposition principles](./decomposition-principles.md), the testing functionality was successfully organized into 2 focused packages:
-- **@h1b/test-mocks** - All mock implementations (logger, file system, cache) ✅
-- **@h1b/test-helpers** - Test utilities, fixtures, and container setup ✅
+- **test-mocks** - All mock implementations (logger, file system, cache) ✅
+- **test-helpers** - Test utilities, fixtures, and container setup ✅
 
 For the overall migration strategy, see [Migration Plan](./migration-plan.md). For timeline and checkpoints, see [Implementation Roadmap](./implementation-roadmap.md#phase-1-testing-package-decomposition-week-1-2).
 
@@ -23,7 +23,7 @@ The decision to implement testing packages first proved correct:
 
 ## Completed Package Details
 
-### @h1b/test-mocks (COMPLETED)
+### test-mocks (COMPLETED)
 - **Status**: Built, tested, deployed
 - **Size**: ~400 lines (well under 1000 line target)
 - **Coverage**: 100% statement coverage
@@ -38,7 +38,7 @@ The decision to implement testing packages first proved correct:
   - State management (clear, reset methods)
   - Full TypeScript support
 
-### @h1b/test-helpers (COMPLETED)
+### test-helpers (COMPLETED)
 - **Status**: Built, partially tested, functional
 - **Size**: ~500 lines (well under 1000 line target)
 - **Coverage**: Needs improvement (core utilities tested)
@@ -99,8 +99,8 @@ The decision to implement testing packages first proved correct:
 1. **Update Main Project** (Priority: High)
    ```typescript
    // Update imports from local mocks to packages
-   import { MockLogger } from '@h1b/test-mocks';
-   import { setupTest } from '@h1b/test-helpers';
+   import { MockLogger } from 'test-mocks';
+   import { setupTest } from 'test-helpers';
    ```
 
 2. **Remove Duplicated Code**
@@ -117,7 +117,7 @@ The decision to implement testing packages first proved correct:
 
 ### Using Mocks
 ```typescript
-import { MockLogger, MockFileSystem } from '@h1b/test-mocks';
+import { MockLogger, MockFileSystem } from 'test-mocks';
 
 const logger = new MockLogger();
 logger.info('Test message');
@@ -130,7 +130,7 @@ expect(await fs.exists('/test.txt')).toBe(true);
 
 ### Using Helpers
 ```typescript
-import { setupTest, waitFor } from '@h1b/test-helpers';
+import { setupTest, waitFor } from 'test-helpers';
 
 const { container, mocks, cleanup } = setupTest({
   useMocks: ['logger', 'fileSystem']
@@ -179,7 +179,7 @@ Based on this successful implementation:
 ## Migration to Next Package
 
 With testing packages complete, proceed to:
-1. **@h1b/logger** - Highest duplication (98%)
+1. **logger** - Highest duplication (98%)
 2. Follow patterns established here
 3. Use test packages for testing
 

@@ -5,30 +5,30 @@
 This document outlines a concrete plan to decompose common concerns from the h1b-visa-analysis and markdown-compiler projects into shared packages. The migration will improve code reuse, consistency, and maintainability across the monorepo while maintaining small, focused contexts per project.
 
 **Note on Decorators**: Decorators are intentionally kept with their related functionality rather than in a separate package. This keeps related code together and reduces cross-package dependencies:
-- Logging decorators (e.g., LogMethod) are part of @h1b/logger
-- Caching decorators (e.g., Cacheable, InvalidateCache) are part of @h1b/cache
-- Future validation decorators would be part of a potential @h1b/validation package
+- Logging decorators (e.g., LogMethod) are part of logger
+- Caching decorators (e.g., Cacheable, InvalidateCache) are part of cache
+- Future validation decorators would be part of a potential validation package
 
 ## Related Documents
 
 - **[Decomposition Analysis](./decomposition-analysis.md)**: Comprehensive analysis of decomposition patterns and strategies for maintaining smaller contexts
-- **[Testing Package Implementation](./testing-package-implementation.md)**: Detailed plan for the @h1b/testing package (current priority)
+- **[Testing Package Implementation](./testing-package-implementation.md)**: Detailed plan for the testing package (current priority)
 - **[Decomposition Principles](./decomposition-principles.md)**: Core principles guiding package design decisions
 - **[Implementation Roadmap](./implementation-roadmap.md)**: Concrete timeline and checkpoints for migration
 
 ## UPDATE: Priority Change (May 2025)
 
-**The @h1b/testing package is now the first priority.** After analysis, we've determined that having robust testing utilities in place will:
+**The testing package is now the first priority.** After analysis, we've determined that having robust testing utilities in place will:
 - Ensure quality of all subsequent shared packages
 - Provide immediate value to developers
 - Establish testing patterns from the start
 
-**CRITICAL UPDATE**: Based on decomposition analysis, @h1b/testing is TOO BIG and should be split into:
-- @h1b/test-container (DI setup)
-- @h1b/mock-logger (logger mocks)
-- @h1b/mock-fs (file system mocks)
-- @h1b/test-fixtures (fixture loading)
-- @h1b/test-utils (async helpers)
+**CRITICAL UPDATE**: Based on decomposition analysis, testing is TOO BIG and should be split into:
+- test-container (DI setup)
+- mock-logger (logger mocks)
+- mock-fs (file system mocks)
+- test-fixtures (fixture loading)
+- test-utils (async helpers)
 
 Each package should be under 500 lines with a single responsibility.
 
@@ -49,12 +49,12 @@ See [`testing-package-implementation.md`](./testing-package-implementation.md) f
 ```
 packages/
 ├── shared/
-│   ├── logger/           # @h1b/logger - Logging context (includes logging decorators)
-│   ├── di-framework/    # @h1b/di-framework - Dependency injection utilities
-│   ├── testing/         # @h1b/testing - Testing context
-│   ├── file-system/     # @h1b/file-system - File operations context
-│   ├── cache/           # @h1b/cache - Caching context (includes cache decorators)
-│   └── events/          # @h1b/events - Event bus for decoupling
+│   ├── logger/           # logger - Logging context (includes logging decorators)
+│   ├── di-framework/    # di-framework - Dependency injection utilities
+│   ├── testing/         # testing - Testing context
+│   ├── file-system/     # file-system - File operations context
+│   ├── cache/           # cache - Caching context (includes cache decorators)
+│   └── events/          # events - Event bus for decoupling
 ├── markdown-compiler/    # Markdown processing context
 ├── prompts-shared/      # AI workflows context
 └── report-components/   # Report content context
@@ -102,7 +102,7 @@ Protect contexts from external changes:
 
 ## Phase 1: Logger Package (Week 1)
 
-### Package: @h1b/logger
+### Package: logger
 
 **Why First**: Highest duplication (98%), clearest boundaries, immediate value
 
@@ -140,17 +140,17 @@ packages/shared/logger/
 - [ ] Extract LogMethod decorator from markdown-compiler
 - [ ] Create factory function
 - [ ] Write comprehensive tests
-- [ ] Update both projects to use @h1b/logger
+- [ ] Update both projects to use logger
 - [ ] Remove duplicated code
 
 #### API Design
 ```typescript
 // Simple usage
-import { createLogger } from '@h1b/logger';
+import { createLogger } from 'logger';
 const logger = createLogger('my-service');
 
 // Advanced usage
-import { WinstonLogger, ILoggerConfig } from '@h1b/logger';
+import { WinstonLogger, ILoggerConfig } from 'logger';
 const config: ILoggerConfig = {
   service: 'my-service',
   level: 'debug',
@@ -162,7 +162,7 @@ const logger = new WinstonLogger(config);
 
 ## Phase 2: DI Framework Package (Week 2)
 
-### Package: @h1b/di-framework
+### Package: di-framework
 
 **Why Second**: Foundation for other packages, establishes patterns
 
@@ -214,7 +214,7 @@ export interface IDisposable {
 
 ## Phase 3: File System Package (Week 3)
 
-### Package: @h1b/file-system
+### Package: file-system
 
 **Why Third**: Used by multiple services, good abstraction
 
@@ -242,7 +242,7 @@ packages/shared/file-system/
 
 ## Phase 4: Testing Package (Week 4)
 
-### Package: @h1b/testing
+### Package: testing
 
 **Why Fourth**: Improves test consistency and quality
 
@@ -272,7 +272,7 @@ packages/shared/testing/
 
 ## Phase 5: Events Package (Week 5)
 
-### Package: @h1b/events
+### Package: events
 
 **Why Fifth**: Enables decoupling between contexts, simpler than cache
 
@@ -309,7 +309,7 @@ packages/shared/events/
 
 ## Phase 6: Cache Package (Week 6)
 
-### Package: @h1b/cache
+### Package: cache
 
 **Why Sixth**: Builds on events for invalidation, includes cache decorators
 
@@ -481,7 +481,7 @@ All shared packages use the same base tsconfig:
 ### Package.json Template
 ```json
 {
-  "name": "@h1b/{package}",
+  "name": "{package}",
   "version": "0.1.0",
   "type": "module",
   "exports": {
@@ -544,12 +544,12 @@ If issues arise:
 
 | Week | Package | Priority | Risk | Context Focus |
 |------|---------|----------|------|---------------|
-| 1 | @h1b/testing | Highest | Low | Testing utilities context |
-| 2 | @h1b/logger | High | Low | Logging context (includes logging decorators) |
-| 3 | @h1b/di-framework | High | Medium | Dependency injection utilities |
-| 4 | @h1b/file-system | Medium | Low | File operations context |
-| 5 | @h1b/events | Medium | Low | Event-driven communication |
-| 6 | @h1b/cache | Low | High | Caching context (includes cache decorators) |
+| 1 | testing | Highest | Low | Testing utilities context |
+| 2 | logger | High | Low | Logging context (includes logging decorators) |
+| 3 | di-framework | High | Medium | Dependency injection utilities |
+| 4 | file-system | Medium | Low | File operations context |
+| 5 | events | Medium | Low | Event-driven communication |
+| 6 | cache | Low | High | Caching context (includes cache decorators) |
 
 **Note**: Testing package moved to Week 1 as per priority change.
 
@@ -583,7 +583,7 @@ During migration, consider:
 
 1. Review and approve this plan
 2. ~~Create shared/ directory structure~~ ✅ Using flat structure
-3. ~~Start with @h1b/testing package~~ ✅ Completed as test-mocks and test-helpers
+3. ~~Start with testing package~~ ✅ Completed as test-mocks and test-helpers
 4. Create GitHub repositories for each package
 5. Set up CI/CD for shared packages
 6. Create package documentation templates ✅ CLAUDE.md template created
@@ -603,20 +603,20 @@ This maintains clean separation while allowing local development.
 ## Appendix: File Mappings
 
 ### Logger Package Sources
-- `/src/services/WinstonLogger.ts` → `@h1b/logger/src/implementations/WinstonLogger.ts`
-- `/src/core/interfaces/ILogger.ts` → `@h1b/logger/src/interfaces/ILogger.ts`
+- `/src/services/WinstonLogger.ts` → `logger/src/implementations/WinstonLogger.ts`
+- `/src/core/interfaces/ILogger.ts` → `logger/src/interfaces/ILogger.ts`
 - `/packages/markdown-compiler/src/services/WinstonLogger.ts` → (remove, use shared)
 - `/packages/markdown-compiler/src/core/interfaces/ILogger.ts` → (remove, use shared)
 
 ### DI Framework Package Sources
-- `/src/core/constants/injection-tokens.ts` → `@h1b/di-framework/src/di/types.ts`
-- `/src/core/container/container.ts` → `@h1b/di-framework/src/di/container.ts`
+- `/src/core/constants/injection-tokens.ts` → `di-framework/src/di/types.ts`
+- `/src/core/container/container.ts` → `di-framework/src/di/container.ts`
 - Similar files from markdown-compiler
 
 ### Decorator Sources
-- `/packages/markdown-compiler/src/core/decorators/LogMethod.ts` → `@h1b/logger/src/decorators/LogMethod.ts`
-- `/packages/markdown-compiler/src/core/decorators/Cacheable.ts` → `@h1b/cache/src/decorators/Cacheable.ts`
-- `/packages/markdown-compiler/src/core/decorators/InvalidateCache.ts` → `@h1b/cache/src/decorators/InvalidateCache.ts`
-- Future validation decorators would go in a potential `@h1b/validation` package
+- `/packages/markdown-compiler/src/core/decorators/LogMethod.ts` → `logger/src/decorators/LogMethod.ts`
+- `/packages/markdown-compiler/src/core/decorators/Cacheable.ts` → `cache/src/decorators/Cacheable.ts`
+- `/packages/markdown-compiler/src/core/decorators/InvalidateCache.ts` → `cache/src/decorators/InvalidateCache.ts`
+- Future validation decorators would go in a potential `validation` package
 
 This migration plan provides a clear path forward with minimal risk and maximum benefit.

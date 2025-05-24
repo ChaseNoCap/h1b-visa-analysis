@@ -9,7 +9,7 @@ Use this checklist when creating any new package in the monorepo.
 - [ ] Identify upstream dependencies (2-3 MAX)
 - [ ] Identify downstream consumers
 - [ ] Determine position in architecture
-- [ ] Choose appropriate package name (@h1b/xxx)
+- [ ] Choose appropriate package name (xxx)
 - [ ] **STOP**: Could this be 2-3 smaller packages instead?
 
 ## Package Setup
@@ -56,12 +56,12 @@ src/
 - [ ] Define all interfaces first
 - [ ] Implement with dependency injection
 - [ ] Add comprehensive error handling
-- [ ] Include logging via @h1b/logger
+- [ ] Include logging via logger
 - [ ] Export everything from index.ts
 
 ### 6. Testing
 - [ ] Set up test structure
-- [ ] Use @h1b/testing utilities
+- [ ] Use testing utilities
 - [ ] Write unit tests (90%+ coverage)
 - [ ] Add integration tests
 - [ ] Ensure all exports are tested

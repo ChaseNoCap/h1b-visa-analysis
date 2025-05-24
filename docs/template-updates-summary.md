@@ -17,13 +17,13 @@ All package templates and documentation have been updated to incorporate the dec
 
 ### 2. `/docs/testing-package-implementation.md`
 **Key Changes:**
-- Added critical update that @h1b/testing is too big
+- Added critical update that testing is too big
 - Split into 5 focused packages:
-  - @h1b/test-container (~200 lines)
-  - @h1b/mock-logger (~150 lines)
-  - @h1b/mock-fs (~300 lines)
-  - @h1b/test-fixtures (~200 lines)
-  - @h1b/test-utils (~150 lines)
+  - test-container (~200 lines)
+  - mock-logger (~150 lines)
+  - mock-fs (~300 lines)
+  - test-fixtures (~200 lines)
+  - test-utils (~150 lines)
 - Each package has one clear responsibility
 
 ### 3. `/docs/package-creation-checklist.md`
@@ -36,7 +36,7 @@ All package templates and documentation have been updated to incorporate the dec
 
 ### 4. `/docs/migration-plan.md`
 **Key Changes:**
-- Added critical update about splitting @h1b/testing
+- Added critical update about splitting testing
 - Listed the 5 smaller packages with size estimates
 - Emphasized single responsibility principle
 

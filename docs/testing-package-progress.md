@@ -1,7 +1,7 @@
-# @h1b/testing Implementation Progress
+# testing Implementation Progress
 
 ## Overview
-This document tracks the implementation progress of the @h1b/testing package.
+This document tracks the implementation progress of the testing package.
 
 **Start Date**: TBD  
 **Target Completion**: 10 days from start  

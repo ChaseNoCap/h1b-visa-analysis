@@ -46,13 +46,13 @@ Welcome to the H1B Visa Analysis project documentation. This guide helps you fin
 - [Testing Package Implementation](./testing-package-implementation.md) - ✅ First success story
 
 #### Package Status
-- [@h1b/test-mocks](../packages/test-mocks/CLAUDE.md) - ✅ Complete
-- [@h1b/test-helpers](../packages/test-helpers/CLAUDE.md) - ✅ Complete
-- @h1b/logger - **Next Priority**
-- @h1b/di-framework - Week 2
-- @h1b/file-system - Week 3
-- @h1b/events - Week 4
-- @h1b/cache - Week 5
+- [test-mocks](../packages/test-mocks/CLAUDE.md) - ✅ Complete
+- [test-helpers](../packages/test-helpers/CLAUDE.md) - ✅ Complete
+- logger - **Next Priority**
+- di-framework - Week 2
+- file-system - Week 3
+- events - Week 4
+- cache - Week 5
 
 ### For AI Assistants (Claude)
 
@@ -86,7 +86,7 @@ Welcome to the H1B Visa Analysis project documentation. This guide helps you fin
    - Set up PAT_TOKEN secret
    - Test with manual workflow dispatch
 
-### Implementing the Next Package (@h1b/logger)
+### Implementing the Next Package (logger)
 
 **This is the current primary development goal.**
 
@@ -94,16 +94,16 @@ Welcome to the H1B Visa Analysis project documentation. This guide helps you fin
 2. Follow [Migration Plan](./migration-plan.md#phase-1-logger-package)
 3. Use established patterns from test packages
 4. Create package structure in `/packages/logger/`
-5. Use @h1b/test-mocks and @h1b/test-helpers for testing
+5. Use test-mocks and test-helpers for testing
 
 ### Adding a New Shared Package
 
-**Note: On hold until @h1b/testing is complete.**
+**Note: On hold until testing is complete.**
 
 1. Review [Migration Plan](./migration-plan.md) for overall strategy
 2. Use [CLAUDE.md Template](./claude-md-template.md) for package documentation
 3. Follow dependency injection patterns from [CLAUDE.md](/CLAUDE.md)
-4. Ensure integration with @h1b/testing for quality
+4. Ensure integration with testing for quality
 
 ### Debugging Report Generation
 
@@ -149,7 +149,7 @@ CLAUDE.md Template
     ↓
 Package Implementation
     ↓
-Integration with @h1b/testing
+Integration with testing
 ```
 
 ## 🔍 Quick Reference
@@ -184,7 +184,7 @@ All documentation follows these principles:
 ## 🚧 Work in Progress
 
 ### Current Focus
-- **@h1b/testing package** - See [implementation doc](./testing-package-implementation.md)
+- **testing package** - See [implementation doc](./testing-package-implementation.md)
 
 ### Coming Soon
 - Integration with actual markdown-compiler

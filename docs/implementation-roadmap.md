@@ -15,7 +15,7 @@ This roadmap follows the decomposition principles defined in [`decomposition-pri
 - [ ] Set up shared ESLint/Prettier configs at workspace root
 
 ### 2. Testing Package Initialization
-- [ ] Create `@h1b/testing` package structure (see [detailed breakdown](./testing-package-implementation.md#package-structure))
+- [ ] Create `testing` package structure (see [detailed breakdown](./testing-package-implementation.md#package-structure))
 - [ ] Copy existing test utilities from main project
 - [ ] Set up package.json with proper exports
 - [ ] Create initial CLAUDE.md for the package (use [template](./claude-md-template.md))
@@ -91,12 +91,12 @@ Extract all testing utilities into a shared package that can be used across all 
 
 #### 1.5 Integration & Migration
 **Acceptance Criteria:**
-- Main project uses @h1b/testing
+- Main project uses testing
 - All existing tests pass
 - No code duplication remains
 
 **Tasks:**
-- [ ] Update main project to use @h1b/testing
+- [ ] Update main project to use testing
 - [ ] Remove duplicated test utilities
 - [ ] Update all test imports
 - [ ] Run full test suite
@@ -124,7 +124,7 @@ Extract core DI, logging, and utility functions into reusable packages.
 
 ### Tasks
 
-#### 2.1 Logger Package (@h1b/logger)
+#### 2.1 Logger Package (logger)
 **Acceptance Criteria:**
 - Winston configuration is reusable
 - Log formats are consistent
@@ -138,7 +138,7 @@ Extract core DI, logging, and utility functions into reusable packages.
 - [ ] Implement structured logging helpers
 - [ ] Migrate main project to use package
 
-#### 2.2 Core Package (@h1b/core)
+#### 2.2 Core Package (core)
 **Acceptance Criteria:**
 - DI utilities are framework-agnostic
 - Base interfaces are well-defined
@@ -158,7 +158,7 @@ Extract core DI, logging, and utility functions into reusable packages.
 - [ ] Check for unnecessary abstraction layers
 - [ ] Validate package sizes and complexity
 
-#### 2.3 File System Package (@h1b/file-system)
+#### 2.3 File System Package (file-system)
 **Acceptance Criteria:**
 - File operations are abstracted
 - Both sync and async APIs available
@@ -194,7 +194,7 @@ Extract business logic into focused, feature-specific packages.
 
 ### Tasks
 
-#### 3.1 Dependency Checker Package (@h1b/dependency-checker)
+#### 3.1 Dependency Checker Package (dependency-checker)
 **Acceptance Criteria:**
 - Can check npm dependencies independently
 - Supports multiple package managers
@@ -208,7 +208,7 @@ Extract business logic into focused, feature-specific packages.
 - [ ] Create CLI interface
 - [ ] Add integration tests
 
-#### 3.2 Report Generator Package (@h1b/report-generator)
+#### 3.2 Report Generator Package (report-generator)
 **Acceptance Criteria:**
 - Report generation is configurable
 - Multiple output formats supported
@@ -222,7 +222,7 @@ Extract business logic into focused, feature-specific packages.
 - [ ] Create report configuration schema
 - [ ] Migrate existing reports
 
-#### 3.3 GitHub Integration Package (@h1b/github)
+#### 3.3 GitHub Integration Package (github)
 **Acceptance Criteria:**
 - GitHub API operations are abstracted
 - Authentication is configurable
@@ -339,7 +339,7 @@ Extract business logic into focused, feature-specific packages.
 
 ## Next Steps
 
-1. **Today:** Create workspace structure and @h1b/testing package
+1. **Today:** Create workspace structure and testing package
 2. **Tomorrow:** Begin extracting test utilities
 3. **This Week:** Complete Phase 1.1 and 1.2
 4. **Next Week:** Finish testing package and begin core extraction

@@ -11,9 +11,9 @@ This document establishes the naming conventions for all packages in the H1B Vis
 All packages in this monorepo use simple, descriptive names **without** namespace prefixes.
 
 ### Examples:
-- ✅ `test-mocks` (not `@h1b/test-mocks`)
-- ✅ `test-helpers` (not `@h1b/test-helpers`)
-- ✅ `logger` (not `@h1b/logger`)
+- ✅ `test-mocks` (not `test-mocks`)
+- ✅ `test-helpers` (not `test-helpers`)
+- ✅ `logger` (not `logger`)
 - ✅ `markdown-compiler` (existing)
 - ✅ `prompts-shared` (existing)
 - ✅ `report-components` (existing)

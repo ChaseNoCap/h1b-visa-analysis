@@ -13,8 +13,8 @@ This guide helps developers understand and use the shared packages in the H1B mo
 ## Package Naming Convention
 
 Packages use clear prefixes to indicate their purpose:
-- `@h1b/test-*` - Testing utilities (mocks, helpers, fixtures)
-- `@h1b/*` - Core functionality (no prefix needed)
+- `test-*` - Testing utilities (mocks, helpers, fixtures)
+- `*` - Core functionality (no prefix needed)
 
 ## Package Structure
 
@@ -64,20 +64,20 @@ packages/shared/{package-name}/
 ### Examples of Good vs Bad Packages
 
 **Good** ✅
-- @h1b/mock-logger - Mock implementation of ILogger
-- @h1b/test-fixtures - Load test fixtures from disk
-- @h1b/async-retry - Retry async operations
+- mock-logger - Mock implementation of ILogger
+- test-fixtures - Load test fixtures from disk
+- async-retry - Retry async operations
 
 **Bad** ❌
-- @h1b/testing - Too broad, does too many things
-- @h1b/utils - Vague, becomes a dumping ground
-- @h1b/core - What is "core"? Be specific!
+- testing - Too broad, does too many things
+- utils - Vague, becomes a dumping ground
+- core - What is "core"? Be specific!
 
 ## Available Packages
 
 ### Testing Packages (Priority 1 - Consolidated by Purpose)
 
-#### @h1b/test-mocks (Planned)
+#### test-mocks (Planned)
 - **Purpose**: All mock implementations for testing
 - **Size**: ~600 lines
 - **Includes**:
@@ -86,10 +86,10 @@ packages/shared/{package-name}/
   - MockCache - In-memory cache
 - **Usage**: 
   ```typescript
-  import { MockLogger, MockFileSystem, MockCache } from '@h1b/test-mocks';
+  import { MockLogger, MockFileSystem, MockCache } from 'test-mocks';
   ```
 
-#### @h1b/test-helpers (Planned)
+#### test-helpers (Planned)
 - **Purpose**: Test setup and utilities
 - **Size**: ~550 lines
 - **Includes**:
@@ -99,12 +99,12 @@ packages/shared/{package-name}/
   - Common test patterns
 - **Usage**: 
   ```typescript
-  import { createTestContainer, loadFixture, waitFor } from '@h1b/test-helpers';
+  import { createTestContainer, loadFixture, waitFor } from 'test-helpers';
   ```
 
 ### Other Packages
 
-#### @h1b/logger (Ready)
+#### logger (Ready)
 - **Purpose**: Centralized logging with Winston and logging decorators
 - **Size**: ~500 lines
 - **Includes**:
@@ -115,10 +115,10 @@ packages/shared/{package-name}/
   - Log level configuration
 - **Usage**: 
   ```typescript
-  import { createLogger, LogMethod } from '@h1b/logger';
+  import { createLogger, LogMethod } from 'logger';
   ```
 
-#### @h1b/di-framework (Planned)
+#### di-framework (Planned)
 - **Purpose**: Dependency injection utilities and container setup
 - **Size**: ~400 lines
 - **Includes**:
@@ -126,14 +126,14 @@ packages/shared/{package-name}/
   - Common injection tokens
   - DI helper decorators
   - Type definitions for DI
-- **Usage**: `import { createContainer, TYPES } from '@h1b/di-framework'`
+- **Usage**: `import { createContainer, TYPES } from 'di-framework'`
 
-### @h1b/file-system (Planned)
+### file-system (Planned)
 - **Purpose**: File system abstractions
 - **Status**: Week 5 of migration plan
-- **Usage**: `import { IFileSystem } from '@h1b/file-system'`
+- **Usage**: `import { IFileSystem } from 'file-system'`
 
-### @h1b/cache (Planned)
+### cache (Planned)
 - **Purpose**: Caching implementations and cache decorators
 - **Size**: ~450 lines
 - **Includes**:
@@ -145,7 +145,7 @@ packages/shared/{package-name}/
 - **Status**: Week 6 of migration plan
 - **Usage**: 
   ```typescript
-  import { MemoryCache, Cacheable } from '@h1b/cache';
+  import { MemoryCache, Cacheable } from 'cache';
   ```
 
 ## Using Shared Packages
@@ -157,14 +157,14 @@ Since packages are in the same monorepo, npm workspaces handles linking:
 ```json
 {
   "dependencies": {
-    "@h1b/logger": "0.1.0"
+    "logger": "0.1.0"
   }
 }
 ```
 
 Then in your code:
 ```typescript
-import { createLogger } from '@h1b/logger';
+import { createLogger } from 'logger';
 const logger = createLogger('my-service');
 ```
 
@@ -176,7 +176,7 @@ Shared packages are included in the TypeScript project references:
 {
   "compilerOptions": {
     "paths": {
-      "@h1b/*": ["packages/shared/*/src"]
+      "*": ["packages/shared/*/src"]
     }
   }
 }

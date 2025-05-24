@@ -6,21 +6,21 @@ This document provides validation checklists to ensure you have the necessary co
 
 Before creating a new package, validate you've read:
 
-- [ ] **CLAUDE.md** - Understand current architecture and @h1b/testing priority
+- [ ] **CLAUDE.md** - Understand current architecture and testing priority
 - [ ] **docs/migration-plan.md** - Know the overall package strategy
 - [ ] **docs/testing-package-implementation.md** - Understand why testing comes first
 - [ ] **docs/claude-md-template.md** - Template for package CLAUDE.md files
 - [ ] **docs/claude-md-guide.md** - Best practices for documentation
 
 **Why these matter:**
-- CLAUDE.md explains that @h1b/testing must be completed first
+- CLAUDE.md explains that testing must be completed first
 - Migration plan shows the dependency graph between packages
 - Testing implementation explains the foundational role of testing
 - Templates ensure consistent documentation across packages
 
 **Key validation questions:**
-1. Is @h1b/testing complete? If not, should you be working on that instead?
-2. Does your package depend on @h1b/testing?
+1. Is testing complete? If not, should you be working on that instead?
+2. Does your package depend on testing?
 3. Have you identified which existing code will migrate to this package?
 4. Will this package be used by multiple consumers?
 
@@ -99,7 +99,7 @@ Before deciding what code to share:
 
 ## Red Flags: You Need More Context If...
 
-1. You're creating a package without understanding why @h1b/testing comes first
+1. You're creating a package without understanding why testing comes first
 2. You're unsure which existing code belongs in your package
 3. You don't know how to structure the DI container for your package
 4. You're making architectural changes without checking the decision log

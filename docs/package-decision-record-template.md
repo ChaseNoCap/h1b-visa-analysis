@@ -137,14 +137,14 @@
 
 ## Example Usage
 
-### Example 1: Creating @h1b/testing Package
+### Example 1: Creating testing Package
 
 **Date:** 2025-05-23  
 **Author:** Team Lead  
 **Status:** Accepted  
-**Package(s):** @h1b/testing (new)
+**Package(s):** testing (new)
 
-**Decision:** Create a new @h1b/testing package to consolidate all testing utilities and infrastructure.
+**Decision:** Create a new testing package to consolidate all testing utilities and infrastructure.
 
 **Context:** Testing utilities are currently duplicated across packages, leading to inconsistency and maintenance overhead.
 
@@ -163,9 +163,9 @@
 **Date:** 2025-05-23  
 **Author:** Architecture Team  
 **Status:** Proposed  
-**Package(s):** @h1b/core (existing), @h1b/auth (new)
+**Package(s):** core (existing), auth (new)
 
-**Decision:** Split authentication logic from @h1b/core into a dedicated @h1b/auth package.
+**Decision:** Split authentication logic from core into a dedicated auth package.
 
 **Context:** The core package has grown to include authentication logic that changes frequently and independently from other core utilities.
 

@@ -1,4 +1,4 @@
-# @h1b/testing Quick Reference
+# testing Quick Reference
 
 ## Current Status: IN DEVELOPMENT
 
@@ -29,7 +29,7 @@ packages/shared/testing/
 
 ### 1. Test Setup (Most Common Use)
 ```typescript
-import { setupTest } from '@h1b/testing';
+import { setupTest } from 'testing';
 
 const { container, mocks, cleanup } = setupTest({
   useMocks: ['logger', 'fileSystem']
@@ -38,7 +38,7 @@ const { container, mocks, cleanup } = setupTest({
 
 ### 2. Mock Logger
 ```typescript
-import { MockLogger } from '@h1b/testing';
+import { MockLogger } from 'testing';
 
 const logger = new MockLogger();
 logger.info('test');
@@ -50,7 +50,7 @@ expect(logger.calls).toHaveLength(1);
 
 ### 3. Mock FileSystem
 ```typescript
-import { MockFileSystem } from '@h1b/testing';
+import { MockFileSystem } from 'testing';
 
 const fs = new MockFileSystem();
 fs.seed({
@@ -61,7 +61,7 @@ fs.seed({
 
 ### 4. Fixtures
 ```typescript
-import { FixtureManager } from '@h1b/testing';
+import { FixtureManager } from 'testing';
 
 const fixtures = new FixtureManager(__dirname);
 const data = await fixtures.load('test-case.json');
@@ -70,7 +70,7 @@ const tempDir = await fixtures.createTempDir();
 
 ### 5. Async Helpers
 ```typescript
-import { waitFor, assertThrowsError } from '@h1b/testing';
+import { waitFor, assertThrowsError } from 'testing';
 
 // Wait for condition
 await waitFor(() => service.isReady());
@@ -164,9 +164,9 @@ beforeEach(() => {
 });
 ```
 
-### After (With @h1b/testing)
+### After (With testing)
 ```typescript
-import { setupTest } from '@h1b/testing';
+import { setupTest } from 'testing';
 
 const { mocks } = setupTest({ useMocks: ['logger'] });
 // Full mock with tracking, assertions, etc.

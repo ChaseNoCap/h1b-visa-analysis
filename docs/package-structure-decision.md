@@ -27,9 +27,9 @@ packages/
 ### ✅ Flat Structure (Chosen)
 ```
 packages/
-├── test-mocks/         # @h1b/test-mocks
-├── test-helpers/       # @h1b/test-helpers
-├── logger/             # @h1b/logger (future)
+├── test-mocks/         # test-mocks
+├── test-helpers/       # test-helpers
+├── logger/             # logger (future)
 ├── prompts-shared/     # External dependency
 ├── markdown-compiler/  # External dependency
 └── report-components/  # External dependency
@@ -54,8 +54,8 @@ packages/
 
 ### 4. Clear Naming
 - Package prefixes already provide grouping:
-  - `@h1b/test-*` = testing related
-  - `@h1b/log*` = logging related
+  - `test-*` = testing related
+  - `log*` = logging related
   - No need for directory-based grouping
 
 ### 5. Workspace Configuration

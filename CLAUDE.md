@@ -18,7 +18,7 @@ The project's decomposition strategy flows from:
 1. **Principles** (`/docs/decomposition-principles.md`) → defines the "why"
 2. **Analysis** (`/docs/decomposition-analysis.md`) → applies principles to this codebase
 3. **Implementation** (`/docs/migration-plan.md`) → executes the strategy
-4. **Current Focus** (`/docs/testing-package-implementation.md`) → @h1b/testing package
+4. **Current Focus** (`/docs/testing-package-implementation.md`) → testing package
 
 ## Decomposition Principles
 
@@ -96,8 +96,8 @@ h1b-visa-analysis/
 │   │   └── output/           # Test output (gitignored)
 │   └── unit/                  # Unit tests
 ├── packages/                  # Workspace packages
-│   ├── test-mocks/            # @h1b/test-mocks package (NEW)
-│   ├── test-helpers/          # @h1b/test-helpers package (NEW)
+│   ├── test-mocks/            # test-mocks package (NEW)
+│   ├── test-helpers/          # test-helpers package (NEW)
 │   ├── prompts-shared/       # Cloned dependency
 │   ├── markdown-compiler/    # Cloned dependency
 │   └── report-components/    # Cloned dependency
@@ -243,14 +243,14 @@ For shared patterns and strategies, see `/docs/decomposition-analysis.md`.
 
 Successfully decomposed testing functionality into two focused packages:
 
-#### @h1b/test-mocks (Completed)
+#### test-mocks (Completed)
 - **Status**: Built, tested, 100% statement coverage
 - **Size**: ~400 lines (well within 1000 line limit)
 - **Location**: `/packages/test-mocks/`
 - **Features**: MockLogger, MockFileSystem, MockCache with assertion helpers
 - **CLAUDE.md**: Complete with context boundaries defined
 
-#### @h1b/test-helpers (Completed)
+#### test-helpers (Completed)
 - **Status**: Built, partially tested, needs more coverage
 - **Size**: ~500 lines (well within 1000 line limit)
 - **Location**: `/packages/test-helpers/`
@@ -262,17 +262,17 @@ Successfully decomposed testing functionality into two focused packages:
 **IMPORTANT**: Follow this sequence for continuing the decomposition:
 
 1. **Integrate Test Packages** (Current Task)
-   - Update main project to use @h1b/test-mocks and @h1b/test-helpers
+   - Update main project to use test-mocks and test-helpers
    - Remove duplicated test utilities from main codebase
    - Update all test imports
    - See: `/docs/migration-plan.md#integration-phase`
 
-2. **Extract Logger Package** (@h1b/logger - Week 1)
+2. **Extract Logger Package** (logger - Week 1)
    - Highest duplication (98% identical with markdown-compiler)
    - Clear boundaries (ILogger interface)
    - See: `/docs/migration-plan.md#phase-1-logger-package`
 
-3. **Extract DI Framework Package** (@h1b/di-framework - Week 2)
+3. **Extract DI Framework Package** (di-framework - Week 2)
    - Foundation for other packages
    - Common interfaces and patterns
    - See: `/docs/migration-plan.md#phase-2-di-framework-package`
