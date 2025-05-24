@@ -373,3 +373,6 @@ The project now uses a clean, modular architecture with:
 - All packages under 1000 lines with clear single responsibilities
 - Comprehensive test coverage using shared test utilities
 - TypeScript compilation clean with no errors
+
+## Development Guidelines
+- No AI ads in commit messages
