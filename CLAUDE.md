@@ -283,7 +283,7 @@ For shared patterns and strategies, see `/docs/decomposition-analysis.md`.
 
 ## Current Status: Package Decomposition Progress
 
-### ✅ Completed Packages (January 2025)
+### ✅ Completed Packages (May 2025)
 
 Successfully extracted and integrated the following packages:
 
@@ -318,16 +318,46 @@ Successfully extracted and integrated the following packages:
 - **Features**: TestContainer, FixtureManager, async utilities, createSpiedInstance, shared config
 - **Usage**: Dev dependency - used in test suites
 
-### 🔄 Current Tasks (January 2025)
+#### file-system ✅
+- **Status**: Built, tested, fully integrated
+- **Size**: ~700 lines (well within 1000 line limit)
+- **Coverage**: 95%+ statement coverage
+- **Location**: `/packages/file-system/`
+- **Features**: File operations abstraction with async/sync methods
+- **Usage**: Production dependency - abstracts all file I/O
+
+#### event-system ✅
+- **Status**: Built, tested, fully integrated
+- **Size**: ~800 lines (well within 1000 line limit)
+- **Coverage**: High coverage with comprehensive tests
+- **Location**: `/packages/event-system/`
+- **Features**: Event-driven debugging, decorators, TestEventBus
+- **Usage**: Optional peer dependency for enhanced debugging
+
+#### cache ✅
+- **Status**: Built, tested, ready for integration
+- **Size**: ~400 lines (well within 1000 line limit)
+- **Coverage**: 94.79% statement coverage (exceeded 90% target) ✅
+- **Location**: `/packages/cache/`
+- **Features**: @Cacheable and @InvalidateCache decorators, MemoryCache with TTL
+- **Usage**: Production dependency - shared between h1b-visa-analysis and markdown-compiler
+
+### 🔄 Current Tasks (May 2025)
 
 **Next in Decomposition**:
-1. **Extract file-system package** 📁
-   - Move file operations to dedicated package
-   - Follow decomposition principles
+1. **Extract report-templates package** 📄
+   - Final package to complete 8/8 (100%)
+   - Template engine interface and renderers
    - See: `/docs/migration-plan.md` for details
 
+**Integration Tasks**:
+2. **Update markdown-compiler to use cache package** 🔄
+   - Remove duplicate cache decorators
+   - Import from shared cache package
+   - Maintain backward compatibility
+
 **Backlog (Low Priority)**:
-2. **Implement report content integration** 📝
+3. **Implement report content integration** 📝
    - Wire up actual content from dependencies
    - TODO in ReportGenerator.ts line 95
    - Feature work - not part of decomposition
@@ -382,6 +412,7 @@ Every package MUST have a CLAUDE.md file. See:
 - `/packages/test-helpers/CLAUDE.md` - Test utilities and helpers
 - `/packages/file-system/CLAUDE.md` - File operations abstraction
 - `/packages/event-system/CLAUDE.md` - Event-driven debug and test system
+- `/packages/cache/CLAUDE.md` - Caching decorators and utilities
 
 ## Key Patterns Discovered During Decomposition
 
@@ -466,7 +497,7 @@ npm update @chasenogap/logger
 
 ## Package Development Status Summary
 
-### Decomposition Progress: 6/8 packages (75%) ✅
+### Decomposition Progress: 7/8 packages (87.5%) ✅
 
 ### Published Shared Dependencies ✅
 - **@chasenogap/logger**: Winston-based logging, published to GitHub Packages
@@ -479,6 +510,7 @@ npm update @chasenogap/logger
 - **test-helpers**: Test utilities and helpers (91.89% coverage) ✅
 - **file-system**: File operations abstraction (95%+ coverage) ✅
 - **event-system**: Event-driven debug and test system ✅
+- **cache**: Caching decorators and utilities (94.79% coverage) ✅
 
 ### Current Architecture Status ✅
 The project uses a clean, modular architecture with:
