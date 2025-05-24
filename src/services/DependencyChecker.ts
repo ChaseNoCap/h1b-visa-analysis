@@ -1,22 +1,32 @@
 import { injectable, inject } from 'inversify';
 import * as path from 'path';
 import * as fs from 'fs/promises';
+import { Emits, Traces, setEventBus } from 'event-system';
 import { TYPES } from '../core/constants/injection-tokens.js';
 import type {
   IDependencyChecker,
   IDependencyStatus,
 } from '../core/interfaces/IDependencyChecker.js';
 import type { ILogger } from 'logger';
+import type { IEventBus } from 'event-system';
 
 @injectable()
 export class DependencyChecker implements IDependencyChecker {
   private readonly dependencies = ['prompts-shared', 'markdown-compiler', 'report-components'];
   private readonly logger: ILogger;
 
-  constructor(@inject(TYPES.ILogger) logger: ILogger) {
+  constructor(
+    @inject(TYPES.ILogger) logger: ILogger,
+    @inject(TYPES.IEventBus) eventBus: IEventBus
+  ) {
     this.logger = logger.child({ service: 'DependencyChecker' });
+    setEventBus(this, eventBus);
   }
 
+  @Emits('dependency.check', { 
+    payloadMapper: (name: string) => ({ dependency: name }),
+  })
+  @Traces({ threshold: 100 })
   async checkDependency(name: string): Promise<IDependencyStatus> {
     const depLogger = this.logger.child({ dependency: name });
     const startTime = Date.now();
@@ -60,6 +70,10 @@ export class DependencyChecker implements IDependencyChecker {
     }
   }
 
+  @Emits('dependency.checkAll', {
+    payloadMapper: () => ({ count: 3 }),
+  })
+  @Traces({ threshold: 500 })
   async checkAllDependencies(): Promise<IDependencyStatus[]> {
     const operationId = `dep-check-${Date.now()}`;
     const opLogger = this.logger.child({ operation: 'checkAll', operationId });

@@ -35,6 +35,7 @@
   "license": "MIT",
   "dependencies": {
     "di-framework": "file:./packages/di-framework",
+    "event-system": "file:./packages/event-system",
     "file-system": "file:./packages/file-system",
     "@chasenogap/logger": "^1.0.0",
     "reflect-metadata": "^0.2.1",

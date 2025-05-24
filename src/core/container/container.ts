@@ -5,6 +5,7 @@ import { TYPES } from '../constants/injection-tokens.js';
 // Import concrete implementations
 import { WinstonLogger } from '@chasenogap/logger';
 import { NodeFileSystem } from 'file-system';
+import { EventBus } from 'event-system';
 import { ReportGenerator } from '../../services/ReportGenerator.js';
 import { DependencyChecker } from '../../services/DependencyChecker.js';
 
@@ -15,6 +16,7 @@ export async function createContainer(): Promise<Container> {
   })
     .addBinding(TYPES.ILogger, WinstonLogger, 'Singleton')
     .addBinding(TYPES.IFileSystem, NodeFileSystem, 'Singleton')
+    .addBinding(TYPES.IEventBus, EventBus, 'Singleton')
     .addBinding(TYPES.IReportGenerator, ReportGenerator)
     .addBinding(TYPES.IDependencyChecker, DependencyChecker)
     .build();

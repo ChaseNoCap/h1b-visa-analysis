@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as fs from 'fs/promises';
 import { DependencyChecker } from '@/services/DependencyChecker';
 import { MockLogger } from 'test-mocks';
+import { TestEventBus } from 'event-system';
 
 // Mock fs/promises
 vi.mock('fs/promises');
@@ -9,17 +10,20 @@ vi.mock('fs/promises');
 describe('DependencyChecker', () => {
   let dependencyChecker: DependencyChecker;
   let mockLogger: MockLogger;
+  let testEventBus: TestEventBus;
 
   beforeEach(() => {
-    // Create mock logger
+    // Create mock logger and test event bus
     mockLogger = new MockLogger();
+    testEventBus = new TestEventBus();
 
-    // Create instance with mock
-    dependencyChecker = new DependencyChecker(mockLogger);
+    // Create instance with mocks
+    dependencyChecker = new DependencyChecker(mockLogger, testEventBus);
 
     // Reset all mocks
     vi.clearAllMocks();
     mockLogger.clear();
+    testEventBus.clearRecordings();
   });
 
   describe('checkDependency', () => {
@@ -46,6 +50,14 @@ describe('DependencyChecker', () => {
       expect(mockLogger.calls.length).toBeGreaterThan(0);
       const debugCalls = mockLogger.calls.filter(call => call.level === 'debug');
       expect(debugCalls.length).toBeGreaterThan(0);
+
+      // Verify events were emitted
+      testEventBus
+        .expectEvent('dependency.check.started')
+        .toHaveBeenEmitted()
+        .withPayload({ dependency: 'test-package' });
+
+      testEventBus.expectEvent('dependency.check.completed').toHaveBeenEmitted();
     });
 
     it('should return unavailable status for missing dependency', async () => {
@@ -63,6 +75,12 @@ describe('DependencyChecker', () => {
       // The logger creates a child logger, check if any warn calls were made
       const warnCalls = mockLogger.calls.filter(call => call.level === 'warn');
       expect(warnCalls.length).toBeGreaterThan(0);
+
+      // Verify failure event was emitted
+      testEventBus
+        .expectEvent('dependency.check.failed')
+        .toHaveBeenEmitted()
+        .withPayload(expect.objectContaining({ dependency: 'missing-package' }));
     });
 
     it('should handle invalid package.json', async () => {
@@ -101,6 +119,17 @@ describe('DependencyChecker', () => {
       // Check that info was logged
       const infoCalls = mockLogger.calls.filter(call => call.level === 'info');
       expect(infoCalls.length).toBeGreaterThan(0);
+
+      // Verify checkAll events
+      testEventBus
+        .expectEvent('dependency.checkAll.started')
+        .toHaveBeenEmitted()
+        .withPayload({ count: 3 });
+
+      testEventBus.expectEvent('dependency.checkAll.completed').toHaveBeenEmitted();
+
+      // Verify performance tracking
+      testEventBus.expectEvent('performance.operation.completed').toHaveBeenEmitted();
     });
 
     it('should handle all dependencies missing', async () => {

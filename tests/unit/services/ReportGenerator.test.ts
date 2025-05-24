@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ReportGenerator } from '@/services/ReportGenerator';
 import { MockLogger } from 'test-mocks';
+import { TestEventBus } from 'event-system';
 import type { IDependencyChecker } from '@/core/interfaces/IDependencyChecker';
 import type { IFileSystem } from 'file-system';
 
@@ -134,11 +135,13 @@ describe('ReportGenerator', () => {
   let mockLogger: MockLogger;
   let mockFileSystem: SimpleMockFileSystem;
   let mockDependencyChecker: IDependencyChecker;
+  let testEventBus: TestEventBus;
 
   beforeEach(() => {
     // Create mocks
     mockLogger = new MockLogger();
     mockFileSystem = new SimpleMockFileSystem();
+    testEventBus = new TestEventBus();
     mockDependencyChecker = new MockDependencyChecker([
       { name: 'prompts-shared', available: true, version: '1.0.0', path: '/path/to/prompts' },
       { name: 'markdown-compiler', available: true, version: '2.0.0', path: '/path/to/markdown' },
@@ -146,7 +149,12 @@ describe('ReportGenerator', () => {
     ]);
 
     // Create instance with mocks
-    reportGenerator = new ReportGenerator(mockLogger, mockDependencyChecker, mockFileSystem);
+    reportGenerator = new ReportGenerator(
+      mockLogger,
+      mockDependencyChecker,
+      mockFileSystem,
+      testEventBus
+    );
   });
 
   describe('generate', () => {
@@ -169,6 +177,11 @@ describe('ReportGenerator', () => {
       expect(content).toContain('✅ prompts-shared (v1.0.0)');
       expect(content).toContain('✅ markdown-compiler (v2.0.0)');
       expect(content).toContain('❌ report-components');
+
+      // Verify events
+      testEventBus.expectEvent('report.generate.started').toHaveBeenEmitted();
+
+      testEventBus.expectEvent('report.generate.completed').toHaveBeenEmitted();
     });
 
     it('should include timestamp when requested', async () => {
@@ -190,7 +203,12 @@ describe('ReportGenerator', () => {
         { name: 'report-components', available: false },
       ]);
 
-      reportGenerator = new ReportGenerator(mockLogger, mockDependencyChecker, mockFileSystem);
+      reportGenerator = new ReportGenerator(
+        mockLogger,
+        mockDependencyChecker,
+        mockFileSystem,
+        testEventBus
+      );
 
       const result = await reportGenerator.generate();
 
@@ -219,6 +237,9 @@ describe('ReportGenerator', () => {
       expect(mockLogger.hasLogged('info', 'Starting report generation')).toBe(true);
       expect(mockLogger.hasLogged('info', 'Report generation completed')).toBe(true);
       expect(mockLogger.hasLogged('debug', 'Dependency check complete')).toBe(true);
+
+      // Verify performance events
+      testEventBus.expectEvent('performance.operation.completed').toHaveBeenEmitted();
     });
 
     it('should handle errors gracefully', async () => {
@@ -230,6 +251,9 @@ describe('ReportGenerator', () => {
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
       expect(mockLogger.hasLogged('error', 'Report generation failed')).toBe(true);
+
+      // Verify failure event
+      testEventBus.expectEvent('report.generate.failed').toHaveBeenEmitted();
     });
   });
 });

@@ -9,6 +9,7 @@ import { ReportGenerator } from '@/services/ReportGenerator';
 import { ContainerBuilder, Container } from 'di-framework';
 import { WinstonLogger } from '@chasenogap/logger';
 import { NodeFileSystem } from 'file-system';
+import { EventBus } from 'event-system';
 
 describe('ReportGenerator with Missing Dependencies', () => {
   let container: Container;
@@ -38,6 +39,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
     container = await new ContainerBuilder()
       .addBinding(TYPES.ILogger, WinstonLogger, 'Singleton')
       .addBinding(TYPES.IFileSystem, NodeFileSystem, 'Singleton')
+      .addBinding(TYPES.IEventBus, EventBus, 'Singleton')
       .addConstant(TYPES.IDependencyChecker, mockDependencyChecker)
       .addBinding(TYPES.IReportGenerator, ReportGenerator)
       .build();
@@ -102,6 +104,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
     container = await new ContainerBuilder()
       .addBinding(TYPES.ILogger, WinstonLogger, 'Singleton')
       .addBinding(TYPES.IFileSystem, NodeFileSystem, 'Singleton')
+      .addBinding(TYPES.IEventBus, EventBus, 'Singleton')
       .addConstant(TYPES.IDependencyChecker, mockDependencyChecker)
       .addBinding(TYPES.IReportGenerator, ReportGenerator)
       .build();

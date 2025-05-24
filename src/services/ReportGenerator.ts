@@ -1,4 +1,5 @@
 import { injectable, inject } from 'inversify';
+import { Emits, Traces, setEventBus } from 'event-system';
 import { TYPES } from '../core/constants/injection-tokens.js';
 import { success, failure } from 'di-framework';
 import type {
@@ -10,6 +11,7 @@ import type {
 import type { IDependencyChecker } from '../core/interfaces/IDependencyChecker.js';
 import type { ILogger } from 'logger';
 import type { IFileSystem } from 'file-system';
+import type { IEventBus } from 'event-system';
 
 @injectable()
 export class ReportGenerator implements IReportGenerator {
@@ -18,11 +20,20 @@ export class ReportGenerator implements IReportGenerator {
   constructor(
     @inject(TYPES.ILogger) logger: ILogger,
     @inject(TYPES.IDependencyChecker) private readonly dependencyChecker: IDependencyChecker,
-    @inject(TYPES.IFileSystem) private readonly fileSystem: IFileSystem
+    @inject(TYPES.IFileSystem) private readonly fileSystem: IFileSystem,
+    @inject(TYPES.IEventBus) eventBus: IEventBus
   ) {
     this.logger = logger.child({ service: 'ReportGenerator' });
+    setEventBus(this, eventBus);
   }
 
+  @Emits('report.generate', {
+    payloadMapper: (options: IReportOptions = {}) => ({
+      format: options?.format || 'markdown',
+      outputDir: options?.outputDir || 'dist',
+    }),
+  })
+  @Traces({ threshold: 1000 })
   async generate(options: IReportOptions = {}): Promise<IReportResult> {
     const startTime = Date.now();
     const requestId = `report-${Date.now()}-${Math.random().toString(36).substring(7)}`;
