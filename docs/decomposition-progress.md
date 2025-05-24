@@ -4,7 +4,7 @@
 
 As of May 2025, the H1B Visa Analysis monorepo decomposition has begun with the successful implementation of the testing packages. This document tracks progress and provides guidance for continuing the decomposition effort.
 
-## ✅ Completed Packages (2/8)
+## ✅ Completed Packages (3/8)
 
 ### @h1b/test-mocks
 - **Status**: Complete
@@ -20,7 +20,15 @@ As of May 2025, the H1B Visa Analysis monorepo decomposition has begun with the 
 - **Key Achievement**: Reusable test utilities and container setup
 - **Location**: `/packages/test-helpers/`
 
-## 📋 Remaining Packages (6/8)
+### @h1b/di-framework
+- **Status**: Complete ✅ Published to GitHub
+- **Size**: ~689 lines (69% of limit)
+- **Coverage**: 84%
+- **Key Achievement**: Clean DI utilities with testing support
+- **Location**: `/packages/di-framework/`
+- **GitHub**: [ChaseNoCap/di-framework](https://github.com/ChaseNoCap/di-framework)
+
+## 📋 Remaining Packages (5/8)
 
 Per [Migration Plan](./migration-plan.md), in priority order:
 
@@ -30,31 +38,25 @@ Per [Migration Plan](./migration-plan.md), in priority order:
 - **Dependencies**: None
 - **Timeline**: Week 1
 
-### 2. @h1b/di-framework
-- **Rationale**: Foundation for other packages
-- **Estimated Size**: ~400 lines
-- **Dependencies**: inversify, reflect-metadata
-- **Timeline**: Week 2
-
-### 3. @h1b/file-system
+### 2. @h1b/file-system
 - **Rationale**: Common file operations
 - **Estimated Size**: ~300 lines
 - **Dependencies**: Node.js built-ins
 - **Timeline**: Week 3
 
-### 4. @h1b/events
+### 3. @h1b/events
 - **Rationale**: Enable decoupling between contexts
 - **Estimated Size**: ~200 lines
 - **Dependencies**: None
 - **Timeline**: Week 4
 
-### 5. @h1b/cache
+### 4. @h1b/cache
 - **Rationale**: Shared caching with decorators
 - **Estimated Size**: ~400 lines
 - **Dependencies**: @h1b/events
 - **Timeline**: Week 5
 
-### 6. @h1b/core (Consider splitting/eliminating)
+### 5. @h1b/core (Consider splitting/eliminating)
 - **Rationale**: May be too generic
 - **Alternative**: Distribute to specific packages
 - **Decision Required**: Review after other packages
@@ -95,19 +97,20 @@ app → feature packages → utility packages → infrastructure
 |---------|--------|------|----------|---------|--------------|
 | @h1b/test-mocks | ✅ | 400 | 100% | 3 | 1 |
 | @h1b/test-helpers | ✅ | 500 | 65% | 4 | 3 |
+| @h1b/di-framework | ✅ | 689 | 84% | 15 | 2 |
 | @h1b/logger | ⏳ | ~300 | - | - | 0 |
-| @h1b/di-framework | ⏳ | ~400 | - | - | 2 |
 | @h1b/file-system | ⏳ | ~300 | - | - | 0 |
 | @h1b/events | ⏳ | ~200 | - | - | 0 |
 | @h1b/cache | ⏳ | ~400 | - | - | 1 |
 
 ## 🎯 Next Immediate Steps
 
-### 1. Complete Test Package Integration (Current)
-- [ ] Update main project imports
-- [ ] Remove duplicated test code
+### 1. Integrate DI Framework Package (Current)
+- [ ] Update main project to use @h1b/di-framework
+- [ ] Replace local token definitions
+- [ ] Use ContainerBuilder from package
+- [ ] Update all imports
 - [ ] Verify all tests pass
-- [ ] Update CI configuration
 
 ### 2. Start Logger Package (Next)
 - [ ] Create package structure
@@ -148,8 +151,8 @@ app → feature packages → utility packages → infrastructure
 Based on current progress:
 
 - **Week 0** (Complete): Test packages ✅
-- **Week 1**: Logger package + integration
-- **Week 2**: DI framework package
+- **Week 1** (Complete): DI framework package ✅
+- **Week 2**: Logger package + integration
 - **Week 3**: File system package
 - **Week 4**: Events package
 - **Week 5**: Cache package
@@ -183,6 +186,11 @@ Total: 6 weeks to complete decomposition
 - **Decision**: Split into test-mocks and test-helpers
 - **Rationale**: Single responsibility principle
 - **Outcome**: Success - clear separation
+
+### May 2025: DI Framework Next
+- **Decision**: Extract DI framework before logger
+- **Rationale**: Foundation for other packages, enables better testing
+- **Outcome**: Success - clean implementation at 689 lines
 
 ### Pending: @h1b/core Package
 - **Question**: Is "core" too generic?

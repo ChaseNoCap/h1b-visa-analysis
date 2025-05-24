@@ -31,6 +31,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@h1b/di-framework": "file:./packages/di-framework",
     "logger": "file:./packages/logger",
     "reflect-metadata": "^0.2.1",
     "inversify": "^6.0.2"
