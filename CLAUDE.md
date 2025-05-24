@@ -102,6 +102,8 @@ h1b-visa-analysis/
 │   ├── logger/               # Logging package ✅
 │   ├── test-mocks/            # Test mocks ✅
 │   ├── test-helpers/          # Test helpers ✅
+│   ├── file-system/          # File operations abstraction ✅
+│   ├── event-system/         # Event-driven debug & test system ✅
 │   ├── prompts-shared/       # Cloned dependency
 │   ├── markdown-compiler/    # Cloned dependency
 │   └── report-components/    # Cloned dependency
@@ -199,6 +201,44 @@ Uses the `logger` package which provides Winston-based logging:
 2. Run `npm run lint` to check code style
 3. Pull latest: `git pull --rebase --autostash`
 4. Push changes to trigger CI/CD
+
+## Event System Integration
+
+### Event-Driven Architecture
+Services now emit events for debugging and testing:
+```typescript
+@injectable()
+export class MyService implements IMyService {
+  constructor(
+    @inject(TYPES.ILogger) private logger: ILogger,
+    @inject(TYPES.IEventBus) eventBus: IEventBus
+  ) {
+    setEventBus(this, eventBus);
+  }
+  
+  @Emits('service.operation', {
+    payloadMapper: (input: string) => ({ input })
+  })
+  @Traces({ threshold: 500 })
+  async doWork(input: string): Promise<Result> {
+    // Implementation - events auto-emitted
+  }
+}
+```
+
+### Testing with Events
+```typescript
+const testEventBus = new TestEventBus();
+const service = new MyService(logger, testEventBus);
+
+await service.doWork('test');
+
+// Assert events
+testEventBus.expectEvent('service.operation.started').toHaveBeenEmitted();
+testEventBus.expectEvent('service.operation.completed')
+  .toHaveBeenEmitted()
+  .withPayload({ result: 'success' });
+```
 
 ## Common Patterns
 
@@ -340,6 +380,8 @@ Every package MUST have a CLAUDE.md file. See:
 - `/packages/di-framework/CLAUDE.md` - DI utilities and interfaces
 - `/packages/test-mocks/CLAUDE.md` - Mock implementations (MockLogger, MockFileSystem, MockCache)
 - `/packages/test-helpers/CLAUDE.md` - Test utilities and helpers
+- `/packages/file-system/CLAUDE.md` - File operations abstraction
+- `/packages/event-system/CLAUDE.md` - Event-driven debug and test system
 
 ## Key Patterns Discovered During Decomposition
 
