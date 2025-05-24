@@ -2,10 +2,12 @@ import { injectable, inject } from 'inversify';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { TYPES } from '../core/constants/injection-tokens.js';
+import { success, failure } from 'di-framework';
 import type {
   IReportGenerator,
   IReportOptions,
   IReportResult,
+  IReportData,
 } from '../core/interfaces/IReportGenerator.js';
 import type { IDependencyChecker } from '../core/interfaces/IDependencyChecker.js';
 import type { ILogger } from 'logger';
@@ -54,22 +56,18 @@ export class ReportGenerator implements IReportGenerator {
         dependenciesUsed: availableDeps.map(d => d.name),
       });
 
-      return {
-        success: true,
+      return success<IReportData>({
         outputPath,
         metadata: {
           generatedAt: new Date(),
           duration,
           dependencies: availableDeps.map(d => d.name),
         },
-      };
+      });
     } catch (error) {
       this.logger.error('Report generation failed', error as Error);
 
-      return {
-        success: false,
-        error: error as Error,
-      };
+      return failure<IReportData>(error as Error);
     }
   }
 

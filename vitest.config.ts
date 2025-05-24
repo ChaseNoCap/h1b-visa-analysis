@@ -29,6 +29,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'logger': path.resolve(__dirname, './packages/logger/dist/index.js'),
+      'test-mocks': path.resolve(__dirname, './packages/test-mocks/dist/index.js'),
+      'di-framework': path.resolve(__dirname, './packages/di-framework/dist/index.js'),
     },
   },
 });

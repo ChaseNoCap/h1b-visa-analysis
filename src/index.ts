@@ -1,10 +1,11 @@
 import 'reflect-metadata';
-import { container } from './core/container/container.js';
+import { containerPromise } from './core/container/container.js';
 import { TYPES } from './core/constants/injection-tokens.js';
 import type { IReportGenerator } from './core/interfaces/IReportGenerator.js';
-import type { ILogger } from './core/interfaces/ILogger.js';
+import type { ILogger } from 'logger';
 
 async function main(): Promise<void> {
+  const container = await containerPromise;
   const logger = container.get<ILogger>(TYPES.ILogger);
   const reportGenerator = container.get<IReportGenerator>(TYPES.IReportGenerator);
 
@@ -19,8 +20,8 @@ async function main(): Promise<void> {
 
     if (result.success) {
       logger.info('Report generated successfully', {
-        outputPath: result.outputPath,
-        duration: result.metadata?.duration,
+        outputPath: result.data?.outputPath,
+        duration: result.data?.metadata?.duration,
       });
       process.exit(0);
     } else {
@@ -32,6 +33,12 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 }
+
+// Public API exports
+export { TYPES } from './core/constants/injection-tokens.js';
+export { containerPromise } from './core/container/container.js';
+export type { IReportGenerator, IReportOptions, IReportResult } from './core/interfaces/IReportGenerator.js';
+export type { IDependencyChecker, IDependencyStatus } from './core/interfaces/IDependencyChecker.js';
 
 // Run if this is the main module
 if (import.meta.url === `file://${process.argv[1]}`) {

@@ -6,8 +6,7 @@ import type { IReportGenerator } from '@/core/interfaces/IReportGenerator';
 import type { IDependencyChecker, IDependencyStatus } from '@/core/interfaces/IDependencyChecker';
 import { ReportGenerator } from '@/services/ReportGenerator';
 // import { createTestContainer, FixtureManager } from 'test-helpers';
-import { Container } from 'inversify';
-import type { ILogger } from 'logger';
+import { ContainerBuilder, Container } from 'di-framework';
 import { WinstonLogger } from 'logger';
 
 describe('ReportGenerator with Missing Dependencies', () => {
@@ -16,9 +15,6 @@ describe('ReportGenerator with Missing Dependencies', () => {
   const testOutputDir = path.join(__dirname, 'fixtures', 'output-missing');
 
   beforeEach(async () => {
-    // Create a new container for this test
-    container = new Container();
-
     // Create a mock dependency checker that returns missing dependencies
     const mockDependencyChecker: IDependencyChecker = {
       checkDependency(name: string): Promise<IDependencyStatus> {
@@ -37,12 +33,12 @@ describe('ReportGenerator with Missing Dependencies', () => {
       },
     };
 
-    // Bind services
-    container.bind<ILogger>(TYPES.ILogger).to(WinstonLogger).inSingletonScope();
-    container
-      .bind<IDependencyChecker>(TYPES.IDependencyChecker)
-      .toConstantValue(mockDependencyChecker);
-    container.bind<IReportGenerator>(TYPES.IReportGenerator).to(ReportGenerator);
+    // Create a new container for this test
+    container = await new ContainerBuilder()
+      .addBinding(TYPES.ILogger, WinstonLogger, 'Singleton')
+      .addConstant(TYPES.IDependencyChecker, mockDependencyChecker)
+      .addBinding(TYPES.IReportGenerator, ReportGenerator)
+      .build();
 
     reportGenerator = container.get<IReportGenerator>(TYPES.IReportGenerator);
 
@@ -70,7 +66,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
     expect(result.success).toBe(false);
     expect(result.error).toBeDefined();
     expect(result.error?.message).toContain('No dependencies available');
-    expect(result.outputPath).toBeUndefined();
+    expect(result.data).toBeUndefined();
   });
 
   it('should handle partial dependencies', async () => {
@@ -100,10 +96,12 @@ describe('ReportGenerator with Missing Dependencies', () => {
       },
     };
 
-    // Re-bind with new mock
-    container
-      .rebind<IDependencyChecker>(TYPES.IDependencyChecker)
-      .toConstantValue(mockDependencyChecker);
+    // Create a new container with the updated mock
+    container = await new ContainerBuilder()
+      .addBinding(TYPES.ILogger, WinstonLogger, 'Singleton')
+      .addConstant(TYPES.IDependencyChecker, mockDependencyChecker)
+      .addBinding(TYPES.IReportGenerator, ReportGenerator)
+      .build();
     reportGenerator = container.get<IReportGenerator>(TYPES.IReportGenerator);
 
     const result = await reportGenerator.generate({
@@ -114,11 +112,11 @@ describe('ReportGenerator with Missing Dependencies', () => {
 
     // Should succeed with partial dependencies
     expect(result.success).toBe(true);
-    expect(result.outputPath).toBeDefined();
-    expect(result.metadata?.dependencies).toEqual(['markdown-compiler']);
+    expect(result.data?.outputPath).toBeDefined();
+    expect(result.data?.metadata?.dependencies).toEqual(['markdown-compiler']);
 
     // Verify content shows mixed status
-    const content = await fs.readFile(result.outputPath!, 'utf-8');
+    const content = await fs.readFile(result.data!.outputPath, 'utf-8');
     expect(content).toContain('❌ prompts-shared');
     expect(content).toContain('✅ markdown-compiler');
     expect(content).toContain('❌ report-components');

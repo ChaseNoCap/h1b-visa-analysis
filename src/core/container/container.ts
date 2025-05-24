@@ -1,31 +1,24 @@
 import 'reflect-metadata';
-import { Container } from 'inversify';
+import { ContainerBuilder, Container } from 'di-framework';
 import { TYPES } from '../constants/injection-tokens.js';
-import type { IReportGenerator } from '../interfaces/IReportGenerator.js';
-import type { IDependencyChecker } from '../interfaces/IDependencyChecker.js';
-import type { ILogger } from 'logger';
 
 // Import concrete implementations
 import { WinstonLogger } from 'logger';
 import { ReportGenerator } from '../../services/ReportGenerator.js';
 import { DependencyChecker } from '../../services/DependencyChecker.js';
 
-export function createContainer(): Container {
-  const container = new Container({
+export async function createContainer(): Promise<Container> {
+  const container = await new ContainerBuilder({
     defaultScope: 'Singleton',
     autoBindInjectable: true,
-  });
+  })
+    .addBinding(TYPES.ILogger, WinstonLogger, 'Singleton')
+    .addBinding(TYPES.IReportGenerator, ReportGenerator)
+    .addBinding(TYPES.IDependencyChecker, DependencyChecker)
+    .build();
 
-  configureContainer(container);
   return container;
 }
 
-export function configureContainer(container: Container): void {
-  // Bind core services
-  container.bind<ILogger>(TYPES.ILogger).to(WinstonLogger).inSingletonScope();
-  container.bind<IReportGenerator>(TYPES.IReportGenerator).to(ReportGenerator);
-  container.bind<IDependencyChecker>(TYPES.IDependencyChecker).to(DependencyChecker);
-}
-
-// Export a singleton container instance
-export const container = createContainer();
+// Export a promise for the singleton container instance
+export const containerPromise = createContainer();

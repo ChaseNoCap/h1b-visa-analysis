@@ -1,13 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import { container } from '@/core/container/container';
+import { containerPromise } from '@/core/container/container';
 import { TYPES } from '@/core/constants/injection-tokens';
 import type { IReportGenerator } from '@/core/interfaces/IReportGenerator';
 import type { IDependencyChecker } from '@/core/interfaces/IDependencyChecker';
+import type { Container } from 'di-framework';
 // import { FixtureManager, setupTest } from 'test-helpers';
 
 describe('ReportGenerator E2E Tests', () => {
+  let container: Container;
   let reportGenerator: IReportGenerator;
   let dependencyChecker: IDependencyChecker;
   // let fixtures: FixtureManager;
@@ -15,6 +17,7 @@ describe('ReportGenerator E2E Tests', () => {
 
   beforeEach(async () => {
     // Use real implementations from container
+    container = await containerPromise;
     reportGenerator = container.get<IReportGenerator>(TYPES.IReportGenerator);
     dependencyChecker = container.get<IDependencyChecker>(TYPES.IDependencyChecker);
 
@@ -44,19 +47,19 @@ describe('ReportGenerator E2E Tests', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(result.outputPath).toBeDefined();
-      expect(result.metadata).toBeDefined();
-      expect(result.metadata?.dependencies).toBeInstanceOf(Array);
+      expect(result.data?.outputPath).toBeDefined();
+      expect(result.data?.metadata).toBeDefined();
+      expect(result.data?.metadata?.dependencies).toBeInstanceOf(Array);
 
       // Verify file was created
       const fileExists = await fs
-        .access(result.outputPath!)
+        .access(result.data!.outputPath)
         .then(() => true)
         .catch(() => false);
       expect(fileExists).toBe(true);
 
       // Read and verify content
-      const content = await fs.readFile(result.outputPath!, 'utf-8');
+      const content = await fs.readFile(result.data!.outputPath, 'utf-8');
       expect(content).toContain('# H1B Visa Analysis Report');
       expect(content).toContain('## Dependency Status');
     });
@@ -69,7 +72,7 @@ describe('ReportGenerator E2E Tests', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(result.outputPath).toMatch(/h1b-report-\d{4}-\d{2}-\d{2}\.md$/);
+      expect(result.data?.outputPath).toMatch(/h1b-report-\d{4}-\d{2}-\d{2}\.md$/);
     });
   });
 
@@ -93,7 +96,7 @@ describe('ReportGenerator E2E Tests', () => {
         includeTimestamp: false,
       });
 
-      const content = await fs.readFile(result.outputPath!, 'utf-8');
+      const content = await fs.readFile(result.data!.outputPath, 'utf-8');
 
       // Should show status for each dependency
       expect(content).toMatch(/[✅❌] prompts-shared/);
@@ -113,7 +116,7 @@ describe('ReportGenerator E2E Tests', () => {
 
       // Should create the directory and succeed
       expect(result.success).toBe(true);
-      expect(result.outputPath).toContain(nonExistentBase);
+      expect(result.data?.outputPath).toContain(nonExistentBase);
     });
 
     it('should provide meaningful error when no dependencies available', () => {
@@ -131,7 +134,7 @@ describe('ReportGenerator E2E Tests', () => {
         format: 'markdown',
       });
 
-      const content = await fs.readFile(result.outputPath!, 'utf-8');
+      const content = await fs.readFile(result.data!.outputPath, 'utf-8');
 
       // Verify markdown structure
       expect(content).toMatch(/^# .+/m); // Has h1 heading
@@ -150,12 +153,12 @@ describe('ReportGenerator E2E Tests', () => {
         outputDir: testOutputDir,
       });
 
-      expect(result.metadata).toBeDefined();
-      expect(result.metadata?.generatedAt).toBeInstanceOf(Date);
-      expect(result.metadata?.duration).toBeGreaterThanOrEqual(0);
-      expect(result.metadata?.duration).toBeLessThan(5000); // Should complete quickly
+      expect(result.data?.metadata).toBeDefined();
+      expect(result.data?.metadata?.generatedAt).toBeInstanceOf(Date);
+      expect(result.data?.metadata?.duration).toBeGreaterThanOrEqual(0);
+      expect(result.data?.metadata?.duration).toBeLessThan(5000); // Should complete quickly
 
-      const generatedTime = result.metadata?.generatedAt.getTime() || 0;
+      const generatedTime = result.data?.metadata?.generatedAt.getTime() || 0;
       expect(generatedTime).toBeGreaterThanOrEqual(startTime);
     });
   });
@@ -171,12 +174,12 @@ describe('ReportGenerator E2E Tests', () => {
       expect(result.success).toBe(true);
 
       // Log processing details
-      console.log('Report generated:', result.outputPath);
-      console.log('Processing duration:', result.metadata?.duration, 'ms');
-      console.log('Dependencies found:', result.metadata?.dependencies);
+      console.log('Report generated:', result.data?.outputPath);
+      console.log('Processing duration:', result.data?.metadata?.duration, 'ms');
+      console.log('Dependencies found:', result.data?.metadata?.dependencies);
 
       // Verify we can read the generated report
-      const content = await fs.readFile(result.outputPath!, 'utf-8');
+      const content = await fs.readFile(result.data!.outputPath, 'utf-8');
       expect(content.length).toBeGreaterThan(0);
     });
   });
