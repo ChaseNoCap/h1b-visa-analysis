@@ -8,7 +8,7 @@ import type {
   IReportResult,
 } from '../core/interfaces/IReportGenerator.js';
 import type { IDependencyChecker } from '../core/interfaces/IDependencyChecker.js';
-import type { ILogger } from '../core/interfaces/ILogger.js';
+import type { ILogger } from 'logger';
 
 @injectable()
 export class ReportGenerator implements IReportGenerator {

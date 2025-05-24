@@ -31,10 +31,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "logger": "file:./packages/logger",
     "reflect-metadata": "^0.2.1",
-    "inversify": "^6.0.2",
-    "winston": "^3.11.0",
-    "winston-daily-rotate-file": "^4.7.1"
+    "inversify": "^6.0.2"
   },
   "devDependencies": {
     "test-mocks": "file:./packages/test-mocks",

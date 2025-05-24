@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
 import { TYPES } from '../constants/injection-tokens.js';
-import type { ILogger } from '../interfaces/ILogger.js';
 import type { IReportGenerator } from '../interfaces/IReportGenerator.js';
 import type { IDependencyChecker } from '../interfaces/IDependencyChecker.js';
+import type { ILogger } from 'logger';
 
 // Import concrete implementations
-import { WinstonLogger } from '../../services/WinstonLogger.js';
+import { WinstonLogger } from 'logger';
 import { ReportGenerator } from '../../services/ReportGenerator.js';
 import { DependencyChecker } from '../../services/DependencyChecker.js';
 

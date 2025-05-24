@@ -7,8 +7,8 @@ import type { IDependencyChecker, IDependencyStatus } from '@/core/interfaces/ID
 import { ReportGenerator } from '@/services/ReportGenerator';
 // import { createTestContainer, FixtureManager } from 'test-helpers';
 import { Container } from 'inversify';
-import type { ILogger } from '@/core/interfaces/ILogger';
-import { WinstonLogger } from '@/services/WinstonLogger';
+import type { ILogger } from 'logger';
+import { WinstonLogger } from 'logger';
 
 describe('ReportGenerator with Missing Dependencies', () => {
   let container: Container;
@@ -38,7 +38,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
     };
 
     // Bind services
-    container.bind<ILogger>(TYPES.ILogger).to(WinstonLogger);
+    container.bind<ILogger>(TYPES.ILogger).to(WinstonLogger).inSingletonScope();
     container
       .bind<IDependencyChecker>(TYPES.IDependencyChecker)
       .toConstantValue(mockDependencyChecker);

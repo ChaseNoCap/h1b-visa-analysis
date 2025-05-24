@@ -6,7 +6,7 @@ import type {
   IDependencyChecker,
   IDependencyStatus,
 } from '../core/interfaces/IDependencyChecker.js';
-import type { ILogger } from '../core/interfaces/ILogger.js';
+import type { ILogger } from 'logger';
 
 @injectable()
 export class DependencyChecker implements IDependencyChecker {
