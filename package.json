@@ -5,7 +5,9 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/di-framework",
+    "packages/test-mocks",
+    "packages/test-helpers"
   ],
   "scripts": {
     "build": "tsc && node dist/src/index.js",
@@ -32,7 +34,7 @@
   "license": "MIT",
   "dependencies": {
     "di-framework": "file:./packages/di-framework",
-    "logger": "file:./packages/logger",
+    "@chasenogap/logger": "^1.0.0",
     "reflect-metadata": "^0.2.1",
     "inversify": "^6.0.2"
   },

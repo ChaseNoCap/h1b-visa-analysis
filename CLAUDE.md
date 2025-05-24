@@ -356,20 +356,81 @@ Every package MUST have a CLAUDE.md file. See:
 - README.md provides usage examples
 - TypeScript interfaces serve as living documentation
 
+## Shared Package Development Pattern
+
+### Development vs. Consumption Architecture
+
+The monorepo uses a **hybrid pattern** for shared packages that are published to external repositories:
+
+```
+h1b-visa-analysis/
+├── packages/
+│   ├── logger/                    # 🔧 DEVELOPMENT workspace
+│   │   ├── src/                   # Edit, test, commit, push here
+│   │   ├── .git/                  # Connected to github.com/ChaseNoCap/logger
+│   │   └── package.json           # @chasenogap/logger
+│   ├── di-framework/             # 🔧 DEVELOPMENT workspace (local only)
+│   └── test-mocks/               # 🔧 DEVELOPMENT workspace (local only)
+├── package.json
+│   ├── workspaces: ["packages/di-framework", "packages/test-mocks"]  # Local packages
+│   └── dependencies: {"@chasenogap/logger": "^1.0.0"}               # Published packages
+└── src/                          # 📦 CONSUMES @chasenogap/logger from GitHub
+```
+
+### Package Categories
+
+1. **Published Shared Packages** (like logger):
+   - **Development**: Work in `/packages/logger/` workspace
+   - **Consumption**: Install from GitHub Packages as `@chasenogap/logger`
+   - **NOT in workspaces array** - prevents resolution conflicts
+   - **Workflow**: Edit → Test → Commit → Push → Publish → Update consumers
+
+2. **Local Workspace Packages** (like di-framework, test-mocks):
+   - **Development**: Work in `/packages/di-framework/` workspace  
+   - **Consumption**: Used directly via workspaces (no publishing)
+   - **IN workspaces array** - enables local development
+   - **Workflow**: Edit → Test → Commit → Used immediately
+
+### Development Workflow for Published Packages
+
+```bash
+# 1. Work on the shared package
+cd packages/logger/
+# Make changes, add features
+npm test
+npm run build
+
+# 2. Commit and push to GitHub
+git add .
+git commit -m "feat: add new logging capability"
+git push
+
+# 3. Publish new version (manual or CI/CD)
+npm version patch  # bumps to 1.0.1
+npm publish
+
+# 4. Update consumer projects
+cd ../../  # Back to main project
+npm update @chasenogap/logger
+# Test integration, commit dependency update
+```
+
 ## Package Development Status Summary
 
 All major packages have been successfully extracted and integrated:
 
-### Dependencies ✅
+### Published Shared Dependencies ✅
+- **@chasenogap/logger**: Winston-based logging, published to GitHub Packages
+
+### Local Workspace Dependencies ✅  
 - **di-framework**: Core DI utilities and interfaces
-- **logger**: Winston-based logging with daily rotation
 - **test-mocks**: Mock implementations for testing
 - **test-helpers**: Test utilities and helpers
 
 ### Current Architecture ✅
 The project now uses a clean, modular architecture with:
 - Main application in `/src/` (simplified structure)
-- Shared packages in `/packages/` providing focused functionality
+- Mixed local/published package consumption pattern
 - All packages under 1000 lines with clear single responsibilities
 - Comprehensive test coverage using shared test utilities
 - TypeScript compilation clean with no errors

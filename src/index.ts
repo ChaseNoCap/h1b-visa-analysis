@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { containerPromise } from './core/container/container.js';
 import { TYPES } from './core/constants/injection-tokens.js';
 import type { IReportGenerator } from './core/interfaces/IReportGenerator.js';
-import type { ILogger } from 'logger';
+import type { ILogger } from '@chasenogap/logger';
 
 async function main(): Promise<void> {
   const container = await containerPromise;
