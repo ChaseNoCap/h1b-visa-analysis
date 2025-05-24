@@ -54,7 +54,7 @@ import { MockLogger } from '../test-mocks';
 ## Future Considerations
 
 If packages are ever published to npm:
-1. Can add namespace prefix then (e.g., `@h1b-visa/logger`)
+1. Can add namespace prefix then (e.g., `@h1b-visa/logger` or scoped packages)
 2. Update imports across all packages
 3. Maintain GitHub repos with simple names
 
