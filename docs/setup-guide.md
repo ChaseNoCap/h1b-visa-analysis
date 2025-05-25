@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide consolidates all setup instructions for the H1B monorepo including environment setup, GitHub Actions configuration, dependency management, and authentication.
+This guide consolidates all setup instructions for the H1B meta repository including environment setup, GitHub Actions configuration, Git submodule management, and authentication.
 
 ## Initial Setup
 
@@ -14,13 +14,18 @@ This guide consolidates all setup instructions for the H1B monorepo including en
 
 ### Repository Setup
 
-1. **Clone Main Repository**
+1. **Clone Meta Repository with Submodules**
 ```bash
-git clone https://github.com/ChaseNoCap/h1b-visa-analysis.git
+git clone --recurse-submodules https://github.com/ChaseNoCap/h1b-visa-analysis.git
 cd h1b-visa-analysis
 ```
 
-2. **Install Dependencies**
+2. **Initialize Submodules (if cloned without --recurse-submodules)**
+```bash
+git submodule update --init --recursive
+```
+
+3. **Install Dependencies**
 ```bash
 npm install
 ```
@@ -96,16 +101,18 @@ jobs:
         client-payload: '{"repository": "${{ github.repository }}"}'
 ```
 
-## Dependency Repository Setup
+## Submodule Repository Setup
 
-### Quick Setup Script
+### Adding a New Submodule
 
-For each dependency (prompts-shared, markdown-compiler, report-components):
+To add a new package as a submodule:
 
 ```bash
-# Clone and setup
-git clone https://github.com/ChaseNoCap/{REPO_NAME}.git
-cd {REPO_NAME}
+# Add the submodule
+git submodule add https://github.com/ChaseNoCap/{REPO_NAME}.git packages/{REPO_NAME}
+
+# Initialize the submodule
+cd packages/{REPO_NAME}
 
 # Create package.json
 cat > package.json << EOF
@@ -160,40 +167,72 @@ git push
 3. Notification workflow
 4. PAT_TOKEN secret
 
-## Monorepo Configuration
+## Meta Repository Configuration
 
-### Workspace Setup
+### Git Submodules Setup
 
-Main `package.json` configuration:
+The project uses Git submodules to manage 11 independent package repositories. The `.gitmodules` file defines all submodule mappings:
+
+```ini
+[submodule "packages/logger"]
+    path = packages/logger
+    url = https://github.com/ChaseNoCap/logger.git
+[submodule "packages/di-framework"]
+    path = packages/di-framework
+    url = https://github.com/ChaseNoCap/di-framework.git
+# ... (9 more submodules)
+```
+
+### Package Dependencies
+
+Main `package.json` uses published packages from GitHub Packages:
 ```json
 {
-  "workspaces": [
-    "packages/*"
-  ],
   "dependencies": {
-    "prompts-shared": "github:ChaseNoCap/prompts-shared",
-    "markdown-compiler": "github:ChaseNoCap/markdown-compiler",
-    "report-components": "github:ChaseNoCap/report-components"
+    "@chasenocap/logger": "^1.0.0",
+    "@chasenocap/di-framework": "^1.0.0",
+    "@chasenocap/file-system": "^1.0.0",
+    "@chasenocap/cache": "^1.0.0",
+    "@chasenocap/report-templates": "^1.0.0"
+  },
+  "devDependencies": {
+    "@chasenocap/test-mocks": "^1.0.0",
+    "@chasenocap/test-helpers": "^1.0.0"
   }
 }
 ```
 
-### Local Package Development
+### Working with Submodules
 
-1. **Clone dependency locally**:
+1. **Navigate to a submodule**:
 ```bash
-cd packages/
-git clone https://github.com/ChaseNoCap/{package-name}.git
+cd packages/logger
 ```
 
-2. **Work on package**:
-- Make changes
-- Test locally
-- Commit and push
-
-3. **Update main project**:
+2. **Create feature branch**:
 ```bash
-npm update {package-name}
+git checkout -b feature/new-feature
+```
+
+3. **Make changes and commit**:
+```bash
+git add .
+git commit -m "feat: add new feature"
+git push origin feature/new-feature
+```
+
+4. **After merge, update meta repository**:
+```bash
+cd ../..
+git submodule update --remote --merge packages/logger
+git add packages/logger
+git commit -m "chore: update logger submodule"
+git push
+```
+
+5. **Update npm dependency**:
+```bash
+npm update @chasenocap/logger
 ```
 
 ## Development Workflow
@@ -212,8 +251,11 @@ npm test
 # Update dependencies
 npm run update-deps
 
-# Build all workspaces
-npm run build:all
+# Update all submodules to latest
+git submodule update --remote --merge
+
+# Check submodule status
+git submodule status
 ```
 
 ### Before Pushing
@@ -302,10 +344,12 @@ curl -H "Authorization: token YOUR_PAT_TOKEN" https://api.github.com/user
 
 ### Key Files
 - `.github/workflows/generate-report.yml` - Main automation
-- `package.json` - Workspace configuration
+- `.gitmodules` - Submodule configuration
+- `package.json` - Dependencies from GitHub Packages
 - `.github/workflows/notify-parent.yml` - Dependency notifications
 - `CLAUDE.md` - Project context
+- `docs/meta-repository-pattern.md` - Submodule architecture guide
 
 ---
 
-*This guide consolidates automation-setup.md, dependency-setup-instructions.md, pat-token-setup.md, and setup-summary.md into a single setup reference.*
+*This guide consolidates automation-setup.md, dependency-setup-instructions.md, pat-token-setup.md, and setup-summary.md into a single setup reference for the Git submodules architecture.*

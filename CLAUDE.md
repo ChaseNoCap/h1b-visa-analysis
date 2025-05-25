@@ -17,15 +17,17 @@ The documentation has been consolidated from 34 files to 12 core documents. Load
 7. **[/docs/setup-guide.md](/docs/setup-guide.md)** - Environment configuration
 8. **[/docs/architecture-reference.md](/docs/architecture-reference.md)** - Technical patterns and prompt architecture
 9. **[/docs/achievements.md](/docs/achievements.md)** - Success metrics
-10. **[/docs/prompt-engineering.md](/docs/prompt-engineering.md)** - Context loading strategies
-11. **[/docs/prompt-xml-structured-guide.md](/docs/prompt-xml-structured-guide.md)** - XML prompt patterns
-12. **[/docs/prompt-optimization-patterns.md](/docs/prompt-optimization-patterns.md)** - Efficient prompting
-13. **[/docs/prompt-migration-guide.md](/docs/prompt-migration-guide.md)** - Prompt package architecture
+10. **[/docs/meta-repository-pattern.md](/docs/meta-repository-pattern.md)** - Git submodules architecture
+11. **[/docs/prompt-engineering.md](/docs/prompt-engineering.md)** - Context loading strategies
+12. **[/docs/prompt-xml-structured-guide.md](/docs/prompt-xml-structured-guide.md)** - XML prompt patterns
+13. **[/docs/prompt-optimization-patterns.md](/docs/prompt-optimization-patterns.md)** - Efficient prompting
+14. **[/docs/prompt-migration-guide.md](/docs/prompt-migration-guide.md)** - Prompt package architecture
 
 ### 🔍 Context Loading by Task
 - **What's next?**: Load `/docs/backlog.md` - Always check backlog first
 - **Working on packages**: Load `/docs/package-catalog.md#[package-name]`
 - **Creating new package**: Load `/docs/developer-handbook.md#package-creation-process`
+- **Git submodules help**: Load `/docs/meta-repository-pattern.md` for submodule management
 - **Prompt engineering**: Load `/docs/prompt-xml-structured-guide.md` for XML patterns
 - **Optimizing prompts**: Load `/docs/prompt-optimization-patterns.md` for efficiency
 - **Prompt package work**: Load `/docs/prompt-migration-guide.md` for architecture
@@ -149,10 +151,7 @@ Comprehensive prompt engineering resources:
 
 ## Project Overview
 
-This is an H1B report generator monorepo that orchestrates three GitHub-based private dependencies:
-- `prompts-shared` - AI development workflows and context management
-- `markdown-compiler` - Markdown processing and compilation  
-- `report-components` - H1B research content
+This is an H1B report generator meta repository that orchestrates 11 Git submodules as independent package repositories. The project uses a meta repository pattern where each package is maintained in its own GitHub repository and integrated via Git submodules.
 
 The project automatically generates reports when dependencies update via GitHub Actions.
 
@@ -184,11 +183,11 @@ npm run coverage       # Generate coverage report
 npm run lint           # Lint code
 npm run typecheck      # Type check without building
 
-# Workspace commands
-npm run build:all      # Build all workspaces
-npm run test:all       # Test all workspaces
+# Submodule commands
+git submodule update --init --recursive  # Initialize all submodules
+git submodule update --remote --merge    # Update all submodules to latest
 
-# Package-specific coverage
+# Package-specific commands (run within each submodule)
 cd packages/test-helpers && npm run coverage  # Check test-helpers coverage (91.89%)
 ```
 
@@ -213,16 +212,18 @@ h1b-visa-analysis/
 │   │   ├── fixtures/          # Test fixtures
 │   │   └── output/           # Test output (gitignored)
 │   └── unit/                  # Unit tests
-├── packages/                  # Workspace packages
-│   ├── di-framework/          # DI utilities and interfaces ✅
-│   ├── logger/               # Logging package ✅
-│   ├── test-mocks/            # Test mocks ✅
-│   ├── test-helpers/          # Test helpers ✅
-│   ├── file-system/          # File operations abstraction ✅
-│   ├── event-system/         # Event-driven debug & test system ✅
-│   ├── prompts-shared/       # Cloned dependency
-│   ├── markdown-compiler/    # Cloned dependency
-│   └── report-components/    # Cloned dependency
+├── packages/                  # Git submodules
+│   ├── di-framework/          # → github.com/ChaseNoCap/di-framework ✅
+│   ├── logger/               # → github.com/ChaseNoCap/logger ✅
+│   ├── test-mocks/            # → github.com/ChaseNoCap/test-mocks ✅
+│   ├── test-helpers/          # → github.com/ChaseNoCap/test-helpers ✅
+│   ├── file-system/          # → github.com/ChaseNoCap/file-system ✅
+│   ├── event-system/         # → github.com/ChaseNoCap/event-system ✅
+│   ├── cache/                # → github.com/ChaseNoCap/cache ✅
+│   ├── report-templates/     # → github.com/ChaseNoCap/report-templates ✅
+│   ├── prompts/              # → github.com/ChaseNoCap/prompts ✅
+│   ├── markdown-compiler/    # → github.com/ChaseNoCap/markdown-compiler
+│   └── report-components/    # → github.com/ChaseNoCap/report-components
 ├── dist/                      # Build output (gitignored)
 ├── logs/                      # Application logs (gitignored)
 ├── coverage/                  # Test coverage (gitignored)
@@ -307,10 +308,10 @@ Uses the `logger` package which provides Winston-based logging:
 ## Development Workflow
 
 ### Local Development
-1. Clone dependency repos to `packages/`
-2. Make changes and test with `npm test`
-3. Build with `npm run build`
-4. Check types with `npm run typecheck`
+1. Clone with submodules: `git clone --recurse-submodules <repo-url>`
+2. Or initialize submodules: `git submodule update --init --recursive`
+3. Work within submodules: `cd packages/logger && npm test`
+4. Update submodule references: `git submodule update --remote --merge`
 
 ### Before Pushing
 1. Run `npm test` to ensure tests pass
@@ -576,59 +577,66 @@ Every package MUST have a CLAUDE.md file. See:
 
 ### Development vs. Consumption Architecture
 
-The monorepo uses a **hybrid pattern** for shared packages that are published to external repositories:
+The meta repository uses Git submodules for all packages, which are published to GitHub Packages:
 
 ```
-h1b-visa-analysis/
-├── packages/
-│   ├── logger/                    # 🔧 DEVELOPMENT workspace
-│   │   ├── src/                   # Edit, test, commit, push here
-│   │   ├── .git/                  # Connected to github.com/ChaseNoCap/logger
+h1b-visa-analysis/ (Meta Repository)
+├── .gitmodules                    # Submodule configuration
+├── packages/                      # All packages as Git submodules
+│   ├── logger/                    # Git submodule → github.com/ChaseNoCap/logger
+│   │   ├── src/                   # Edit, test, commit, push in submodule repo
+│   │   ├── .git/                  # Submodule's git directory
 │   │   └── package.json           # @chasenocap/logger
-│   ├── di-framework/             # 🔧 DEVELOPMENT workspace (local only)
-│   └── test-mocks/               # 🔧 DEVELOPMENT workspace (local only)
-├── package.json
-│   ├── workspaces: ["packages/di-framework", "packages/test-mocks"]  # Local packages
-│   └── dependencies: {"@chasenocap/logger": "^1.0.0"}               # Published packages
-└── src/                          # 📦 CONSUMES @chasenocap/logger from GitHub
+│   ├── di-framework/             # Git submodule → github.com/ChaseNoCap/di-framework
+│   └── test-mocks/               # Git submodule → github.com/ChaseNoCap/test-mocks
+├── package.json                   # No workspaces field - uses published packages
+│   └── dependencies: {"@chasenocap/logger": "^1.0.0"}  # From GitHub Packages
+└── src/                          # 📦 CONSUMES published packages from GitHub
 ```
 
-### Package Categories
+### Package Management
 
-1. **Published Shared Packages** (like logger):
-   - **Development**: Work in `/packages/logger/` workspace
-   - **Consumption**: Install from GitHub Packages as `@chasenocap/logger`
-   - **NOT in workspaces array** - prevents resolution conflicts
-   - **Workflow**: Edit → Test → Commit → Push → Publish → Update consumers
+All packages are Git submodules published to GitHub Packages:
 
-2. **Local Workspace Packages** (like di-framework, test-mocks):
-   - **Development**: Work in `/packages/di-framework/` workspace  
-   - **Consumption**: Used directly via workspaces (no publishing)
-   - **IN workspaces array** - enables local development
-   - **Workflow**: Edit → Test → Commit → Used immediately
+1. **Core Infrastructure Packages**:
+   - **Development**: Work in `/packages/[package]/` submodule
+   - **Consumption**: Install from GitHub Packages as `@chasenocap/[package]`
+   - **Workflow**: Edit in submodule → Test → Commit → Push → Publish → Update meta repo
 
-### Development Workflow for Published Packages
+2. **Submodule Management**:
+   - Each package is an independent Git repository
+   - Meta repository tracks specific commits via submodule references
+   - Changes require updating both submodule and meta repository
+
+### Development Workflow for Submodule Packages
 
 ```bash
-# 1. Work on the shared package
+# 1. Navigate to the submodule
 cd packages/logger/
-# Make changes, add features
+
+# 2. Create feature branch in submodule
+git checkout -b feature/new-capability
+
+# 3. Make changes and test
 npm test
 npm run build
 
-# 2. Commit and push to GitHub
+# 4. Commit and push in submodule
 git add .
 git commit -m "feat: add new logging capability"
-git push
+git push origin feature/new-capability
 
-# 3. Publish new version (manual or CI/CD)
+# 5. After merge, publish new version
+git checkout main
+git pull
 npm version patch  # bumps to 1.0.1
 npm publish
 
-# 4. Update consumer projects
-cd ../../  # Back to main project
-npm update @chasenocap/logger
-# Test integration, commit dependency update
+# 6. Update meta repository
+cd ../../  # Back to meta repo
+git add packages/logger
+git commit -m "chore: update logger submodule to v1.0.1"
+npm update @chasenocap/logger  # Update package.json dependency
 ```
 
 ## Package Development Status Summary
@@ -641,19 +649,20 @@ npm update @chasenocap/logger
   - ✅ Fully integrated with child loggers and structured context
   - ✅ Local duplicate code removed
 
-### Local Workspace Dependencies ✅  
-- **di-framework**: Core DI utilities and interfaces (84% coverage)
-- **test-mocks**: Mock implementations for testing (100% coverage)
-- **test-helpers**: Test utilities and helpers (91.89% coverage) ✅
-- **file-system**: File operations abstraction (95%+ coverage) ✅
-- **event-system**: Event-driven debug and test system ✅
-- **cache**: Caching decorators and utilities (94.79% coverage) ✅
-- **report-templates**: Template engine and report builders (100% coverage) ✅
+### Git Submodule Packages ✅  
+- **@chasenocap/di-framework**: Core DI utilities and interfaces (84% coverage)
+- **@chasenocap/test-mocks**: Mock implementations for testing (100% coverage)
+- **@chasenocap/test-helpers**: Test utilities and helpers (91.89% coverage) ✅
+- **@chasenocap/file-system**: File operations abstraction (95%+ coverage) ✅
+- **@chasenocap/event-system**: Event-driven debug and test system ✅
+- **@chasenocap/cache**: Caching decorators and utilities (94.79% coverage) ✅
+- **@chasenocap/report-templates**: Template engine and report builders (100% coverage) ✅
+- **@chasenocap/prompts**: AI context management (implemented) ✅
 
 ### Current Architecture Status ✅
 The project uses a clean, modular architecture with:
 - Main application in `/src/` with enhanced logging and templating
-- Mixed local/published package consumption pattern
+- Meta repository pattern with Git submodules
 - All 9 packages under 1000 lines with clear single responsibilities
 - Implemented prompts package for AI context management
 - TypeScript compilation: ✅ Clean with no errors

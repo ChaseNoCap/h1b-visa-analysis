@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide provides step-by-step instructions for extracting functionality from the H1B monorepo into focused, reusable packages. It consolidates our migration strategy, implementation roadmap, and lessons learned.
+This guide provides step-by-step instructions for extracting functionality from the H1B meta repository into focused, reusable packages managed as Git submodules. It consolidates our migration strategy, implementation roadmap, and lessons learned.
 
 ## Migration Strategy
 
@@ -15,34 +15,50 @@ This guide provides step-by-step instructions for extracting functionality from 
 
 ### Package Architecture
 ```
-packages/
-├── di-framework/      # DI utilities (local)
-├── logger/           # Logging (@chasenocap/logger)
-├── test-mocks/       # Mock implementations (local)
-├── test-helpers/     # Test utilities (local)
-├── file-system/      # File operations (local)
-├── event-system/     # Event bus (local)
-├── cache/            # Caching with decorators (local)
-└── report-templates/ # Report formatting (local)
+packages/ (Git submodules)
+├── di-framework/      # DI utilities → github.com/ChaseNoCap/di-framework
+├── logger/           # Logging → github.com/ChaseNoCap/logger
+├── test-mocks/       # Mock implementations → github.com/ChaseNoCap/test-mocks
+├── test-helpers/     # Test utilities → github.com/ChaseNoCap/test-helpers
+├── file-system/      # File operations → github.com/ChaseNoCap/file-system
+├── event-system/     # Event bus → github.com/ChaseNoCap/event-system
+├── cache/            # Caching → github.com/ChaseNoCap/cache
+├── report-templates/ # Report formatting → github.com/ChaseNoCap/report-templates
+└── prompts/          # AI context → github.com/ChaseNoCap/prompts
 ```
+
+All packages are:
+- Independent Git repositories
+- Integrated as Git submodules
+- Published to GitHub Packages as @chasenocap/* packages
 
 ## Migration Process
 
 ### Phase 1: Setup & Planning
 
-#### 1.1 Create Package Structure
+#### 1.1 Create Package Repository
 ```bash
-# Create package directory
-mkdir -p packages/{package-name}/src
-cd packages/{package-name}
+# Create new repository on GitHub
+# github.com/ChaseNoCap/{package-name}
+
+# Clone and set up locally
+git clone https://github.com/ChaseNoCap/{package-name}.git
+cd {package-name}
 
 # Initialize package
 npm init -y
 npm install --save-dev typescript vitest @types/node
 
-# Copy configurations
-cp ../../tsconfig.json .
-cp ../../vitest.config.ts .
+# Set up TypeScript and testing
+# Copy configurations from meta repo
+```
+
+#### 1.2 Add as Submodule
+```bash
+# From meta repository root
+git submodule add https://github.com/ChaseNoCap/{package-name}.git packages/{package-name}
+git add .gitmodules packages/{package-name}
+git commit -m "feat: add {package-name} submodule"
 ```
 
 #### 1.2 Write CLAUDE.md First
@@ -107,28 +123,47 @@ import { TYPES } from './core/constants/injection-tokens';
 3. Run full test suite
 4. Update documentation
 
-### Phase 4: Publishing (if needed)
+### Phase 4: Publishing
 
-#### 4.1 GitHub Repository
-For shared packages:
+#### 4.1 Working in Submodule
 ```bash
+# Navigate to submodule
 cd packages/{package-name}
-git init
+
+# Create feature branch
+git checkout -b feature/initial-implementation
+
+# Commit changes
 git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/{org}/{package}
-git push -u origin main
+git commit -m "feat: initial implementation"
+git push origin feature/initial-implementation
 ```
 
-#### 4.2 GitHub Packages
+#### 4.2 Publish to GitHub Packages
 ```bash
+# After PR merge
+git checkout main
+git pull
 npm version patch
 npm publish --registry=https://npm.pkg.github.com
 ```
 
+#### 4.3 Update Meta Repository
+```bash
+# Back in meta repo
+cd ../..
+git add packages/{package-name}
+git commit -m "chore: update {package-name} submodule"
+
+# Update package.json dependency
+npm install @chasenocap/{package-name}@latest
+git add package.json package-lock.json
+git commit -m "chore: update {package-name} dependency"
+```
+
 ## Migration Timeline
 
-### Completed Packages (8/8) ✅
+### Completed Packages (9/9) ✅
 
 | Week | Package | Size | Coverage | Status |
 |------|---------|------|----------|---------|
@@ -140,6 +175,7 @@ npm publish --registry=https://npm.pkg.github.com
 | 4 | event-system | 800 lines | High | ✅ Complete |
 | 5 | cache | 400 lines | 94.79% | ✅ Complete |
 | 6 | report-templates | 287 lines | 100% | ✅ Complete |
+| 7 | prompts | 400 lines | N/A | ✅ Complete |
 
 ## Key Patterns & Learnings
 
@@ -149,9 +185,9 @@ npm publish --registry=https://npm.pkg.github.com
 - **Pattern**: Single responsibility = natural size limit
 
 ### Dependency Management
-- **Published packages**: Not in workspaces array
-- **Local packages**: In workspaces array
-- **Pattern**: Clear separation between local/published
+- **All packages**: Git submodules (no workspaces)
+- **Published packages**: Consumed from GitHub Packages
+- **Pattern**: Submodule for development, npm package for consumption
 
 ### Testing First
 Starting with test packages proved valuable:
@@ -254,4 +290,4 @@ packages/logger/
 
 ---
 
-*This guide consolidates migration-plan.md, implementation-roadmap.md, testing-package-implementation.md, and testing-package-progress.md into a single migration reference.*
+*This guide consolidates migration-plan.md, implementation-roadmap.md, testing-package-implementation.md, and testing-package-progress.md into a single migration reference for the Git submodules architecture.*

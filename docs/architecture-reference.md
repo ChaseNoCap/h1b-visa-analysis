@@ -2,7 +2,7 @@
 
 ## Overview
 
-This reference consolidates the architectural patterns, technical decisions, and shared code analysis for the H1B monorepo, providing a comprehensive guide to the system's design and implementation.
+This reference consolidates the architectural patterns, technical decisions, and shared code analysis for the H1B meta repository, providing a comprehensive guide to the system's design and implementation including its Git submodules architecture.
 
 ## Core Architecture
 
@@ -92,11 +92,68 @@ export class Service {
 }
 ```
 
+## Git Submodules Architecture
+
+### Meta Repository Pattern
+
+The project uses a meta repository pattern where each package is maintained as an independent Git repository and integrated via Git submodules:
+
+```
+h1b-visa-analysis/ (Meta Repository)
+├── .gitmodules                    # Submodule configuration
+├── packages/                      # Git submodules directory
+│   ├── di-framework/             # → github.com/ChaseNoCap/di-framework
+│   ├── logger/                   # → github.com/ChaseNoCap/logger
+│   ├── test-mocks/               # → github.com/ChaseNoCap/test-mocks
+│   ├── test-helpers/             # → github.com/ChaseNoCap/test-helpers
+│   ├── file-system/              # → github.com/ChaseNoCap/file-system
+│   ├── event-system/             # → github.com/ChaseNoCap/event-system
+│   ├── cache/                    # → github.com/ChaseNoCap/cache
+│   ├── report-templates/         # → github.com/ChaseNoCap/report-templates
+│   ├── prompts/                  # → github.com/ChaseNoCap/prompts
+│   ├── markdown-compiler/        # → github.com/ChaseNoCap/markdown-compiler
+│   └── report-components/        # → github.com/ChaseNoCap/report-components
+└── src/                          # Main application code
+```
+
+### Benefits of Submodules
+
+1. **Independent Versioning**: Each package has its own Git history and version tags
+2. **Separate CI/CD**: Packages can have independent build and test pipelines
+3. **Clear Ownership**: Each repository has distinct maintainers and contributors
+4. **Reusability**: Packages can be used in other projects independently
+5. **Atomic Changes**: Changes to packages are isolated and trackable
+
+### Development Workflow
+
+```bash
+# Clone with submodules
+git clone --recurse-submodules <repo-url>
+
+# Work in a submodule
+cd packages/logger
+git checkout -b feature/new-feature
+# Make changes, commit, push
+cd ../..
+git add packages/logger
+git commit -m "chore: update logger submodule"
+
+# Update all submodules
+git submodule update --remote --merge
+```
+
+### Package Publishing
+
+All packages are published to GitHub Packages:
+- Organization: `@chasenocap`
+- Registry: `npm.pkg.github.com`
+- Consumption: Via standard npm dependencies
+
 ## Project Structure
 
 ### Standard Package Layout
 
-Packages in this monorepo follow a flexible structure based on their needs:
+Packages follow a flexible structure based on their needs:
 
 **Common Structure:**
 ```
@@ -118,6 +175,7 @@ package/
 ### Main Application Structure
 ```
 h1b-visa-analysis/
+├── .gitmodules            # Git submodules configuration
 ├── src/
 │   ├── core/
 │   │   ├── constants/      # Injection tokens
@@ -125,7 +183,7 @@ h1b-visa-analysis/
 │   │   └── interfaces/     # Core contracts
 │   ├── services/           # Business logic
 │   └── index.ts           # Public API
-├── packages/              # Extracted packages
+├── packages/              # Git submodules (11 packages)
 ├── tests/                 # Test suites
 └── dist/                  # Build output
 ```
@@ -196,26 +254,34 @@ The project uses XML-based prompts for structured, parseable context:
 ```xml
 <system_architecture>
   <overview>
-    This monorepo implements a report generation system with decomposed packages
+    This meta repository implements a report generation system with Git submodules
   </overview>
+  
+  <repository_structure>
+    <pattern>Meta Repository with Git Submodules</pattern>
+    <total_packages>11</total_packages>
+    <registry>GitHub Packages (@chasenocap)</registry>
+  </repository_structure>
   
   <packages>
     <category name="Core Infrastructure">
       <package name="logger">
         <purpose>Structured logging with Winston</purpose>
-        <status>Published to GitHub Packages</status>
+        <status>Git submodule → Published to GitHub Packages</status>
+        <repository>github.com/ChaseNoCap/logger</repository>
       </package>
       <package name="di-framework">
         <purpose>Dependency injection container</purpose>
-        <status>Local workspace</status>
+        <status>Git submodule → Published to GitHub Packages</status>
+        <repository>github.com/ChaseNoCap/di-framework</repository>
       </package>
     </category>
   </packages>
   
   <dependency_flow>
-    Applications → Core Packages → No Dependencies
-         ↓              ↓
-    Test Packages ← Test Interfaces
+    Meta Repository → Published Packages (@chasenocap/*)
+         ↓                    ↑
+    Git Submodules → Independent Repositories
   </dependency_flow>
 </system_architecture>
 ```
@@ -449,16 +515,19 @@ Analysis revealed significant duplication between h1b-visa-analysis and markdown
 - **Testing**: Same Vitest configuration
 
 ### Extracted Packages
-Successfully decomposed into 8 focused packages:
+Successfully decomposed into 11 Git submodules:
 
-1. **di-framework** - DI utilities (1,261 lines)
-2. **logger** - Winston logging (136 lines)
-3. **test-mocks** - Mock implementations (1,757 lines)
-4. **test-helpers** - Test utilities (611 lines)
-5. **file-system** - File operations (191 lines)
-6. **event-system** - Event bus (source not available)
-7. **cache** - Caching decorators (source not available)
-8. **report-templates** - Template engine (source not available)
+1. **@chasenocap/di-framework** - DI utilities (689 lines)
+2. **@chasenocap/logger** - Winston logging (300 lines)
+3. **@chasenocap/test-mocks** - Mock implementations (400 lines)
+4. **@chasenocap/test-helpers** - Test utilities (500 lines)
+5. **@chasenocap/file-system** - File operations (700 lines)
+6. **@chasenocap/event-system** - Event bus (800 lines)
+7. **@chasenocap/cache** - Caching decorators (400 lines)
+8. **@chasenocap/report-templates** - Template engine (287 lines)
+9. **@chasenocap/prompts** - AI context management (400 lines)
+10. **markdown-compiler** - Markdown processing (private repo)
+11. **report-components** - H1B research content (private repo)
 
 **Note**: Some packages have compiled distributions but source files are not currently accessible. Line counts are from actual implementation where available.
 

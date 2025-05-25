@@ -2,7 +2,7 @@
 
 ## Overview
 
-This handbook consolidates all developer resources including templates, checklists, naming conventions, and decision-making guides for the H1B monorepo.
+This handbook consolidates all developer resources including templates, checklists, naming conventions, and decision-making guides for the H1B meta repository with Git submodules.
 
 ## Package Development Guide
 
@@ -101,14 +101,27 @@ Before creating any package:
 
 #### Step-by-Step Creation
 
-1. **Setup Directory**
+1. **Create GitHub Repository**
 ```bash
-mkdir -p packages/{package-name}/src
-cd packages/{package-name}
+# Create new repository at github.com/ChaseNoCap/{package-name}
+# Clone it locally
+git clone https://github.com/ChaseNoCap/{package-name}.git
+cd {package-name}
+
+# Initialize package
 npm init -y
+mkdir -p src
 ```
 
-2. **Configure Package**
+2. **Add as Submodule to Meta Repository**
+```bash
+# From h1b-visa-analysis root
+git submodule add https://github.com/ChaseNoCap/{package-name}.git packages/{package-name}
+git add .gitmodules packages/{package-name}
+git commit -m "feat: add {package-name} submodule"
+```
+
+3. **Configure Package**
 ```json
 {
   "name": "{package-name}",
@@ -128,7 +141,7 @@ npm init -y
 }
 ```
 
-3. **Create Structure**
+4. **Create Structure**
 ```
 src/
 ├── interfaces/      # Public API (1-3 files)
@@ -137,13 +150,30 @@ src/
 └── index.ts        # Explicit exports
 ```
 
-4. **Write CLAUDE.md** (REQUIRED)
+5. **Write CLAUDE.md** (REQUIRED)
 - Use template below
 - Fill ALL sections
 - Include code examples
 - Document boundaries
 
-5. **Implement**
+6. **Implement and Publish**
+- Define interfaces first
+- Write tests alongside
+- Keep it simple
+- Export via index.ts
+- Publish to GitHub Packages:
+  ```bash
+  npm version patch
+  npm publish --registry=https://npm.pkg.github.com
+  ```
+
+7. **Update Meta Repository**
+```bash
+# Update package.json to use published version
+npm install @chasenocap/{package-name}@latest
+git add package.json package-lock.json
+git commit -m "chore: add {package-name} dependency"
+```
 - Define interfaces first
 - Write tests alongside
 - Keep it simple
@@ -269,17 +299,30 @@ Use this template when making architectural decisions:
 ## Prompt Package Development
 
 ### Creating Package Prompts
-When creating a new package, also create corresponding prompts in the prompts package:
+When creating a new package, also create corresponding prompts in the prompts submodule:
 
 ```bash
-# 1. Create package-specific prompt directory
-mkdir -p packages/prompts/src/packages/{package-name}
+# 1. Navigate to prompts submodule
+cd packages/prompts
 
-# 2. Create the four required prompt files
-touch packages/prompts/src/packages/{package-name}/overview.md
-touch packages/prompts/src/packages/{package-name}/api.md
-touch packages/prompts/src/packages/{package-name}/integration.md
-touch packages/prompts/src/packages/{package-name}/status.md
+# 2. Create package-specific prompt directory
+mkdir -p src/packages/{package-name}
+
+# 3. Create the four required prompt files
+touch src/packages/{package-name}/overview.md
+touch src/packages/{package-name}/api.md
+touch src/packages/{package-name}/integration.md
+touch src/packages/{package-name}/status.md
+
+# 4. Commit and push in submodule
+git add .
+git commit -m "feat: add prompts for {package-name}"
+git push
+
+# 5. Update meta repository
+cd ../..
+git add packages/prompts
+git commit -m "chore: update prompts submodule"
 ```
 
 ### Prompt File Templates
@@ -593,10 +636,10 @@ export class Service {
 
 ### Import Patterns
 ```typescript
-// From packages
+// From published packages (GitHub Packages)
 import type { ILogger } from '@chasenocap/logger';
-import { MockLogger } from 'test-mocks';
-import { setupTest } from 'test-helpers';
+import { MockLogger } from '@chasenocap/test-mocks';
+import { setupTest } from '@chasenocap/test-helpers';
 
 // From DI
 const logger = container.get<ILogger>(TYPES.ILogger);
@@ -623,4 +666,4 @@ const service = container.get<IService>(TYPES.IService);
 
 ---
 
-*This handbook consolidates claude-md-template.md, claude-md-guide.md, package-creation-checklist.md, package-decision-record-template.md, and naming-convention.md into a single developer reference.*
+*This handbook consolidates claude-md-template.md, claude-md-guide.md, package-creation-checklist.md, package-decision-record-template.md, and naming-convention.md into a single developer reference for the Git submodules architecture.*

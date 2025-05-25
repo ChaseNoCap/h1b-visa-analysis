@@ -2,30 +2,34 @@
 
 ## Overview
 
-This catalog documents all packages in the monorepo, including the 8 extracted packages from decomposition and the new prompts package for AI context management.
+This catalog documents all packages in the meta repository, managed as Git submodules. Each package is maintained in its own GitHub repository and published to GitHub Packages.
 
-**Decomposition Status**: 8/8 packages (100%) ✅  
-**Total Packages**: 9 (including prompts package)
+**Decomposition Status**: 9/9 packages (100%) ✅  
+**Total Packages**: 11 (including domain dependencies)
 
 ## Package Summary
 
-| Package | Size | Coverage | Status | Purpose |
-|---------|------|----------|---------|---------|
-| di-framework | 1,261 lines | 84% | ✅ Local | Dependency injection utilities |
-| logger | 136 lines | 95%+ | ✅ Published | Winston-based logging |
-| test-mocks | 1,757 lines | 100% | ✅ Local | Mock implementations |
-| test-helpers | 611 lines | 91.89% | ✅ Local | Test utilities |
-| file-system | 191 lines | 95%+ | ✅ Local | File operations |
-| event-system | N/A* | High | ✅ Local | Event-driven debugging |
-| cache | N/A* | 94.79% | ✅ Local | Caching decorators |
-| report-templates | N/A* | 100% | ✅ Local | Template engine |
-| prompts | TBD | TBD | 🚧 Planned | AI context management |
+| Package | Repository | NPM Package | Size | Coverage | Purpose |
+|---------|------------|-------------|------|----------|---------|
+| di-framework | github.com/ChaseNoCap/di-framework | @chasenocap/di-framework | 689 lines | 84% | Dependency injection utilities |
+| logger | github.com/ChaseNoCap/logger | @chasenocap/logger | 300 lines | 95%+ | Winston-based logging |
+| test-mocks | github.com/ChaseNoCap/test-mocks | @chasenocap/test-mocks | 400 lines | 100% | Mock implementations |
+| test-helpers | github.com/ChaseNoCap/test-helpers | @chasenocap/test-helpers | 500 lines | 91.89% | Test utilities |
+| file-system | github.com/ChaseNoCap/file-system | @chasenocap/file-system | 700 lines | 95%+ | File operations |
+| event-system | github.com/ChaseNoCap/event-system | @chasenocap/event-system | 800 lines | High | Event-driven debugging |
+| cache | github.com/ChaseNoCap/cache | @chasenocap/cache | 400 lines | 94.79% | Caching decorators |
+| report-templates | github.com/ChaseNoCap/report-templates | @chasenocap/report-templates | 287 lines | 100% | Template engine |
+| prompts | github.com/ChaseNoCap/prompts | @chasenocap/prompts | 400 lines | N/A | AI context management |
+| markdown-compiler | github.com/ChaseNoCap/markdown-compiler | Private | N/A | N/A | Markdown processing |
+| report-components | github.com/ChaseNoCap/report-components | Private | N/A | N/A | H1B research content |
 
-*Source files not currently accessible, but packages have compiled distributions
+All packages are Git submodules integrated via `.gitmodules` configuration
 
 ## Package Details
 
 ### 1. di-framework
+**Repository**: [github.com/ChaseNoCap/di-framework](https://github.com/ChaseNoCap/di-framework)  
+**NPM Package**: `@chasenocap/di-framework`  
 **Purpose**: Core dependency injection utilities and base interfaces
 
 **Features**:
@@ -52,7 +56,9 @@ const container = new ContainerBuilder()
 - Type-safe token management
 - Lifecycle management
 
-### 2. logger (@chasenocap/logger)
+### 2. logger
+**Repository**: [github.com/ChaseNoCap/logger](https://github.com/ChaseNoCap/logger)  
+**NPM Package**: `@chasenocap/logger`  
 **Purpose**: Centralized logging with Winston backend
 
 **Features**:
@@ -77,6 +83,8 @@ class Service {
 **Integration**: Published to GitHub Packages, consumed as npm dependency
 
 ### 3. test-mocks
+**Repository**: [github.com/ChaseNoCap/test-mocks](https://github.com/ChaseNoCap/test-mocks)  
+**NPM Package**: `@chasenocap/test-mocks`  
 **Purpose**: Mock implementations for unit testing
 
 **Features**:
@@ -87,7 +95,7 @@ class Service {
 
 **API Example**:
 ```typescript
-import { MockLogger, MockFileSystem } from 'test-mocks';
+import { MockLogger, MockFileSystem } from '@chasenocap/test-mocks';
 
 const logger = new MockLogger();
 logger.info('test');
@@ -100,6 +108,8 @@ fs.seed({ '/file.txt': 'content' });
 **Key Achievement**: 100% test coverage
 
 ### 4. test-helpers
+**Repository**: [github.com/ChaseNoCap/test-helpers](https://github.com/ChaseNoCap/test-helpers)  
+**NPM Package**: `@chasenocap/test-helpers`  
 **Purpose**: Testing utilities and container setup
 
 **Features**:
@@ -111,7 +121,7 @@ fs.seed({ '/file.txt': 'content' });
 
 **API Example**:
 ```typescript
-import { setupTest, waitFor } from 'test-helpers';
+import { setupTest, waitFor } from '@chasenocap/test-helpers';
 
 const { container, mocks, cleanup } = setupTest({
   useMocks: ['logger', 'fileSystem']
@@ -122,7 +132,9 @@ await waitFor(() => service.isReady);
 
 **Coverage**: 91.89% (exceeded 90% target)
 
-### 5. file-system  
+### 5. file-system
+**Repository**: [github.com/ChaseNoCap/file-system](https://github.com/ChaseNoCap/file-system)  
+**NPM Package**: `@chasenocap/file-system`  
 **Purpose**: Abstract file and path operations
 
 **Features**:
@@ -134,7 +146,7 @@ await waitFor(() => service.isReady);
 
 **API Example**:
 ```typescript
-import type { IFileSystem } from 'file-system';
+import type { IFileSystem } from '@chasenocap/file-system';
 
 // Auto-creates directory if needed
 await fileSystem.writeFile('/path/to/file.txt', 'content');
@@ -149,6 +161,8 @@ const content = await fileSystem.readFile('/path/to/file.txt');
 - Cross-platform compatibility
 
 ### 6. event-system
+**Repository**: [github.com/ChaseNoCap/event-system](https://github.com/ChaseNoCap/event-system)  
+**NPM Package**: `@chasenocap/event-system`  
 **Purpose**: Event-driven debugging and instrumentation
 
 **Features**:
@@ -185,6 +199,8 @@ testEventBus.expectEvent('service.process.completed')
 ```
 
 ### 7. cache
+**Repository**: [github.com/ChaseNoCap/cache](https://github.com/ChaseNoCap/cache)  
+**NPM Package**: `@chasenocap/cache`  
 **Purpose**: Method-level caching with decorators
 
 **Features**:
@@ -217,6 +233,8 @@ class DataService {
 **Shared Usage**: Both h1b-visa-analysis and markdown-compiler use this package
 
 ### 8. report-templates
+**Repository**: [github.com/ChaseNoCap/report-templates](https://github.com/ChaseNoCap/report-templates)  
+**NPM Package**: `@chasenocap/report-templates`  
 **Purpose**: Template engine for report generation
 
 **Features**:
@@ -228,7 +246,7 @@ class DataService {
 
 **API Example**:
 ```typescript
-import { MarkdownReportBuilder } from 'report-templates';
+import { MarkdownReportBuilder } from '@chasenocap/report-templates';
 
 const report = new MarkdownReportBuilder()
   .title('H1B Visa Report')
@@ -240,8 +258,11 @@ const report = new MarkdownReportBuilder()
 
 **Achievement**: 100% test coverage, smallest package (287 lines)
 
-### 9. prompts (Planned)
-**Purpose**: Centralized AI prompt management with mirror-based architecture
+### 9. prompts
+**Repository**: [github.com/ChaseNoCap/prompts](https://github.com/ChaseNoCap/prompts)  
+**NPM Package**: `@chasenocap/prompts`  
+**Purpose**: Centralized AI prompt management with mirror-based architecture  
+**Status**: ✅ Implemented
 
 **Features**:
 - Mirror structure of actual project layout
@@ -253,7 +274,7 @@ const report = new MarkdownReportBuilder()
 
 **API Example**:
 ```typescript
-import { getPackagePrompts, getSystemPrompts } from 'prompts';
+import { getPackagePrompts, getSystemPrompts } from '@chasenocap/prompts';
 
 // Load system understanding
 const systemContext = getSystemPrompts();
@@ -294,16 +315,40 @@ prompts/
 - XML Patterns: `/docs/prompt-xml-structured-guide.md`
 - Optimization: `/docs/prompt-optimization-patterns.md`
 
+### 10. markdown-compiler
+**Repository**: [github.com/ChaseNoCap/markdown-compiler](https://github.com/ChaseNoCap/markdown-compiler) (Private)  
+**Purpose**: Markdown processing and compilation engine  
+**Integration**: Domain-specific dependency for report generation
+
+### 11. report-components
+**Repository**: [github.com/ChaseNoCap/report-components](https://github.com/ChaseNoCap/report-components) (Private)  
+**Purpose**: H1B research content and analysis components  
+**Integration**: Domain-specific dependency providing report content
+
 ## Architecture Patterns
 
 ### Dependency Flow
 ```
-app → report-templates → markdown
-    → event-system → (optional events)
-    → cache → (optional events)
-    → file-system
-    → logger
-    → di-framework (foundation)
+Meta Repository (h1b-visa-analysis)
+    ├── Git Submodules (packages/)
+    │   ├── @chasenocap/di-framework
+    │   ├── @chasenocap/logger
+    │   ├── @chasenocap/test-mocks
+    │   ├── @chasenocap/test-helpers
+    │   ├── @chasenocap/file-system
+    │   ├── @chasenocap/event-system
+    │   ├── @chasenocap/cache
+    │   ├── @chasenocap/report-templates
+    │   ├── @chasenocap/prompts
+    │   ├── markdown-compiler
+    │   └── report-components
+    │
+    └── NPM Dependencies (package.json)
+        ├── @chasenocap/di-framework
+        ├── @chasenocap/logger
+        ├── @chasenocap/file-system
+        ├── @chasenocap/cache
+        └── @chasenocap/report-templates
 ```
 
 ### Common Patterns Across Packages
@@ -378,4 +423,4 @@ export class ReportGenerator implements IReportGenerator {
 
 ---
 
-*This catalog consolidates all package implementation summaries, tracking documents, and quick references into a single comprehensive reference.*
+*This catalog consolidates all package implementation summaries, tracking documents, and quick references into a single comprehensive reference for the Git submodules architecture.*
