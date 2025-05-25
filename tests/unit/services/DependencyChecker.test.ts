@@ -99,7 +99,7 @@ describe('DependencyChecker', () => {
     it('should check all configured dependencies', async () => {
       // Mock some available and some missing
       vi.mocked(fs.access)
-        .mockResolvedValueOnce(undefined) // prompts-shared exists
+        .mockResolvedValueOnce(undefined) // prompts exists
         .mockRejectedValueOnce(new Error('ENOENT')) // markdown-compiler missing
         .mockResolvedValueOnce(undefined); // report-components exists
 

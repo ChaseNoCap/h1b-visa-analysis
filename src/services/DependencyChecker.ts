@@ -12,7 +12,7 @@ import type { IEventBus } from 'event-system';
 
 @injectable()
 export class DependencyChecker implements IDependencyChecker {
-  private readonly dependencies = ['prompts-shared', 'markdown-compiler', 'report-components'];
+  private readonly dependencies = ['prompts', 'markdown-compiler', 'report-components'];
   private readonly logger: ILogger;
 
   constructor(

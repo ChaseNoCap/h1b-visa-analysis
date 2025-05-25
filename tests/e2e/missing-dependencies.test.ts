@@ -28,7 +28,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
       },
       checkAllDependencies(): Promise<IDependencyStatus[]> {
         return Promise.resolve([
-          { name: 'prompts-shared', available: false, error: 'Not found' },
+          { name: 'prompts', available: false, error: 'Not found' },
           { name: 'markdown-compiler', available: false, error: 'Not found' },
           { name: 'report-components', available: false, error: 'Not found' },
         ]);
@@ -93,7 +93,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
       },
       checkAllDependencies(): Promise<IDependencyStatus[]> {
         return Promise.resolve([
-          { name: 'prompts-shared', available: false, error: 'Not found' },
+          { name: 'prompts', available: false, error: 'Not found' },
           { name: 'markdown-compiler', available: true, version: '0.1.0', path: '/test/path' },
           { name: 'report-components', available: false, error: 'Not found' },
         ]);
@@ -123,7 +123,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
 
     // Verify content shows mixed status
     const content = await fs.readFile(result.data!.outputPath, 'utf-8');
-    expect(content).toContain('❌ prompts-shared');
+    expect(content).toContain('❌ prompts');
     expect(content).toContain('✅ markdown-compiler');
     expect(content).toContain('❌ report-components');
   });
