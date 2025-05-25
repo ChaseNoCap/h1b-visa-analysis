@@ -31,7 +31,4 @@ Thumbs.db
 .npmrc
 !packages/*/.npmrc
 
-# External dependencies cloned locally
-packages/markdown-compiler/
-packages/report-components/
-packages/prompts-shared/
+# Packages are now managed as Git submodules (see .gitmodules)
