@@ -36,15 +36,17 @@ jobs:
           cache: 'npm'
 
       - name: Configure npm for GitHub Packages
+        env:
+          NPM_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          echo "@chasenocap:registry=https://npm.pkg.github.com/" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          echo "NPM token configured for GitHub Packages"
 
       - name: Update specific package (repository_dispatch)
         if: github.event_name == 'repository_dispatch'
         env:
           PACKAGE: ${{ github.event.client_payload.package }}
           VERSION: ${{ github.event.client_payload.version }}
+          NPM_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           echo "Updating @chasenocap/${PACKAGE} to ${VERSION}"
           
@@ -70,6 +72,8 @@ jobs:
 
       - name: Update all packages (scheduled/manual)
         if: github.event_name != 'repository_dispatch'
+        env:
+          NPM_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           echo "Checking for updates to all @chasenocap packages"
           

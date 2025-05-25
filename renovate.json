@@ -12,6 +12,14 @@
     "enabled": true
   },
   "npmrc": "@chasenocap:registry=https://npm.pkg.github.com/",
+  "hostRules": [
+    {
+      "matchHost": "npm.pkg.github.com",
+      "hostType": "npm",
+      "username": "x-access-token",
+      "password": "{{ secrets.GITHUB_COM_TOKEN }}"
+    }
+  ],
   "packageRules": [
     {
       "description": "Automerge ChaseNoCap packages",
