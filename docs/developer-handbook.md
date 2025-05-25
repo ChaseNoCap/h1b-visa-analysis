@@ -594,7 +594,7 @@ export class Service {
 ### Import Patterns
 ```typescript
 // From packages
-import type { ILogger } from '@chasenogap/logger';
+import type { ILogger } from '@chasenocap/logger';
 import { MockLogger } from 'test-mocks';
 import { setupTest } from 'test-helpers';
 

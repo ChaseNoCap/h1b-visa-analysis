@@ -38,7 +38,7 @@ GitHub Packages requires scoped package names matching your GitHub username or o
 
 ```json
 {
-  "name": "@chasenogap/di-framework"
+  "name": "@chasenocap/di-framework"
 }
 ```
 
@@ -48,7 +48,7 @@ Each package needs specific fields configured:
 
 ```json
 {
-  "name": "@chasenogap/di-framework",
+  "name": "@chasenocap/di-framework",
   "version": "1.0.0",
   "description": "Dependency injection framework",
   "main": "dist/index.js",
@@ -116,19 +116,19 @@ Ensure each package has its own `tsconfig.json`:
 #### Global Configuration (~/.npmrc)
 ```ini
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-@chasenogap:registry=https://npm.pkg.github.com
+@chasenocap:registry=https://npm.pkg.github.com
 ```
 
 #### Project Root .npmrc
 ```ini
-@chasenogap:registry=https://npm.pkg.github.com
+@chasenocap:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 always-auth=true
 ```
 
 #### Per-Package .npmrc (packages/*/npmrc)
 ```ini
-@chasenogap:registry=https://npm.pkg.github.com
+@chasenocap:registry=https://npm.pkg.github.com
 ```
 
 ### 3. Environment Variable Setup
@@ -233,7 +233,7 @@ name: Publish Tagged Package
 on:
   push:
     tags:
-      - '@chasenogap/*@*'
+      - '@chasenocap/*@*'
 
 permissions:
   contents: read
@@ -357,7 +357,7 @@ Each package maintains its own version:
 cd packages/di-framework
 npm version patch  # 1.0.0 → 1.0.1
 
-# Creates git tag: @chasenogap/di-framework@1.0.1
+# Creates git tag: @chasenocap/di-framework@1.0.1
 ```
 
 ### 2. Synchronized Versioning
@@ -406,7 +406,7 @@ During development, use workspace protocol:
 ```json
 {
   "dependencies": {
-    "@chasenogap/di-framework": "workspace:*"
+    "@chasenocap/di-framework": "workspace:*"
   }
 }
 ```
@@ -418,7 +418,7 @@ Before publishing, update to specific versions:
 ```json
 {
   "dependencies": {
-    "@chasenogap/di-framework": "^1.0.0"
+    "@chasenocap/di-framework": "^1.0.0"
   }
 }
 ```
@@ -473,14 +473,14 @@ For projects consuming your private packages:
 
 ```bash
 # Create .npmrc in project root
-echo "@chasenogap:registry=https://npm.pkg.github.com" > .npmrc
+echo "@chasenocap:registry=https://npm.pkg.github.com" > .npmrc
 echo "//npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}" >> .npmrc
 
 # Set environment variable
 export GITHUB_TOKEN="your-pat-token"
 
 # Install packages
-npm install @chasenogap/di-framework @chasenogap/logger
+npm install @chasenocap/di-framework @chasenocap/logger
 ```
 
 ### 2. CI/CD Configuration
@@ -492,7 +492,7 @@ For GitHub Actions:
   env:
     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   run: |
-    echo "@chasenogap:registry=https://npm.pkg.github.com" > .npmrc
+    echo "@chasenocap:registry=https://npm.pkg.github.com" > .npmrc
     echo "//npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}" >> .npmrc
     npm ci
 ```
@@ -508,7 +508,7 @@ FROM node:18
 ARG GITHUB_TOKEN
 
 # Configure npm
-RUN echo "@chasenogap:registry=https://npm.pkg.github.com" > ~/.npmrc && \
+RUN echo "@chasenocap:registry=https://npm.pkg.github.com" > ~/.npmrc && \
     echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> ~/.npmrc
 
 # Copy and install
@@ -608,7 +608,7 @@ RUN npm run build
 
 ```json
 {
-  "name": "@chasenogap/di-framework",
+  "name": "@chasenocap/di-framework",
   "version": "1.0.0",
   "description": "Lightweight dependency injection framework",
   "main": "dist/index.js",
@@ -634,14 +634,14 @@ RUN npm run build
 
 ```json
 {
-  "name": "@chasenogap/test-helpers",
+  "name": "@chasenocap/test-helpers",
   "version": "1.0.0",
   "dependencies": {
-    "@chasenogap/test-mocks": "^1.0.0",
+    "@chasenocap/test-mocks": "^1.0.0",
     "vitest": "^1.2.0"
   },
   "peerDependencies": {
-    "@chasenogap/di-framework": "^1.0.0"
+    "@chasenocap/di-framework": "^1.0.0"
   }
 }
 ```
@@ -663,8 +663,8 @@ npm version patch
 npm publish
 
 # Automated via GitHub Actions
-# Push tag: @chasenogap/di-framework@1.0.1
-git tag @chasenogap/di-framework@1.0.1
+# Push tag: @chasenocap/di-framework@1.0.1
+git tag @chasenocap/di-framework@1.0.1
 git push --tags
 ```
 
@@ -705,10 +705,10 @@ git push --tags
 npm whoami --registry=https://npm.pkg.github.com
 
 # View package info
-npm view @chasenogap/di-framework --registry=https://npm.pkg.github.com
+npm view @chasenocap/di-framework --registry=https://npm.pkg.github.com
 
 # List all versions
-npm view @chasenogap/di-framework versions --registry=https://npm.pkg.github.com
+npm view @chasenocap/di-framework versions --registry=https://npm.pkg.github.com
 
 # Debug publishing issues
 npm publish --dry-run
@@ -718,7 +718,7 @@ npm cache clean --force
 
 # Check package contents before publish
 npm pack
-tar -tzf chasenogap-di-framework-1.0.0.tgz
+tar -tzf chasenocap-di-framework-1.0.0.tgz
 ```
 
 ## Conclusion

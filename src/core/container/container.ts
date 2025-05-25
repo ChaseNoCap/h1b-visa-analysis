@@ -3,7 +3,7 @@ import { ContainerBuilder, Container } from 'di-framework';
 import { TYPES } from '../constants/injection-tokens.js';
 
 // Import concrete implementations
-import { WinstonLogger } from '@chasenogap/logger';
+import { WinstonLogger } from '@chasenocap/logger';
 import { NodeFileSystem } from 'file-system';
 import { EventBus } from 'event-system';
 import { ReportGenerator } from '../../services/ReportGenerator.js';

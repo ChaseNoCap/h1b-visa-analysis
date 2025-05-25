@@ -7,7 +7,7 @@ import type { IDependencyChecker, IDependencyStatus } from '@/core/interfaces/ID
 import { ReportGenerator } from '@/services/ReportGenerator';
 // import { createTestContainer, FixtureManager } from 'test-helpers';
 import { ContainerBuilder, Container } from 'di-framework';
-import { WinstonLogger } from '@chasenogap/logger';
+import { WinstonLogger } from '@chasenocap/logger';
 import { NodeFileSystem } from 'file-system';
 import { EventBus } from 'event-system';
 

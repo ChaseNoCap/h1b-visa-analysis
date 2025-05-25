@@ -1,0 +1,43 @@
+name: Publish Tagged Package
+
+on:
+  push:
+    tags:
+      - '@chasenocap/*@*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://npm.pkg.github.com'
+          
+      - name: Extract package info
+        id: package
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          PACKAGE=$(echo $TAG | cut -d'@' -f2 | cut -d'/' -f2)
+          VERSION=$(echo $TAG | cut -d'@' -f3)
+          echo "package=$PACKAGE" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build package
+        working-directory: packages/${{ steps.package.outputs.package }}
+        run: npm run build
+        
+      - name: Publish package
+        working-directory: packages/${{ steps.package.outputs.package }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm publish

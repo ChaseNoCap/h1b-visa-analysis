@@ -6,12 +6,12 @@
   "type": "module",
   "workspaces": [
     "packages/di-framework",
-    "packages/test-mocks",
-    "packages/test-helpers",
     "packages/file-system",
     "packages/cache",
     "packages/report-templates",
-    "packages/event-system"
+    "packages/event-system",
+    "packages/prompts",
+    "packages/logger"
   ],
   "scripts": {
     "build": "tsc && node dist/src/index.js",
@@ -37,27 +37,22 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "di-framework": "file:./packages/di-framework",
-    "event-system": "file:./packages/event-system",
-    "file-system": "file:./packages/file-system",
-    "cache": "file:./packages/cache",
-    "report-templates": "file:./packages/report-templates",
-    "@chasenogap/logger": "^1.0.0",
-    "reflect-metadata": "^0.2.1",
-    "inversify": "^6.0.2"
+    "@chasenocap/logger": "file:./packages/logger",
+    "@chasenocap/test-mocks": "^0.1.1",
+    "inversify": "^6.0.2",
+    "reflect-metadata": "^0.2.1"
   },
   "devDependencies": {
-    "test-mocks": "file:./packages/test-mocks",
-    "test-helpers": "file:./packages/test-helpers",
+    "@chasenocap/test-helpers": "^0.1.0",
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
     "@typescript-eslint/parser": "^6.13.0",
+    "@vitest/coverage-v8": "^0.34.0",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.0.1",
     "prettier": "^3.1.0",
     "typescript": "^5.3.0",
-    "vitest": "^0.34.0",
-    "@vitest/coverage-v8": "^0.34.0"
+    "vitest": "^0.34.0"
   }
 }

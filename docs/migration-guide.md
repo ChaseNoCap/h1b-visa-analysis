@@ -17,7 +17,7 @@ This guide provides step-by-step instructions for extracting functionality from 
 ```
 packages/
 ├── di-framework/      # DI utilities (local)
-├── logger/           # Logging (@chasenogap/logger)
+├── logger/           # Logging (@chasenocap/logger)
 ├── test-mocks/       # Mock implementations (local)
 ├── test-helpers/     # Test utilities (local)
 ├── file-system/      # File operations (local)
@@ -97,7 +97,7 @@ package-name/
 import { Logger } from './services/Logger';
 
 // After
-import type { ILogger } from '@chasenogap/logger';
+import type { ILogger } from '@chasenocap/logger';
 import { TYPES } from './core/constants/injection-tokens';
 ```
 
@@ -227,7 +227,7 @@ packages/logger/
 
 ### 4. Published to GitHub Packages
 - Created GitHub repository
-- Published as @chasenogap/logger
+- Published as @chasenocap/logger
 - Updated consumers to use published version
 
 ### 5. Result

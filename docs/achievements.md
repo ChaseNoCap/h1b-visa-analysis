@@ -34,7 +34,7 @@ As of May 2025, the H1B Visa Analysis monorepo has successfully completed its en
 
 ### Phase 2: Core Infrastructure (Weeks 1-2)
 - ✅ Extracted di-framework with clean DI utilities
-- ✅ Published logger to GitHub Packages (@chasenogap/logger)
+- ✅ Published logger to GitHub Packages (@chasenocap/logger)
 - ✅ Created comprehensive file-system abstraction
 
 ### Phase 3: Advanced Features (Weeks 3-6)

@@ -395,7 +395,7 @@ For shared patterns and strategies, see `/docs/decomposition-analysis.md`.
 1. **Enhanced Logging**: All services now use child loggers with operation context
 2. **Simplified Testing**: Removed Sinon dependency, using only Vitest mocks
 3. **Improved Coverage**: test-helpers package now at 91.89% coverage
-4. **Clean Imports**: All logger imports now use @chasenogap/logger
+4. **Clean Imports**: All logger imports now use @chasenocap/logger
 
 ## Current Status: Package Decomposition Progress
 
@@ -412,11 +412,11 @@ Successfully extracted and integrated the following packages:
 - **Usage**: Core dependency - used by main project and other packages
 
 #### logger ✅  
-- **Status**: Extracted to GitHub package @chasenogap/logger
+- **Status**: Extracted to GitHub package @chasenocap/logger
 - **Size**: ~300 lines (well within 1000 line limit)
 - **Location**: Published to GitHub Packages
 - **Features**: Winston-based logging with daily rotation, structured logging, child loggers
-- **Usage**: Production dependency - imported as `import type { ILogger } from '@chasenogap/logger'`
+- **Usage**: Production dependency - imported as `import type { ILogger } from '@chasenocap/logger'`
 - **Integration**: ✅ Fully integrated, duplicate code removed
 
 #### test-mocks ✅
@@ -584,20 +584,20 @@ h1b-visa-analysis/
 │   ├── logger/                    # 🔧 DEVELOPMENT workspace
 │   │   ├── src/                   # Edit, test, commit, push here
 │   │   ├── .git/                  # Connected to github.com/ChaseNoCap/logger
-│   │   └── package.json           # @chasenogap/logger
+│   │   └── package.json           # @chasenocap/logger
 │   ├── di-framework/             # 🔧 DEVELOPMENT workspace (local only)
 │   └── test-mocks/               # 🔧 DEVELOPMENT workspace (local only)
 ├── package.json
 │   ├── workspaces: ["packages/di-framework", "packages/test-mocks"]  # Local packages
-│   └── dependencies: {"@chasenogap/logger": "^1.0.0"}               # Published packages
-└── src/                          # 📦 CONSUMES @chasenogap/logger from GitHub
+│   └── dependencies: {"@chasenocap/logger": "^1.0.0"}               # Published packages
+└── src/                          # 📦 CONSUMES @chasenocap/logger from GitHub
 ```
 
 ### Package Categories
 
 1. **Published Shared Packages** (like logger):
    - **Development**: Work in `/packages/logger/` workspace
-   - **Consumption**: Install from GitHub Packages as `@chasenogap/logger`
+   - **Consumption**: Install from GitHub Packages as `@chasenocap/logger`
    - **NOT in workspaces array** - prevents resolution conflicts
    - **Workflow**: Edit → Test → Commit → Push → Publish → Update consumers
 
@@ -627,7 +627,7 @@ npm publish
 
 # 4. Update consumer projects
 cd ../../  # Back to main project
-npm update @chasenogap/logger
+npm update @chasenocap/logger
 # Test integration, commit dependency update
 ```
 
@@ -637,7 +637,7 @@ npm update @chasenogap/logger
 ### Total Packages: 9 (including implemented prompts package)
 
 ### Published Shared Dependencies ✅
-- **@chasenogap/logger**: Winston-based logging, published to GitHub Packages
+- **@chasenocap/logger**: Winston-based logging, published to GitHub Packages
   - ✅ Fully integrated with child loggers and structured context
   - ✅ Local duplicate code removed
 

@@ -52,7 +52,7 @@ const container = new ContainerBuilder()
 - Type-safe token management
 - Lifecycle management
 
-### 2. logger (@chasenogap/logger)
+### 2. logger (@chasenocap/logger)
 **Purpose**: Centralized logging with Winston backend
 
 **Features**:
@@ -64,7 +64,7 @@ const container = new ContainerBuilder()
 
 **API Example**:
 ```typescript
-import type { ILogger } from '@chasenogap/logger';
+import type { ILogger } from '@chasenocap/logger';
 
 class Service {
   @LogMethod({ level: 'info' })
