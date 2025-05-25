@@ -2,23 +2,31 @@
 
 This file provides guidance to Claude Code when working with code in this repository.
 
-## Context Building Guide
+## 🎯 Context Loading Guide
 
-### 📚 Documentation Index
-For comprehensive project context, see `/docs/index.md` - the documentation index that maps all available resources.
+### Efficient Documentation Access
+The documentation has been consolidated from 34 files to 12 core documents. Load only what's needed:
 
-### 🎯 Task-Specific Context
-- **Architecture Overview**: Start with `/docs/decomposition-principles.md` and `/docs/decomposition-analysis.md`
-- **Package Development**: Read `/docs/migration-plan.md` → `/docs/testing-package-implementation.md`
-- **Creating New Packages**: Follow `/docs/claude-md-template.md` and `/docs/claude-md-guide.md`
-- **GitHub Actions**: Check `/docs/automation-setup.md` for CI/CD workflows
+### 📚 Documentation Structure (12 Core Files)
+1. **[/docs/index.md](/docs/index.md)** - Documentation hub and navigation
+2. **[/docs/decomposition-guide.md](/docs/decomposition-guide.md)** - Principles, patterns, and governance
+3. **[/docs/migration-guide.md](/docs/migration-guide.md)** - Package extraction process
+4. **[/docs/package-catalog.md](/docs/package-catalog.md)** - All 8 packages with details
+5. **[/docs/developer-handbook.md](/docs/developer-handbook.md)** - Templates and guidelines
+6. **[/docs/setup-guide.md](/docs/setup-guide.md)** - Environment configuration
+7. **[/docs/architecture-reference.md](/docs/architecture-reference.md)** - Technical patterns
+8. **[/docs/achievements.md](/docs/achievements.md)** - Success metrics
+9. **[/docs/prompt-engineering.md](/docs/prompt-engineering.md)** - Context loading strategies
 
-### 🔗 Decision Trail
-The project's decomposition strategy flows from:
-1. **Principles** (`/docs/decomposition-principles.md`) → defines the "why"
-2. **Analysis** (`/docs/decomposition-analysis.md`) → applies principles to this codebase
-3. **Implementation** (`/docs/migration-plan.md`) → executes the strategy
-4. **Current Focus** (`/docs/testing-package-implementation.md`) → testing package
+### 🔍 Context Loading by Task
+- **Working on packages**: Load `/docs/package-catalog.md#[package-name]`
+- **Creating new package**: Load `/docs/developer-handbook.md`
+- **Architecture questions**: Load `/docs/architecture-reference.md`
+- **Setup/GitHub Actions**: Load `/docs/setup-guide.md`
+- **Understanding decomposition**: Load `/docs/decomposition-guide.md`
+
+### 💡 Efficient Prompting
+See `/docs/prompt-engineering.md` for keyword triggers and context loading strategies.
 
 ## Decomposition Principles
 
