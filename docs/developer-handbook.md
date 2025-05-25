@@ -6,6 +6,71 @@ This handbook consolidates all developer resources including templates, checklis
 
 ## Package Development Guide
 
+### Prompt Engineering Guidelines
+
+#### XML-Structured Prompt Development
+When creating prompts for packages or workflows, use XML structure for clarity and parseability:
+
+```xml
+<package name="{{package_name}}">
+  <metadata>
+    <version>1.0.0</version>
+    <coverage>95%</coverage>
+    <size>~500 lines</size>
+    <status>stable</status>
+  </metadata>
+  
+  <purpose>
+    Single-line description of what this package does
+  </purpose>
+  
+  <features>
+    <feature>Key feature 1</feature>
+    <feature>Key feature 2</feature>
+  </features>
+  
+  <dependencies>
+    <dependency>inversify</dependency>
+    <dependency optional="true">winston</dependency>
+  </dependencies>
+  
+  <exports>
+    <export type="interface">ICache</export>
+    <export type="decorator">@Cacheable</export>
+    <export type="class">MemoryCache</export>
+  </exports>
+</package>
+```
+
+#### Prompt Optimization Patterns
+When creating prompts, follow these optimization principles:
+
+1. **Use Exact Names**: "test-helpers package" not "testing utilities"
+2. **Reference Specific Sections**: "architecture-reference.md#dependency-injection"
+3. **Batch Related Questions**: Group related items in single prompt
+4. **Include Error Context**: Provide full stack traces and recent changes
+5. **Start Minimal**: Load only necessary context first
+
+#### Context Loading Strategies
+```xml
+<context_loading strategy="progressive">
+  <level depth="1">
+    <load>CLAUDE.md</load>
+    <purpose>Project overview</purpose>
+  </level>
+  
+  <level depth="2" condition="needs_package_info">
+    <load>package-catalog.md#{{package}}</load>
+    <purpose>Package details</purpose>
+  </level>
+  
+  <level depth="3" condition="needs_implementation">
+    <load>packages/{{package}}/src/</load>
+    <purpose>Implementation details</purpose>
+  </level>
+</context_loading>
+```
+
 ### Naming Conventions
 
 **Package Names**:
@@ -200,6 +265,190 @@ Use this template when making architectural decisions:
 - [ ] Single clear purpose
 - [ ] 90%+ test coverage
 ```
+
+## Prompt Package Development
+
+### Creating Package Prompts
+When creating a new package, also create corresponding prompts in the prompts package:
+
+```bash
+# 1. Create package-specific prompt directory
+mkdir -p packages/prompts/src/packages/{package-name}
+
+# 2. Create the four required prompt files
+touch packages/prompts/src/packages/{package-name}/overview.md
+touch packages/prompts/src/packages/{package-name}/api.md
+touch packages/prompts/src/packages/{package-name}/integration.md
+touch packages/prompts/src/packages/{package-name}/status.md
+```
+
+### Prompt File Templates
+
+#### Overview Template (overview.md)
+```xml
+<package_overview name="{package-name}">
+  <metadata>
+    <version>1.0.0</version>
+    <coverage>95%</coverage>
+    <size>~500 lines</size>
+    <status>development|stable</status>
+  </metadata>
+  
+  <purpose>
+    Single sentence describing what this package does
+  </purpose>
+  
+  <features>
+    <feature>Key feature 1</feature>
+    <feature>Key feature 2</feature>
+  </features>
+  
+  <consumers>
+    <consumer>h1b-visa-analysis</consumer>
+    <consumer>markdown-compiler</consumer>
+  </consumers>
+</package_overview>
+```
+
+#### API Template (api.md)
+```xml
+<package_api name="{package-name}">
+  <interfaces>
+    <interface name="IServiceName">
+      <method>methodName(params): ReturnType</method>
+    </interface>
+  </interfaces>
+  
+  <usage_example>
+    <![CDATA[
+    import { ServiceName } from '{package-name}';
+    
+    const service = new ServiceName();
+    const result = await service.doWork();
+    ]]>
+  </usage_example>
+  
+  <decorators>
+    <decorator name="@DecoratorName">
+      <description>What it does</description>
+      <example>@DecoratorName({ option: 'value' })</example>
+    </decorator>
+  </decorators>
+</package_api>
+```
+
+#### Integration Template (integration.md)
+```xml
+<integration_context package="{package-name}">
+  <integrates_with>
+    <package name="logger">
+      <interaction>Logs operations and errors</interaction>
+    </package>
+    <package name="di-framework">
+      <interaction>Uses dependency injection</interaction>
+    </package>
+  </integrates_with>
+  
+  <used_by>
+    <application>h1b-visa-analysis</application>
+    <application>markdown-compiler</application>
+  </used_by>
+  
+  <patterns>
+    <pattern>Decorator-based configuration</pattern>
+    <pattern>Interface segregation</pattern>
+  </patterns>
+</integration_context>
+```
+
+#### Status Template (status.md)
+```xml
+<package_status name="{package-name}">
+  <current_state>
+    <version>{{version}}</version>
+    <coverage>{{coverage}}%</coverage>
+    <last_update>{{date}}</last_update>
+    <state>{{development|stable|deprecated}}</state>
+  </current_state>
+  
+  <dependencies>
+    <dependency>inversify</dependency>
+    <dependency optional="true">winston</dependency>
+  </dependencies>
+  
+  <dependents>
+    <dependent>h1b-visa-analysis</dependent>
+    <dependent>markdown-compiler</dependent>
+  </dependents>
+  
+  <metrics>
+    <metric name="size">{{lines}} lines</metric>
+    <metric name="exports">{{count}} public exports</metric>
+    <metric name="tests">{{count}} test files</metric>
+  </metrics>
+</package_status>
+```
+
+### Workflow Prompt Development
+Create workflow prompts for cross-cutting processes:
+
+```xml
+<workflow name="package_creation">
+  <overview>
+    Step-by-step process for creating new packages
+  </overview>
+  
+  <steps>
+    <step order="1">
+      <name>Planning</name>
+      <actions>
+        <action>Define single responsibility</action>
+        <action>Verify size constraints</action>
+        <action>Identify dependencies</action>
+      </actions>
+    </step>
+    
+    <step order="2">
+      <name>Implementation</name>
+      <actions>
+        <action>Create package structure</action>
+        <action>Implement interfaces first</action>
+        <action>Write tests alongside</action>
+      </actions>
+    </step>
+  </steps>
+  
+  <success_criteria>
+    <criterion>Package under 500 lines</criterion>
+    <criterion>90%+ test coverage</criterion>
+    <criterion>CLAUDE.md complete</criterion>
+  </success_criteria>
+</workflow>
+```
+
+### Prompt Validation
+Validate prompt structure matches project reality:
+
+```typescript
+// scripts/validate-prompts.ts
+export async function validatePromptStructure() {
+  const projectPackages = await scanProjectPackages();
+  const promptPackages = await scanPromptPackages();
+
+  for (const pkg of projectPackages) {
+    const promptPath = `src/packages/${pkg.name}`;
+    if (!promptPackages.has(promptPath)) {
+      console.warn(`Missing prompts for package: ${pkg.name}`);
+    }
+  }
+}
+```
+
+### Anti-Patterns in Prompt Development
+1. **Vague Descriptions**: "Fix the bug" → "Cache decorator returns undefined in ReportGenerator.ts:45"
+2. **Missing Context**: "Why doesn't this work?" → Include error messages and stack traces
+3. **Context Overloading**: "Load all docs" → Load minimal context first
+4. **Generic References**: "the testing utilities" → "test-helpers package"
 
 ## Development Patterns
 

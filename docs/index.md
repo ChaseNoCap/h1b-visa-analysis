@@ -27,7 +27,7 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
 #### **Learn About Decomposition**
 → Study [Decomposition Guide](./decomposition-guide.md) → [Achievements](./achievements.md)
 
-## 📚 Consolidated Documentation (13 Files)
+## 📚 Consolidated Documentation (16 Files)
 
 ### Core Guides
 
@@ -70,21 +70,33 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
    - Context loading strategies for Claude Code
    - *New guide for efficient AI interactions*
 
+10. **[Prompt XML Structured Guide](./prompt-xml-structured-guide.md)**
+    - XML-based prompt engineering patterns
+    - Hierarchical context loading and structured workflows
+
+11. **[Prompt Optimization Patterns](./prompt-optimization-patterns.md)**
+    - Efficient prompting techniques and anti-patterns
+    - Task-focused requests and context loading strategies
+
+12. **[Prompt Migration Guide](./prompt-migration-guide.md)**
+    - XML-enhanced prompt package architecture
+    - Mirror-based structure for system awareness
+
 ### Templates & References
 
-10. **[CLAUDE.md Template](./claude-md-template.md)**
+13. **[CLAUDE.md Template](./claude-md-template.md)**
     - Template for package documentation
 
-11. **[CLAUDE.md Guide](./claude-md-guide.md)**
+14. **[CLAUDE.md Guide](./claude-md-guide.md)**
     - Best practices for CLAUDE.md files
 
-12. **[GitHub Repositories](./github-repositories.md)**
+15. **[GitHub Repositories](./github-repositories.md)**
     - Links to related repositories
 
-13. **[Coverage Badges Guide](./coverage-badges-guide.md)**
+16. **[Coverage Badges Guide](./coverage-badges-guide.md)**
     - How to implement test coverage badges
 
-14. **[Index](./index.md)**
+17. **[Index](./index.md)**
     - This documentation hub
 
 ## 👥 Documentation by Role
@@ -106,6 +118,9 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
 
 ### For Claude Code
 - Context: [Prompt Engineering](./prompt-engineering.md)
+- XML Patterns: [Prompt XML Structured Guide](./prompt-xml-structured-guide.md)
+- Optimization: [Prompt Optimization Patterns](./prompt-optimization-patterns.md)
+- Migration: [Prompt Migration Guide](./prompt-migration-guide.md)
 - Templates: [CLAUDE.md Template](./claude-md-template.md)
 - Guidance: [CLAUDE.md Guide](./claude-md-guide.md)
 

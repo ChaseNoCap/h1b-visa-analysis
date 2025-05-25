@@ -188,6 +188,218 @@ export class ServiceError extends Error {
 }
 ```
 
+## Prompt Architecture Patterns
+
+### XML-Structured Prompt System
+The project uses XML-based prompts for structured, parseable context:
+
+```xml
+<system_architecture>
+  <overview>
+    This monorepo implements a report generation system with decomposed packages
+  </overview>
+  
+  <packages>
+    <category name="Core Infrastructure">
+      <package name="logger">
+        <purpose>Structured logging with Winston</purpose>
+        <status>Published to GitHub Packages</status>
+      </package>
+      <package name="di-framework">
+        <purpose>Dependency injection container</purpose>
+        <status>Local workspace</status>
+      </package>
+    </category>
+  </packages>
+  
+  <dependency_flow>
+    Applications → Core Packages → No Dependencies
+         ↓              ↓
+    Test Packages ← Test Interfaces
+  </dependency_flow>
+</system_architecture>
+```
+
+### Mirror-Based Prompt Structure
+Prompts mirror the actual project structure for intuitive navigation:
+
+```
+prompts/
+├── src/
+│   ├── system/           # System-wide understanding
+│   │   ├── architecture.md   # Overall system architecture
+│   │   ├── dependencies.md   # System dependency graph
+│   │   └── workflows.md      # How components work together
+│   │
+│   ├── packages/         # Mirrors actual package structure
+│   │   ├── logger/          # Logger package prompts
+│   │   ├── cache/           # Cache package prompts
+│   │   └── .../             # Other packages
+│   │
+│   ├── applications/     # Main applications
+│   └── workflows/        # Cross-cutting processes
+│
+├── scripts/             # Automation scripts
+└── templates/           # Prompt templates
+```
+
+### Progressive Context Loading
+Implement hierarchical context loading for efficiency:
+
+```xml
+<context_loading strategy="progressive">
+  <level depth="1">
+    <load>CLAUDE.md</load>
+    <purpose>Project overview</purpose>
+  </level>
+  
+  <level depth="2" condition="needs_package_info">
+    <load>package-catalog.md#{{package}}</load>
+    <purpose>Package details</purpose>
+  </level>
+  
+  <level depth="3" condition="needs_implementation">
+    <load>packages/{{package}}/src/</load>
+    <purpose>Implementation details</purpose>
+  </level>
+</context_loading>
+```
+
+### Task-Specific Context Patterns
+
+#### Bug Fixing Context
+```xml
+<task_context type="bug_fix">
+  <required_context>
+    <load>error logs</load>
+    <load>affected file</load>
+    <load>related tests</load>
+  </required_context>
+  
+  <optional_context>
+    <load>recent commits</load>
+    <load>similar fixed issues</load>
+  </optional_context>
+</task_context>
+```
+
+#### Package Development Context
+```xml
+<task_context type="package_development">
+  <required_context>
+    <load>decomposition-guide.md</load>
+    <load>developer-handbook.md</load>
+    <load>package-catalog.md</load>
+  </required_context>
+  
+  <conditional_context>
+    <when condition="creating_new_package">
+      <load>claude-md-template.md</load>
+    </when>
+    <when condition="working_on_existing">
+      <load>packages/{{package}}/CLAUDE.md</load>
+    </when>
+  </conditional_context>
+</task_context>
+```
+
+### Keyword Trigger System
+Automatic context loading based on keywords:
+
+```xml
+<triggers category="package_work">
+  <trigger pattern="working on {{package}} package">
+    <load>package-catalog.md#{{package}}</load>
+    <load>packages/{{package}}/CLAUDE.md</load>
+  </trigger>
+  
+  <trigger pattern="creating new package">
+    <load>developer-handbook.md</load>
+    <load>decomposition-guide.md</load>
+  </trigger>
+  
+  <trigger pattern="DI pattern|dependency injection">
+    <load>architecture-reference.md#dependency-injection</load>
+    <load>packages/di-framework/CLAUDE.md</load>
+  </trigger>
+</triggers>
+```
+
+### Prompt Optimization Architecture
+
+#### Minimal Context First
+```typescript
+// Start with minimal context
+const baseContext = {
+  project: 'CLAUDE.md',
+  architecture: 'architecture-reference.md#core-architecture'
+};
+
+// Progressive enhancement
+if (workingOnPackage) {
+  context.package = `package-catalog.md#${packageName}`;
+}
+
+if (needsImplementation) {
+  context.source = `packages/${packageName}/src/`;
+}
+```
+
+#### Error Context Structure
+```xml
+<error_context>
+  <error_message>
+    Cannot inject IEventBus into ReportGenerator
+  </error_message>
+  
+  <stack_trace>
+    <!-- Include relevant stack trace -->
+  </stack_trace>
+  
+  <context>
+    <file>src/services/ReportGenerator.ts</file>
+    <line>45</line>
+    <recent_changes>
+      Added @Emits decorator to generateReport method
+    </recent_changes>
+  </context>
+  
+  <attempted_solutions>
+    <solution>Verified IEventBus is registered in container</solution>
+    <solution>Checked import statements</solution>
+  </attempted_solutions>
+</error_context>
+```
+
+### Prompt Validation Patterns
+
+#### Structure Validation
+```typescript
+// Ensure prompts match project structure
+export interface IPromptValidator {
+  validateStructure(): Promise<ValidationResult>;
+  validateContent(promptPath: string): Promise<ValidationResult>;
+  generateMissingPrompts(): Promise<void>;
+}
+
+@injectable()
+export class PromptValidator implements IPromptValidator {
+  async validateStructure(): Promise<ValidationResult> {
+    const projectPackages = await this.scanProjectPackages();
+    const promptPackages = await this.scanPromptPackages();
+    
+    const missing = projectPackages.filter(
+      pkg => !promptPackages.has(`packages/${pkg.name}`)
+    );
+    
+    return {
+      valid: missing.length === 0,
+      issues: missing.map(pkg => `Missing prompts for ${pkg.name}`)
+    };
+  }
+}
+```
+
 ## Decorator Ecosystem
 
 ### Available Decorators

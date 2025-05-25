@@ -2,9 +2,10 @@
 
 ## Overview
 
-This catalog documents all 8 packages extracted during the decomposition effort, providing a comprehensive reference for each package's purpose, features, and usage.
+This catalog documents all packages in the monorepo, including the 8 extracted packages from decomposition and the new prompts package for AI context management.
 
-**Decomposition Status**: 8/8 packages (100%) ✅
+**Decomposition Status**: 8/8 packages (100%) ✅  
+**Total Packages**: 9 (including prompts package)
 
 ## Package Summary
 
@@ -18,6 +19,7 @@ This catalog documents all 8 packages extracted during the decomposition effort,
 | event-system | N/A* | High | ✅ Local | Event-driven debugging |
 | cache | N/A* | 94.79% | ✅ Local | Caching decorators |
 | report-templates | N/A* | 100% | ✅ Local | Template engine |
+| prompts | TBD | TBD | 🚧 Planned | AI context management |
 
 *Source files not currently accessible, but packages have compiled distributions
 
@@ -237,6 +239,60 @@ const report = new MarkdownReportBuilder()
 ```
 
 **Achievement**: 100% test coverage, smallest package (287 lines)
+
+### 9. prompts (Planned)
+**Purpose**: Centralized AI prompt management with mirror-based architecture
+
+**Features**:
+- Mirror structure of actual project layout
+- System-level prompts (architecture, dependencies, workflows)
+- Package-specific prompts for all packages
+- Workflow documentation and patterns
+- XML-structured prompts for parseability
+- Auto-updating status via scripts
+
+**API Example**:
+```typescript
+import { getPackagePrompts, getSystemPrompts } from 'prompts';
+
+// Load system understanding
+const systemContext = getSystemPrompts();
+
+// Load package-specific context
+const cachePrompts = getPackagePrompts('cache');
+const { overview, api, integration, status } = cachePrompts;
+
+// Load workflow understanding
+const workflow = getWorkflowPrompts()['report-generation'];
+```
+
+**Structure**:
+```
+prompts/
+├── src/
+│   ├── system/           # System-wide prompts
+│   ├── packages/         # Mirrors actual packages
+│   │   ├── cache/       # Cache package prompts
+│   │   ├── logger/      # Logger package prompts
+│   │   └── .../        # Other packages
+│   ├── applications/    # Main applications
+│   └── workflows/       # Cross-cutting workflows
+├── scripts/             # Automation scripts
+└── templates/           # Prompt templates
+```
+
+**Key Benefits**:
+- Single source of truth for all prompts
+- Structure conveys relationships
+- Easy navigation and discovery
+- Version controlled prompt evolution
+- Progressive context loading
+- XML-enhanced for structured parsing
+
+**References**:
+- Implementation: `/docs/prompt-migration-guide.md`
+- XML Patterns: `/docs/prompt-xml-structured-guide.md`
+- Optimization: `/docs/prompt-optimization-patterns.md`
 
 ## Architecture Patterns
 

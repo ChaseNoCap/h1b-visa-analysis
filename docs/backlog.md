@@ -11,7 +11,19 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## High Priority Items
 
-### 1. Add Coverage Badges to README
+### 1. Create Prompts Package
+**Status**: Not Started  
+**Description**: Implement centralized prompts package that mirrors project structure for AI context management
+**Tasks**:
+- Create `packages/prompts/` with mirror structure
+- Populate system-level prompts (architecture, dependencies, workflows)
+- Create package-specific prompts for all 8 packages
+- Implement validation script to ensure structure matches project
+- Add automation scripts for status updates
+- Create simple API for prompt access
+**Reference**: See `/docs/prompt-migration-guide.md` for implementation details
+
+### 2. Add Coverage Badges to README
 **Status**: Not Started  
 **Description**: Add test coverage badges to the main README.md to show coverage status for each package
 **Tasks**:
@@ -22,7 +34,17 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Medium Priority Items
 
-### 2. Implement Report Content Integration
+### 3. Implement XML-Enhanced Prompt Templates
+**Status**: Not Started  
+**Description**: Convert all prompt templates to XML structure for better parseability
+**Tasks**:
+- Convert existing prompts to XML format
+- Add conditional context loading logic
+- Implement structured task definitions
+- Create XML validation for prompts
+**Reference**: See `/docs/prompt-xml-structured-guide.md` for patterns
+
+### 4. Implement Report Content Integration
 **Status**: Not Started  
 **Description**: Wire up actual content from dependencies (prompts-shared, markdown-compiler, report-components)
 **Tasks**:
@@ -31,7 +53,17 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - Use template engine for dynamic content rendering
 - Test end-to-end report generation with real data
 
-### 3. Add PDF Generation Support
+### 5. Add Prompt Context Optimization
+**Status**: Not Started  
+**Description**: Implement optimization patterns for efficient Claude interactions
+**Tasks**:
+- Add keyword trigger system
+- Implement progressive context loading
+- Create task-specific context loaders
+- Add prompt performance metrics
+**Reference**: See `/docs/prompt-optimization-patterns.md` for techniques
+
+### 6. Add PDF Generation Support
 **Status**: Not Started  
 **Description**: Add ability to generate reports in PDF format
 **Tasks**:
@@ -42,7 +74,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Low Priority Items
 
-### 4. Performance Optimizations
+### 7. Performance Optimizations
 **Status**: Not Started  
 **Description**: Optimize report generation performance
 **Tasks**:
@@ -51,7 +83,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - Implement streaming for large reports
 - Add performance metrics and monitoring
 
-### 5. Create Web UI
+### 8. Create Web UI
 **Status**: Not Started  
 **Description**: Build a web interface for report generation
 **Tasks**:
@@ -62,7 +94,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Technical Debt
 
-### 6. Improve Error Messages
+### 9. Improve Error Messages
 **Status**: Not Started  
 **Description**: Enhance error messages across all packages for better debugging
 **Tasks**:
@@ -71,7 +103,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - Create error documentation
 - Improve error context and suggestions
 
-### 7. Add Integration Tests
+### 10. Add Integration Tests
 **Status**: Not Started  
 **Description**: Create integration tests between packages
 **Tasks**:
@@ -82,7 +114,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Documentation
 
-### 8. Create Architecture Decision Records (ADRs)
+### 11. Create Architecture Decision Records (ADRs)
 **Status**: Not Started  
 **Description**: Document key architectural decisions
 **Tasks**:
@@ -93,7 +125,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Infrastructure
 
-### 9. Set Up Continuous Deployment
+### 12. Set Up Continuous Deployment
 **Status**: Not Started  
 **Description**: Automate package publishing and deployment
 **Tasks**:

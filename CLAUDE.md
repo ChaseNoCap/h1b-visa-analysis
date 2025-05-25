@@ -7,28 +7,134 @@ This file provides guidance to Claude Code when working with code in this reposi
 ### Efficient Documentation Access
 The documentation has been consolidated from 34 files to 12 core documents. Load only what's needed:
 
-### 📚 Documentation Structure (13 Core Files)
+### 📚 Documentation Structure (16 Core Files)
 1. **[/docs/index.md](/docs/index.md)** - Documentation hub and navigation
 2. **[/docs/backlog.md](/docs/backlog.md)** - Prioritized work items and future tasks
 3. **[/docs/decomposition-guide.md](/docs/decomposition-guide.md)** - Principles, patterns, and governance
 4. **[/docs/migration-guide.md](/docs/migration-guide.md)** - Package extraction process
-5. **[/docs/package-catalog.md](/docs/package-catalog.md)** - All 8 packages with details
-6. **[/docs/developer-handbook.md](/docs/developer-handbook.md)** - Templates and guidelines
+5. **[/docs/package-catalog.md](/docs/package-catalog.md)** - All 9 packages with details (including prompts)
+6. **[/docs/developer-handbook.md](/docs/developer-handbook.md)** - Templates, guidelines, and prompt development
 7. **[/docs/setup-guide.md](/docs/setup-guide.md)** - Environment configuration
-8. **[/docs/architecture-reference.md](/docs/architecture-reference.md)** - Technical patterns
+8. **[/docs/architecture-reference.md](/docs/architecture-reference.md)** - Technical patterns and prompt architecture
 9. **[/docs/achievements.md](/docs/achievements.md)** - Success metrics
 10. **[/docs/prompt-engineering.md](/docs/prompt-engineering.md)** - Context loading strategies
+11. **[/docs/prompt-xml-structured-guide.md](/docs/prompt-xml-structured-guide.md)** - XML prompt patterns
+12. **[/docs/prompt-optimization-patterns.md](/docs/prompt-optimization-patterns.md)** - Efficient prompting
+13. **[/docs/prompt-migration-guide.md](/docs/prompt-migration-guide.md)** - Prompt package architecture
 
 ### 🔍 Context Loading by Task
 - **What's next?**: Load `/docs/backlog.md` - Always check backlog first
 - **Working on packages**: Load `/docs/package-catalog.md#[package-name]`
-- **Creating new package**: Load `/docs/developer-handbook.md`
-- **Architecture questions**: Load `/docs/architecture-reference.md`
+- **Creating new package**: Load `/docs/developer-handbook.md#package-creation-process`
+- **Prompt engineering**: Load `/docs/prompt-xml-structured-guide.md` for XML patterns
+- **Optimizing prompts**: Load `/docs/prompt-optimization-patterns.md` for efficiency
+- **Prompt package work**: Load `/docs/prompt-migration-guide.md` for architecture
+- **Architecture questions**: Load `/docs/architecture-reference.md#prompt-architecture-patterns`
 - **Setup/GitHub Actions**: Load `/docs/setup-guide.md`
 - **Understanding decomposition**: Load `/docs/decomposition-guide.md`
 
+## 🤖 Advanced Prompt Engineering
+
+### XML-Structured Context Loading
+Use XML patterns for structured, parseable prompts:
+
+```xml
+<task_definition>
+  <objective>
+    Create a new caching decorator for Redis support
+  </objective>
+  
+  <requirements>
+    <requirement priority="high">
+      Maintain compatibility with existing @Cacheable decorator
+    </requirement>
+    <requirement priority="medium">
+      Support TTL configuration
+    </requirement>
+  </requirements>
+  
+  <constraints>
+    <constraint>Package must remain under 1000 lines</constraint>
+    <constraint>Follow existing decorator patterns</constraint>
+    <constraint>Maintain 90%+ test coverage</constraint>
+  </constraints>
+</task_definition>
+```
+
+### Progressive Context Loading Strategy
+```xml
+<context_loading strategy="progressive">
+  <level depth="1">
+    <load>CLAUDE.md</load>
+    <purpose>Project overview</purpose>
+  </level>
+  
+  <level depth="2" condition="needs_package_info">
+    <load>package-catalog.md#{{package}}</load>
+    <purpose>Package details</purpose>
+  </level>
+  
+  <level depth="3" condition="needs_implementation">
+    <load>packages/{{package}}/src/</load>
+    <purpose>Implementation details</purpose>
+  </level>
+</context_loading>
+```
+
+### Keyword Trigger System
+Automatic context loading based on specific keywords:
+
+- **"working on [package] package"** → Loads package-catalog.md + package CLAUDE.md
+- **"creating new package"** → Loads developer-handbook.md + decomposition-guide.md
+- **"DI pattern"** → Loads architecture-reference.md#dependency-injection
+- **"testing strategy"** → Loads test-helpers and test-mocks documentation
+- **"prompt optimization"** → Loads prompt-optimization-patterns.md
+
+### Optimization Patterns
+
+#### ✅ Good Prompt Patterns
+```
+"The cache decorator in ReportGenerator isn't working - getting undefined results when using @Cacheable on generateReport method"
+
+"Update the logger package to add JSON export format support"
+
+"Getting 'Cannot inject IEventBus' error when using @Emits decorator in ReportGenerator.ts:45
+Stack: [full trace]
+Recent: Added event decorators"
+```
+
+#### ❌ Anti-Patterns to Avoid
+```
+"Fix the bug"                    → Too vague
+"Make it better"                 → No clear objective
+"The testing utilities"          → Use "test-helpers package"
+"Load all documentation"         → Context overload
+```
+
+### Prompts Package Integration
+When the prompts package is implemented, use this pattern:
+
+```typescript
+import { getPackagePrompts, getSystemPrompts, getWorkflowPrompts } from 'prompts';
+
+// Load system understanding
+const systemContext = getSystemPrompts();
+const architecture = systemContext.architecture;
+
+// Load package-specific context
+const cachePrompts = getPackagePrompts('cache');
+const { overview, api, integration, status } = cachePrompts;
+
+// Load workflow understanding
+const reportWorkflow = getWorkflowPrompts()['report-generation'];
+```
+
 ### 💡 Efficient Prompting
-See `/docs/prompt-engineering.md` for keyword triggers and context loading strategies.
+Comprehensive prompt engineering resources:
+- **[/docs/prompt-engineering.md](/docs/prompt-engineering.md)** - Context loading strategies and keyword triggers
+- **[/docs/prompt-xml-structured-guide.md](/docs/prompt-xml-structured-guide.md)** - XML-based prompt structure for parseability
+- **[/docs/prompt-optimization-patterns.md](/docs/prompt-optimization-patterns.md)** - Optimization techniques and anti-patterns
+- **[/docs/prompt-migration-guide.md](/docs/prompt-migration-guide.md)** - Mirror-based prompt package implementation
 
 ## Decomposition Principles
 
@@ -360,9 +466,19 @@ Successfully extracted and integrated the following packages:
 - **Features**: Template engine, MarkdownReportBuilder, template registry
 - **Usage**: Production dependency - used by ReportGenerator for formatting
 
+#### prompts 🚧
+- **Status**: Planned for implementation
+- **Size**: Target <1000 lines
+- **Coverage**: Target 90%+
+- **Location**: `/packages/prompts/` (to be created)
+- **Features**: XML-structured prompts, mirror-based architecture, auto-updating status
+- **Usage**: Development dependency - AI context management and optimization
+- **Reference**: Implementation details in `/docs/prompt-migration-guide.md`
+
 ### ✅ Decomposition Complete! (May 2025)
 
 **Achievement Unlocked**: 8/8 packages (100%) successfully extracted and integrated! 🎉
+**Expansion**: Adding prompts package for AI context management 🤖
 
 **Completed Integrations**:
 - ✅ markdown-compiler now uses shared cache package
@@ -518,6 +634,7 @@ npm update @chasenogap/logger
 ## Package Development Status Summary
 
 ### Decomposition Progress: 8/8 packages (100%) ✅ 🎉
+### Total Packages: 9 (including planned prompts package)
 
 ### Published Shared Dependencies ✅
 - **@chasenogap/logger**: Winston-based logging, published to GitHub Packages
@@ -538,10 +655,12 @@ The project uses a clean, modular architecture with:
 - Main application in `/src/` with enhanced logging and templating
 - Mixed local/published package consumption pattern
 - All 8 packages under 1000 lines with clear single responsibilities
+- Planned prompts package for AI context management
 - TypeScript compilation: ✅ Clean with no errors
 - Tests: ✅ 301/314 tests passing (96% pass rate)
 - Testing Stack: ✅ Simplified - Vitest only (Sinon removed)
 - **Decomposition Complete**: 100% of planned packages extracted
+- **Prompt Engineering**: Comprehensive XML-based prompt system documented
 
 ## Development Guidelines
 - No AI ads in commit messages
