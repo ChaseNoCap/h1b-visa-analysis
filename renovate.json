@@ -1,0 +1,54 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "timezone": "America/New_York",
+  "schedule": ["every 30 minutes"],
+  "cloneSubmodules": true,
+  "git-submodules": {
+    "enabled": true
+  },
+  "npmrc": "@chasenocap:registry=https://npm.pkg.github.com/",
+  "packageRules": [
+    {
+      "description": "Automerge ChaseNoCap packages",
+      "matchPackagePatterns": ["^@chasenocap/"],
+      "groupName": "ChaseNoCap packages",
+      "schedule": ["at any time"],
+      "automerge": true,
+      "automergeType": "pr",
+      "rangeStrategy": "bump",
+      "recreateClosed": true,
+      "rebaseWhen": "behind-base-branch"
+    },
+    {
+      "description": "Group submodule updates",
+      "matchManagers": ["git-submodules"],
+      "groupName": "Submodule updates",
+      "commitMessageTopic": "submodule {{depName}}",
+      "automerge": true
+    },
+    {
+      "description": "Security updates",
+      "matchUpdateTypes": ["patch", "minor"],
+      "matchPackagePatterns": ["*"],
+      "automerge": true,
+      "minimumReleaseAge": "0 days",
+      "schedule": ["at any time"],
+      "prPriority": 10
+    }
+  ],
+  "prCreation": "immediate",
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 20,
+  "rebaseWhen": "conflicted",
+  "semanticCommits": "enabled",
+  "commitMessagePrefix": "chore:",
+  "labels": ["dependencies", "automated"],
+  "postUpdateOptions": [
+    "npmDedupe"
+  ]
+}

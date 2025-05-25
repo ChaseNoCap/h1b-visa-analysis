@@ -1,0 +1,142 @@
+name: Auto Update Dependencies
+
+on:
+  repository_dispatch:
+    types: [package-published]
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours as backup
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to update (optional)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          cache: 'npm'
+
+      - name: Configure npm for GitHub Packages
+        run: |
+          echo "@chasenocap:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+
+      - name: Update specific package (repository_dispatch)
+        if: github.event_name == 'repository_dispatch'
+        env:
+          PACKAGE: ${{ github.event.client_payload.package }}
+          VERSION: ${{ github.event.client_payload.version }}
+        run: |
+          echo "Updating @chasenocap/${PACKAGE} to ${VERSION}"
+          
+          # Update npm dependency
+          npm update "@chasenocap/${PACKAGE}@${VERSION}" --save
+          
+          # Update submodule to matching tag
+          if [ -d "packages/${PACKAGE}" ]; then
+            cd "packages/${PACKAGE}"
+            git fetch --tags origin
+            
+            # Try different tag formats
+            if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+              git checkout "v${VERSION}"
+            elif git rev-parse "${VERSION}" >/dev/null 2>&1; then
+              git checkout "${VERSION}"
+            else
+              echo "Warning: Could not find tag ${VERSION} or v${VERSION}"
+              git pull origin main
+            fi
+            cd ../..
+          fi
+
+      - name: Update all packages (scheduled/manual)
+        if: github.event_name != 'repository_dispatch'
+        run: |
+          echo "Checking for updates to all @chasenocap packages"
+          
+          # Update npm dependencies
+          npm update
+          
+          # Update all submodules to latest
+          git submodule update --remote --merge
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true' && github.event_name == 'repository_dispatch'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update @chasenocap/${{ github.event.client_payload.package }} to ${{ github.event.client_payload.version }}"
+          title: "⬆️ Update @chasenocap/${{ github.event.client_payload.package }} to ${{ github.event.client_payload.version }}"
+          body: |
+            ## Automated Dependency Update
+            
+            This PR updates the following:
+            - **Package**: `@chasenocap/${{ github.event.client_payload.package }}`
+            - **Version**: `${{ github.event.client_payload.version }}`
+            - **Triggered by**: Package release in ${{ github.event.client_payload.repository }}
+            
+            ### Checklist
+            - [ ] Tests pass
+            - [ ] Build succeeds
+            - [ ] Submodule reference updated
+            
+            ---
+            *This PR was automatically created by the dependency update workflow.*
+          branch: auto-update-${{ github.event.client_payload.package }}-${{ github.event.client_payload.version }}
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+
+      - name: Create Pull Request (scheduled)
+        if: steps.changes.outputs.has_changes == 'true' && github.event_name != 'repository_dispatch'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update dependencies"
+          title: "⬆️ Scheduled dependency updates"
+          body: |
+            ## Automated Dependency Update
+            
+            This PR contains scheduled updates for @chasenocap packages.
+            
+            ### Checklist
+            - [ ] Tests pass
+            - [ ] Build succeeds
+            - [ ] All submodules updated
+            
+            ---
+            *This PR was automatically created by the scheduled dependency update workflow.*
+          branch: auto-update-scheduled-${{ github.run_number }}
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
