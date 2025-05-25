@@ -1,15 +1,24 @@
 name: Notify Parent Repository on Publish
 
 on:
+  push:
+    branches: [main]
   release:
     types: [published]
   workflow_run:
     workflows: ["Publish Package"]
     types: [completed]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to notify (optional)'
+        required: false
+        type: string
+        default: 'latest'
 
 jobs:
   notify-parent:
-    if: ${{ github.event_name == 'release' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'release' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,6 +29,8 @@ jobs:
           echo "name=${GITHUB_REPOSITORY#*/}" >> $GITHUB_OUTPUT
           if [[ "${{ github.event_name }}" == "release" ]]; then
             echo "version=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]] && [[ -n "${{ github.event.inputs.version }}" ]]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
           else
             echo "version=latest" >> $GITHUB_OUTPUT
           fi
