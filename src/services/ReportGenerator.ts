@@ -28,7 +28,7 @@ export class ReportGenerator implements IReportGenerator {
     @inject(TYPES.IEventBus) eventBus: IEventBus
   ) {
     this.logger = logger.child({ service: 'ReportGenerator' });
-    this.reportBuilder = this.templateContainer.get<IReportBuilder>(TEMPLATE_TYPES.IReportBuilder);
+    this.reportBuilder = this.templateContainer.markdownBuilder;
     setEventBus(this, eventBus);
   }
 

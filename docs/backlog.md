@@ -9,9 +9,66 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 3. **Refinement**: Work items should be refined before starting implementation
 4. **Updates**: Mark items complete and add new discoveries as work progresses
 
+## Critical Priority Items (Blocking Build)
+
+### 1. Implement event-system Package
+**Status**: Not Started  
+**Description**: Implement missing event-system functionality that's blocking the main application build
+**Acceptance Criteria**:
+- Export Emits, Traces, setEventBus decorators
+- Export EventBus and TestEventBus classes
+- Event-driven debugging and instrumentation working
+- All TypeScript compilation errors resolved
+**Tasks**:
+- [ ] Implement EventBus class with emit/subscribe functionality
+- [ ] Create Emits decorator for method instrumentation
+- [ ] Create Traces decorator for performance monitoring
+- [ ] Implement setEventBus helper function
+- [ ] Create TestEventBus for testing scenarios
+- [ ] Add comprehensive tests (target 85%+ coverage)
+- [ ] Update package exports in index.ts
+**Dependencies**: di-framework, inversify
+**Estimate**: 1-2 days
+**Blocker**: Main application cannot build without this
+
+### 2. Implement report-templates Package
+**Status**: Not Started  
+**Description**: Implement missing report-templates functionality for report generation
+**Acceptance Criteria**:
+- Export createTemplateContainer, TEMPLATE_TYPES, IReportBuilder
+- Template engine with fluent API working
+- MarkdownReportBuilder implementation complete
+- Integration with main ReportGenerator service
+**Tasks**:
+- [ ] Design IReportBuilder interface
+- [ ] Implement MarkdownReportBuilder class
+- [ ] Create template container factory
+- [ ] Define TEMPLATE_TYPES constants
+- [ ] Add template registry and management
+- [ ] Create fluent API for report building
+- [ ] Add comprehensive tests (target 90%+ coverage)
+- [ ] Update package exports in index.ts
+**Dependencies**: di-framework, file-system
+**Estimate**: 2-3 days
+**Blocker**: Main application cannot build without this
+
+### 3. Fix file-system Package Exports
+**Status**: Not Started  
+**Description**: Fix missing file-system exports causing import errors
+**Acceptance Criteria**:
+- All imports in main application resolve correctly
+- TypeScript compilation succeeds
+**Tasks**:
+- [ ] Verify NodeFileSystem implementation is complete
+- [ ] Fix export statements in index.ts
+- [ ] Test imports in main application
+**Dependencies**: None (already implemented)
+**Estimate**: 30 minutes
+**Blocker**: Import errors in main application
+
 ## High Priority Items
 
-### 1. Implement Automated Dependency Updates
+### 4. Implement Automated Dependency Updates
 **Status**: Not Started  
 **Description**: Set up automated consumption of new package versions using Renovate + GitHub Actions
 **Acceptance Criteria**:
@@ -33,7 +90,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 **Reference**: See `/docs/dependency-automation-guide.md` for detailed implementation
 **Estimate**: 1-2 days
 
-### 2. Add Coverage Badges to README
+### 5. Add Coverage Badges to README
 **Status**: Not Started  
 **Description**: Add test coverage badges to the main README.md to show coverage status for each package
 **Tasks**:
@@ -44,7 +101,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Medium Priority Items
 
-### 3. Implement XML-Enhanced Prompt Templates
+### 6. Implement XML-Enhanced Prompt Templates
 **Status**: Not Started  
 **Description**: Convert all prompt templates to XML structure for better parseability
 **Tasks**:
