@@ -1,18 +1,22 @@
 import { injectable, inject } from 'inversify';
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import { Emits, Traces, setEventBus } from 'event-system';
+import { Emits, Traces, setEventBus } from '@chasenocap/event-system';
 import { TYPES } from '../core/constants/injection-tokens.js';
 import type {
   IDependencyChecker,
   IDependencyStatus,
 } from '../core/interfaces/IDependencyChecker.js';
-import type { ILogger } from 'logger';
-import type { IEventBus } from 'event-system';
+import type { ILogger } from '@chasenocap/logger';
+import type { IEventBus } from '@chasenocap/event-system';
 
 @injectable()
 export class DependencyChecker implements IDependencyChecker {
-  private readonly dependencies = ['prompts', 'markdown-compiler', 'report-components'];
+  private readonly dependencies = [
+    '@chasenocap/prompts',
+    '@chasenocap/markdown-compiler',
+    '@chasenocap/report-components',
+  ];
   private readonly logger: ILogger;
 
   constructor(
@@ -23,7 +27,7 @@ export class DependencyChecker implements IDependencyChecker {
     setEventBus(this, eventBus);
   }
 
-  @Emits('dependency.check', { 
+  @Emits('dependency.check', {
     payloadMapper: (name: string) => ({ dependency: name }),
   })
   @Traces({ threshold: 100 })
@@ -32,18 +36,19 @@ export class DependencyChecker implements IDependencyChecker {
     const startTime = Date.now();
 
     try {
-      const packagePath = path.join(process.cwd(), 'packages', name);
-      const packageJsonPath = path.join(packagePath, 'package.json');
+      // For published packages, check node_modules
+      const modulePath = path.join(process.cwd(), 'node_modules', name);
+      const packageJsonPath = path.join(modulePath, 'package.json');
 
-      // Check if package directory exists
-      await fs.access(packagePath);
+      // Check if package is installed
+      await fs.access(packageJsonPath);
 
       // Try to read package.json
       const packageJsonContent = await fs.readFile(packageJsonPath, 'utf-8');
       const packageJson = JSON.parse(packageJsonContent) as { version?: string; name?: string };
 
       depLogger.debug('Dependency found', {
-        path: packagePath,
+        path: modulePath,
         version: packageJson.version ?? 'unknown',
         checkDuration: Date.now() - startTime,
       });
@@ -52,13 +57,13 @@ export class DependencyChecker implements IDependencyChecker {
         name,
         available: true,
         version: packageJson.version ?? 'unknown',
-        path: packagePath,
+        path: modulePath,
       };
     } catch (error) {
       const err = error as Error;
       depLogger.warn('Dependency not available', {
         message: err.message,
-        code: (err as any).code,
+        code: (err as NodeJS.ErrnoException).code,
         checkDuration: Date.now() - startTime,
       });
 

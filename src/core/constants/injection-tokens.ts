@@ -1,4 +1,4 @@
-import { createTokens } from 'di-framework';
+import { createTokens } from '@chasenocap/di-framework';
 
 // Create type-safe tokens using di-framework
 export const TYPES = createTokens('h1b', {

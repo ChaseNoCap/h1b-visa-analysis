@@ -1,11 +1,11 @@
 import 'reflect-metadata';
-import { ContainerBuilder, Container } from 'di-framework';
+import { ContainerBuilder, Container } from '@chasenocap/di-framework';
 import { TYPES } from '../constants/injection-tokens.js';
 
 // Import concrete implementations
 import { WinstonLogger } from '@chasenocap/logger';
-import { NodeFileSystem } from 'file-system';
-import { EventBus } from 'event-system';
+import { NodeFileSystem } from '@chasenocap/file-system';
+import { EventBus } from '@chasenocap/event-system';
 import { ReportGenerator } from '../../services/ReportGenerator.js';
 import { DependencyChecker } from '../../services/DependencyChecker.js';
 

@@ -1,9 +1,9 @@
 import { injectable, inject } from 'inversify';
-import { Emits, Traces, setEventBus } from 'event-system';
+import { Emits, Traces, setEventBus } from '@chasenocap/event-system';
 import { TYPES } from '../core/constants/injection-tokens.js';
-import { success, failure } from 'di-framework';
-import { createTemplateContainer, TEMPLATE_TYPES } from 'report-templates';
-import type { IReportBuilder } from 'report-templates';
+import { success, failure } from '@chasenocap/di-framework';
+import { createTemplateContainer, TEMPLATE_TYPES } from '@chasenocap/report-templates';
+import type { IReportBuilder } from '@chasenocap/report-templates';
 import type {
   IReportGenerator,
   IReportOptions,
@@ -11,9 +11,9 @@ import type {
   IReportData,
 } from '../core/interfaces/IReportGenerator.js';
 import type { IDependencyChecker } from '../core/interfaces/IDependencyChecker.js';
-import type { ILogger } from 'logger';
-import type { IFileSystem } from 'file-system';
-import type { IEventBus } from 'event-system';
+import type { ILogger } from '@chasenocap/logger';
+import type { IFileSystem } from '@chasenocap/file-system';
+import type { IEventBus } from '@chasenocap/event-system';
 
 @injectable()
 export class ReportGenerator implements IReportGenerator {

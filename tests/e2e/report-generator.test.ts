@@ -3,9 +3,9 @@ import { containerPromise } from '@/core/container/container';
 import { TYPES } from '@/core/constants/injection-tokens';
 import type { IReportGenerator } from '@/core/interfaces/IReportGenerator';
 import type { IDependencyChecker } from '@/core/interfaces/IDependencyChecker';
-import type { IFileSystem } from 'file-system';
-import type { Container } from 'di-framework';
-// import { FixtureManager, setupTest } from 'test-helpers';
+import type { IFileSystem } from '@chasenocap/file-system';
+import type { Container } from '@chasenocap/di-framework';
+// import { FixtureManager, setupTest } from '@chasenocap/test-helpers';
 
 describe('ReportGenerator E2E Tests', () => {
   let container: Container;

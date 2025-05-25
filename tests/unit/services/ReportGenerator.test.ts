@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ReportGenerator } from '@/services/ReportGenerator';
-import { MockLogger } from 'test-mocks';
-import { TestEventBus } from 'event-system';
+import { MockLogger } from '@chasenocap/test-mocks';
+import { TestEventBus } from '@chasenocap/event-system';
 import type { IDependencyChecker } from '@/core/interfaces/IDependencyChecker';
-import type { IFileSystem } from 'file-system';
+import type { IFileSystem } from '@chasenocap/file-system';
 
 // Mock implementation of IDependencyChecker
 class MockDependencyChecker implements IDependencyChecker {

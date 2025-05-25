@@ -5,11 +5,11 @@ import { TYPES } from '@/core/constants/injection-tokens';
 import type { IReportGenerator } from '@/core/interfaces/IReportGenerator';
 import type { IDependencyChecker, IDependencyStatus } from '@/core/interfaces/IDependencyChecker';
 import { ReportGenerator } from '@/services/ReportGenerator';
-// import { createTestContainer, FixtureManager } from 'test-helpers';
-import { ContainerBuilder, Container } from 'di-framework';
+// import { createTestContainer, FixtureManager } from '@chasenocap/test-helpers';
+import { ContainerBuilder, Container } from '@chasenocap/di-framework';
 import { WinstonLogger } from '@chasenocap/logger';
-import { NodeFileSystem } from 'file-system';
-import { EventBus } from 'event-system';
+import { NodeFileSystem } from '@chasenocap/file-system';
+import { EventBus } from '@chasenocap/event-system';
 
 describe('ReportGenerator with Missing Dependencies', () => {
   let container: Container;

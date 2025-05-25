@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as fs from 'fs/promises';
 import { DependencyChecker } from '@/services/DependencyChecker';
-import { MockLogger } from 'test-mocks';
-import { TestEventBus } from 'event-system';
+import { MockLogger } from '@chasenocap/test-mocks';
+import { TestEventBus } from '@chasenocap/event-system';
 
 // Mock fs/promises
 vi.mock('fs/promises');

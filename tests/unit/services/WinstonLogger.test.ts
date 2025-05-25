@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import { WinstonLogger } from 'logger';
+import { WinstonLogger } from '@chasenocap/logger';
 
 describe('WinstonLogger', () => {
   let logger: WinstonLogger;

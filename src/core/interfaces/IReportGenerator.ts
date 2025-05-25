@@ -1,4 +1,4 @@
-import type { IResult } from 'di-framework';
+import type { IResult } from '@chasenocap/di-framework';
 
 export interface IReportOptions {
   outputDir?: string;

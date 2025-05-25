@@ -1,49 +1,48 @@
 {
   "name": "h1b-visa-analysis",
-  "version": "0.1.0",
-  "description": "H1B visa analysis monorepo",
+  "version": "1.0.0",
+  "description": "H1B visa analysis meta repository",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "packages/di-framework",
-    "packages/file-system",
-    "packages/cache",
-    "packages/report-templates",
-    "packages/event-system",
-    "packages/prompts",
-    "packages/logger"
-  ],
   "scripts": {
     "build": "tsc && node dist/src/index.js",
     "build:watch": "tsc --watch",
-    "build:all": "npm run build --workspaces --if-present",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "test:all": "npm test --workspaces --if-present",
     "coverage": "vitest run --coverage",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
-    "update-deps": "npm update prompts markdown-compiler report-components"
+    "update-deps": "npm update",
+    "submodule:update": "git submodule update --remote --merge",
+    "submodule:init": "git submodule update --init --recursive"
   },
   "keywords": [
     "h1b",
     "report",
     "generator",
-    "monorepo"
+    "meta-repository"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@chasenocap/logger": "file:./packages/logger",
-    "@chasenocap/test-mocks": "^0.1.1",
+    "@chasenocap/cache": "^1.0.0",
+    "@chasenocap/di-framework": "^1.0.0",
+    "@chasenocap/event-system": "^1.0.2",
+    "@chasenocap/file-system": "^1.0.0",
+    "@chasenocap/logger": "^1.0.0",
+    "@chasenocap/markdown-compiler": "^1.0.0",
+    "@chasenocap/report-components": "^1.0.0",
+    "@chasenocap/report-templates": "^1.0.0",
     "inversify": "^6.0.2",
     "reflect-metadata": "^0.2.1"
   },
   "devDependencies": {
-    "@chasenocap/test-helpers": "^0.1.0",
+    "@chasenocap/prompts": "^1.0.0",
+    "@chasenocap/test-helpers": "^1.0.0",
+    "@chasenocap/test-mocks": "^1.0.0",
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
     "@typescript-eslint/parser": "^6.13.0",
