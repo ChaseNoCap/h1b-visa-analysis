@@ -11,17 +11,27 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## High Priority Items
 
-### 1. Create Prompts Package
+### 1. Implement Automated Dependency Updates
 **Status**: Not Started  
-**Description**: Implement centralized prompts package that mirrors project structure for AI context management
+**Description**: Set up automated consumption of new package versions using Renovate + GitHub Actions
+**Acceptance Criteria**:
+- Automated PRs created within 1 hour of package publish
+- Git submodules automatically updated to match npm versions
+- Tests run automatically on all updates
+- Security updates prioritized and auto-merged
 **Tasks**:
-- Create `packages/prompts/` with mirror structure
-- Populate system-level prompts (architecture, dependencies, workflows)
-- Create package-specific prompts for all 8 packages
-- Implement validation script to ensure structure matches project
-- Add automation scripts for status updates
-- Create simple API for prompt access
-**Reference**: See `/docs/prompt-migration-guide.md` for implementation details
+- [ ] Install and configure Renovate GitHub App
+- [ ] Create renovate.json with submodule support
+- [ ] Set up repository dispatch in all 11 package repos
+- [ ] Create meta repo workflow for instant updates
+- [ ] Configure auto-merge for @chasenocap packages
+- [ ] Set up authentication for GitHub Packages
+- [ ] Test with one package (logger) first
+- [ ] Roll out to all packages
+- [ ] Create monitoring dashboard
+- [ ] Document troubleshooting guide
+**Reference**: See `/docs/dependency-automation-guide.md` for detailed implementation
+**Estimate**: 1-2 days
 
 ### 2. Add Coverage Badges to README
 **Status**: Not Started  
@@ -136,7 +146,24 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Completed Items
 
-_Items moved here when complete with completion date_
+### ✅ Standardize Package Management (May 2025)
+**Status**: Completed  
+**Description**: Migrated from hybrid workspace/submodule to pure Git submodules architecture
+**Completed Tasks**:
+- ✅ Removed NPM workspaces configuration
+- ✅ Updated all dependencies to @chasenocap scoped packages
+- ✅ Fixed all imports across codebase
+- ✅ Created package-standardization-guide.md
+- ✅ Updated all 11 packages to consistent structure
+
+### ✅ Create Prompts Package (May 2025)
+**Status**: Completed  
+**Description**: Implemented centralized prompts package for AI context management
+**Completed Tasks**:
+- ✅ Created packages/prompts/ as Git submodule
+- ✅ Implemented mirror-based architecture
+- ✅ Added automation scripts for updates
+- ✅ Published as @chasenocap/prompts v1.0.0
 
 ---
 
