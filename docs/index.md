@@ -12,6 +12,9 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
 
 ### I want to...
 
+#### **Know What's Next** 🎯
+→ Check [Backlog](./backlog.md) for prioritized work items
+
 #### **Understand the Architecture**
 → Read [Architecture Reference](./architecture-reference.md)
 
@@ -24,56 +27,64 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
 #### **Learn About Decomposition**
 → Study [Decomposition Guide](./decomposition-guide.md) → [Achievements](./achievements.md)
 
-## 📚 Consolidated Documentation (12 Files)
+## 📚 Consolidated Documentation (13 Files)
 
 ### Core Guides
 
-1. **[Decomposition Guide](./decomposition-guide.md)**
+1. **[Backlog](./backlog.md)** 🎯
+   - Prioritized future work items
+   - Task tracking and refinement
+   - **Always check this when asked "what's next?"**
+
+2. **[Decomposition Guide](./decomposition-guide.md)**
    - Principles, patterns, learnings, and governance
    - *Consolidates 6 decomposition documents*
 
-2. **[Migration Guide](./migration-guide.md)**
+3. **[Migration Guide](./migration-guide.md)**
    - Step-by-step package extraction process
    - *Consolidates 4 migration/implementation documents*
 
-3. **[Package Catalog](./package-catalog.md)**
+4. **[Package Catalog](./package-catalog.md)**
    - All 8 packages with features, usage, and metrics
    - *Consolidates 7 package implementation summaries*
 
-4. **[Developer Handbook](./developer-handbook.md)**
+5. **[Developer Handbook](./developer-handbook.md)**
    - Templates, checklists, naming conventions, patterns
    - *Consolidates 5 template/guideline documents*
 
-5. **[Setup Guide](./setup-guide.md)**
+6. **[Setup Guide](./setup-guide.md)**
    - GitHub Actions, PAT tokens, dependencies, troubleshooting
    - *Consolidates 4 setup documents*
 
-6. **[Architecture Reference](./architecture-reference.md)**
+7. **[Architecture Reference](./architecture-reference.md)**
    - Patterns, shared code analysis, validation
    - *Consolidates 3 architecture documents*
 
 ### Supporting Documents
 
-7. **[Achievements](./achievements.md)**
+8. **[Achievements](./achievements.md)**
    - 100% decomposition success story and metrics
    - *Consolidates completion and milestone documents*
 
-8. **[Prompt Engineering](./prompt-engineering.md)**
+9. **[Prompt Engineering](./prompt-engineering.md)**
    - Context loading strategies for Claude Code
    - *New guide for efficient AI interactions*
 
 ### Templates & References
 
-9. **[CLAUDE.md Template](./claude-md-template.md)**
-   - Template for package documentation
+10. **[CLAUDE.md Template](./claude-md-template.md)**
+    - Template for package documentation
 
-10. **[CLAUDE.md Guide](./claude-md-guide.md)**
+11. **[CLAUDE.md Guide](./claude-md-guide.md)**
     - Best practices for CLAUDE.md files
 
-11. **[GitHub Repositories](./github-repositories.md)**
+12. **[GitHub Repositories](./github-repositories.md)**
     - Links to related repositories
 
-12. **[Index](./index.md)**
+13. **[Coverage Badges Guide](./coverage-badges-guide.md)**
+    - How to implement test coverage badges
+
+14. **[Index](./index.md)**
     - This documentation hub
 
 ## 👥 Documentation by Role
@@ -154,17 +165,18 @@ npm run coverage   # Test coverage
 
 ## 🚀 Next Steps
 
-### Post-Decomposition Features
-1. **Content Integration**: Wire up actual H1B data
-2. **PDF Generation**: Add PDF output format
-3. **Web Interface**: Create UI for reports
-4. **API Endpoints**: RESTful generation
+### Check the Backlog! 🎯
+**Always start with [Backlog](./backlog.md)** to see prioritized work items. Current high-priority items include:
+- Coverage badges implementation
+- Report content integration
+- PDF generation support
 
 ### Using the Documentation
-1. Start with your role or task
-2. Load minimal context first
-3. Follow cross-references as needed
-4. Use [Prompt Engineering](./prompt-engineering.md) for Claude Code
+1. **Check [Backlog](./backlog.md) first** when asked "what's next?"
+2. Start with your role or task
+3. Load minimal context first
+4. Follow cross-references as needed
+5. Use [Prompt Engineering](./prompt-engineering.md) for Claude Code
 
 ---
 

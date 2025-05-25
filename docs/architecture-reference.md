@@ -95,19 +95,25 @@ export class Service {
 ## Project Structure
 
 ### Standard Package Layout
+
+Packages in this monorepo follow a flexible structure based on their needs:
+
+**Common Structure:**
 ```
 package/
 ├── src/
-│   ├── interfaces/      # Public contracts
-│   ├── implementations/ # Internal classes
-│   ├── errors/         # Domain errors
-│   └── index.ts        # Public exports
-├── tests/
-│   ├── unit/           # Isolated tests
-│   └── e2e/            # Integration tests
+│   ├── index.ts        # Public exports (always present)
+│   └── [feature-based organization varies by package]
+├── tests/              # Test files
+├── dist/               # Compiled output
 ├── CLAUDE.md           # Context documentation
 └── package.json        # Dependencies
 ```
+
+**Actual Package Structures:**
+- **Simple packages** (e.g., file-system): Flat structure with interfaces and implementations in src/
+- **Feature-based packages** (e.g., di-framework): Organized by feature (container/, tokens/, testing/, etc.)
+- **Decorator packages** (e.g., cache, event-system): Organized by type (decorators/, implementations/, interfaces/)
 
 ### Main Application Structure
 ```
@@ -233,14 +239,16 @@ Analysis revealed significant duplication between h1b-visa-analysis and markdown
 ### Extracted Packages
 Successfully decomposed into 8 focused packages:
 
-1. **di-framework** - DI utilities (689 lines)
-2. **logger** - Winston logging (300 lines)
-3. **test-mocks** - Mock implementations (400 lines)
-4. **test-helpers** - Test utilities (500 lines)
-5. **file-system** - File operations (700 lines)
-6. **event-system** - Event bus (800 lines)
-7. **cache** - Caching decorators (400 lines)
-8. **report-templates** - Template engine (287 lines)
+1. **di-framework** - DI utilities (1,261 lines)
+2. **logger** - Winston logging (136 lines)
+3. **test-mocks** - Mock implementations (1,757 lines)
+4. **test-helpers** - Test utilities (611 lines)
+5. **file-system** - File operations (191 lines)
+6. **event-system** - Event bus (source not available)
+7. **cache** - Caching decorators (source not available)
+8. **report-templates** - Template engine (source not available)
+
+**Note**: Some packages have compiled distributions but source files are not currently accessible. Line counts are from actual implementation where available.
 
 ### Shared Benefits
 - **Code Reduction**: ~500+ lines eliminated
@@ -333,11 +341,13 @@ export default defineConfig({
 
 ### Package Criteria
 - Single responsibility
-- < 1000 lines (prefer < 500)
-- 2-3 dependencies max
+- Target: < 2000 lines (ideal: < 1000)
+- 2-3 runtime dependencies max
 - Clear, specific name
 - Testable in isolation
 - Documented purpose
+
+**Note**: The original 1000-line guideline proved too restrictive. Packages like test-mocks (1,757 lines) and di-framework (1,261 lines) exceed this but maintain clear single responsibilities. The key is cohesion over arbitrary size limits.
 
 ## Future Considerations
 

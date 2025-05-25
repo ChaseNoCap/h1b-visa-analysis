@@ -10,14 +10,16 @@ This catalog documents all 8 packages extracted during the decomposition effort,
 
 | Package | Size | Coverage | Status | Purpose |
 |---------|------|----------|---------|---------|
-| di-framework | 689 lines | 84% | ✅ Local | Dependency injection utilities |
-| logger | 300 lines | 95%+ | ✅ Published | Winston-based logging |
-| test-mocks | 400 lines | 100% | ✅ Local | Mock implementations |
-| test-helpers | 500 lines | 91.89% | ✅ Local | Test utilities |
-| file-system | 700 lines | 95%+ | ✅ Local | File operations |
-| event-system | 800 lines | High | ✅ Local | Event-driven debugging |
-| cache | 400 lines | 94.79% | ✅ Local | Caching decorators |
-| report-templates | 287 lines | 100% | ✅ Local | Template engine |
+| di-framework | 1,261 lines | 84% | ✅ Local | Dependency injection utilities |
+| logger | 136 lines | 95%+ | ✅ Published | Winston-based logging |
+| test-mocks | 1,757 lines | 100% | ✅ Local | Mock implementations |
+| test-helpers | 611 lines | 91.89% | ✅ Local | Test utilities |
+| file-system | 191 lines | 95%+ | ✅ Local | File operations |
+| event-system | N/A* | High | ✅ Local | Event-driven debugging |
+| cache | N/A* | 94.79% | ✅ Local | Caching decorators |
+| report-templates | N/A* | 100% | ✅ Local | Template engine |
+
+*Source files not currently accessible, but packages have compiled distributions
 
 ## Package Details
 

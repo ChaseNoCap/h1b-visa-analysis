@@ -25,9 +25,11 @@ Keep packages small and focused.
 
 **Rules of thumb:**
 - < 10 source files
-- < 1000 lines of code
+- Target: < 2000 lines of code (ideal: < 1000)
 - < 5 public exports
 - If explaining takes > 1 paragraph, split it
+
+**Note**: While we target < 1000 lines, some packages like test-mocks (1,757 lines) and di-framework (1,261 lines) exceed this while maintaining single responsibility. Focus on cohesion over arbitrary limits.
 
 ### 4. Dependency Direction
 Dependencies flow from specific → general.

@@ -7,18 +7,20 @@ This file provides guidance to Claude Code when working with code in this reposi
 ### Efficient Documentation Access
 The documentation has been consolidated from 34 files to 12 core documents. Load only what's needed:
 
-### 📚 Documentation Structure (12 Core Files)
+### 📚 Documentation Structure (13 Core Files)
 1. **[/docs/index.md](/docs/index.md)** - Documentation hub and navigation
-2. **[/docs/decomposition-guide.md](/docs/decomposition-guide.md)** - Principles, patterns, and governance
-3. **[/docs/migration-guide.md](/docs/migration-guide.md)** - Package extraction process
-4. **[/docs/package-catalog.md](/docs/package-catalog.md)** - All 8 packages with details
-5. **[/docs/developer-handbook.md](/docs/developer-handbook.md)** - Templates and guidelines
-6. **[/docs/setup-guide.md](/docs/setup-guide.md)** - Environment configuration
-7. **[/docs/architecture-reference.md](/docs/architecture-reference.md)** - Technical patterns
-8. **[/docs/achievements.md](/docs/achievements.md)** - Success metrics
-9. **[/docs/prompt-engineering.md](/docs/prompt-engineering.md)** - Context loading strategies
+2. **[/docs/backlog.md](/docs/backlog.md)** - Prioritized work items and future tasks
+3. **[/docs/decomposition-guide.md](/docs/decomposition-guide.md)** - Principles, patterns, and governance
+4. **[/docs/migration-guide.md](/docs/migration-guide.md)** - Package extraction process
+5. **[/docs/package-catalog.md](/docs/package-catalog.md)** - All 8 packages with details
+6. **[/docs/developer-handbook.md](/docs/developer-handbook.md)** - Templates and guidelines
+7. **[/docs/setup-guide.md](/docs/setup-guide.md)** - Environment configuration
+8. **[/docs/architecture-reference.md](/docs/architecture-reference.md)** - Technical patterns
+9. **[/docs/achievements.md](/docs/achievements.md)** - Success metrics
+10. **[/docs/prompt-engineering.md](/docs/prompt-engineering.md)** - Context loading strategies
 
 ### 🔍 Context Loading by Task
+- **What's next?**: Load `/docs/backlog.md` - Always check backlog first
 - **Working on packages**: Load `/docs/package-catalog.md#[package-name]`
 - **Creating new package**: Load `/docs/developer-handbook.md`
 - **Architecture questions**: Load `/docs/architecture-reference.md`
@@ -35,7 +37,7 @@ See `/docs/prompt-engineering.md` for keyword triggers and context loading strat
 ### Key Principles:
 1. **Single Purpose**: Each package has exactly ONE reason to exist
 2. **Clear Boundaries**: Package names clearly indicate their purpose
-3. **Size Limits**: Packages stay under 1000 lines with < 5 public exports
+3. **Size Limits**: Packages target < 2000 lines with < 5 public exports (ideal: < 1000)
 4. **Dependency Direction**: Dependencies flow from specific → general
 5. **Test in Isolation**: If you can't test it alone, it's too coupled
 
@@ -543,6 +545,20 @@ The project uses a clean, modular architecture with:
 
 ## Development Guidelines
 - No AI ads in commit messages
+
+## Working with the Backlog
+
+### When Asked "What's Next?"
+1. **Always check `/docs/backlog.md` first** - This is the source of truth for prioritized work
+2. **Help refine work items** - Break down high-level items into concrete tasks
+3. **Enforce backlog usage** - New work should be added to the backlog for prioritization
+4. **Update status** - Mark items as in progress/complete as work proceeds
+
+### Backlog Best Practices
+- Work items should come from the backlog, not ad-hoc requests
+- Help users understand the priority and impact of different items
+- Suggest refinements to make work items more actionable
+- Track completion and celebrate progress
 
 ## Development Environment Checks
 
