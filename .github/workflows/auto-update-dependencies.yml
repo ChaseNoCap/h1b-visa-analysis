@@ -34,11 +34,16 @@ jobs:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com'
           cache: 'npm'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
 
       - name: Configure npm for GitHub Packages
         run: |
-          echo "@chasenocap:registry=https://npm.pkg.github.com/" >> ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT_TOKEN }}" >> ~/.npmrc
+          npm config set @chasenocap:registry https://npm.pkg.github.com
+          npm config set //npm.pkg.github.com/:_authToken ${{ secrets.PAT_TOKEN }}
+          npm config set registry https://registry.npmjs.org/
+          echo "NPM configuration:"
+          npm config list
 
       - name: Update specific package (repository_dispatch)
         if: github.event_name == 'repository_dispatch'

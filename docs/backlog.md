@@ -12,7 +12,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - **Report Generation**: ✅ Working with 119KB comprehensive output
 - **Dependency Automation**: ✅ Fully automated with monitoring
 
-**Next Priority**: Fix All CI Failures (Item #9) - Use monitoring dashboard to systematically fix all failing packages
+**Next Priority**: Complete Automated Publishing Implementation (New Items #15-20) - Fix publish workflows and enable real-time automation
 
 ## How to Use This Backlog
 
@@ -257,27 +257,57 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - ✅ Documented instant update infrastructure
 **Final Results**: Meta repo CI passes, instant update infrastructure ready, clear monitoring
 
-### 9. Automated Publishing & Monitoring (NEW CRITICAL PRIORITY)
-**Status**: 🔥 Critical - Blocks proper monitoring  
-**Description**: Automate package publishing to enable meaningful monitoring and reliable updates
-**Priority Justification**: Manual publishing creates monitoring blind spots and unreliable automation
-**Current Problem**: Publishing is manual, inconsistent, and prevents proper monitoring
-**Blocking Issue**: Auto-update workflow has npm auth errors (breaks instant updates)
+### 15. Complete Automated Publishing Implementation (CRITICAL)
+**Status**: 🔥 In Progress - Blocking real-time automation  
+**Description**: Fix publish workflows and complete automated publishing to enable reliable instant updates
+**Priority Justification**: Manual publishing prevents proper automation monitoring and breaks instant updates
+**Current Problem**: Auto-update workflow has npm auth errors, packages not published to GitHub Packages
+**Sprint 1 Status**: ✅ Auth issue identified, cache package publish workflow created
 **Tasks**:
-- [ ] **CRITICAL**: Fix npm auth in auto-update workflow
-- [ ] Test end-to-end update flow with manual publish
-- [ ] Create standard publish workflow template
-- [ ] Deploy publish automation to logger package (test)
-- [ ] Deploy publish workflows to all 11 packages
-- [ ] Add real publish status monitoring
-- [ ] Replace "N/A" metrics with actionable data
-**Process**: Follow docs/automated-publishing-critical-path.md
+- [x] ✅ Debug auto-update workflow npm authentication issue  
+- [ ] **IN PROGRESS**: Fix cache package publish workflow (test step failing)
+- [ ] Test successful cache package publish to GitHub Packages
+- [ ] Deploy publish workflows to remaining 10 packages
+- [ ] Test end-to-end flow: publish → notify → auto-update
+- [ ] Add comprehensive test suites to packages without tests
+- [ ] Update monitoring dashboard with real publish metrics
+**Process**: Following docs/automated-publishing-critical-path.md
 **Success Criteria**: 
-- Auto-update workflow succeeds
-- All packages have automated publishing
-- Dashboard shows real publish metrics
-- Zero manual intervention needed for updates
-**Estimate**: 4.5 hours (Sprint 1: 1h, Sprint 2: 2h, Sprint 3: 1.5h)
+- All 11 packages publish automatically to GitHub Packages
+- Auto-update workflow succeeds without auth errors
+- Dashboard shows real publish status (not "N/A")
+- Zero manual intervention for updates
+**Estimate**: 3 hours remaining (1h fix, 1h deploy, 1h test)
+
+### 16. Add Missing Test Suites to Packages
+**Status**: Medium Priority - Enables quality automation  
+**Description**: Add comprehensive test suites to packages that currently have none
+**Priority Justification**: Required for reliable automated publishing and quality assurance
+**Affected Packages**:
+- cache (no tests)
+- event-system (has tests)
+- file-system (has tests)  
+- logger (has tests)
+- prompts (documentation package - N/A)
+- report-components (content package - different testing needs)
+**Tasks**:
+- [ ] Create test suite for cache package (@Cacheable, @InvalidateCache decorators)
+- [ ] Add integration tests for caching behavior
+- [ ] Create test fixtures and mock data
+- [ ] Ensure >90% coverage target
+- [ ] Update publish workflows to run tests
+**Estimate**: 4-6 hours per package
+
+### 17. Enhance Monitoring Dashboard with Real Metrics
+**Status**: Medium Priority - After publishing works  
+**Description**: Replace "N/A" placeholders with real publish and automation metrics
+**Tasks**:
+- [ ] Add GitHub Packages API integration for publish status
+- [ ] Track publish frequency and success rates  
+- [ ] Monitor auto-update workflow success rates
+- [ ] Add package version tracking across ecosystem
+- [ ] Create actionable alerts for automation failures
+**Estimate**: 2-3 hours
 
 ### 10. Performance Optimizations
 **Status**: Medium Priority - After CI fixes  
