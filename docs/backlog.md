@@ -52,9 +52,40 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - ✅ All imports in main application resolve correctly
 **Final Results**: Package builds with correct structure, imports working
 
+## Critical Priority Items (Package Publishing)
+
+### 4. Complete Package Publishing to GitHub Packages
+**Status**: In Progress 🚧  
+**Description**: Publish all remaining packages to GitHub Packages Registry to enable Renovate automation
+**Current State**:
+- ✅ Published: @chasenocap/cache@1.0.5 (fixed, no di-framework dependency)
+  - Note: Package name is `@chasenocap/cache` NOT `@chasenocap/mailto:cache` (that was a typo)
+- ✅ Published: @chasenocap/logger@1.0.0
+- ✅ Published: @chasenocap/di-framework@1.0.0
+- ✅ Published: @chasenocap/prompts@1.0.0
+- ✅ Published: @chasenocap/test-mocks@0.1.1
+- ✅ Published: @chasenocap/test-helpers@0.1.0
+- ❌ Not Published: file-system, event-system, report-templates, markdown-compiler, report-components
+
+**Immediate Tasks**:
+- [ ] Fix npm installation issues (npm cache corruption)
+- [ ] Publish @chasenocap/file-system (no dependencies)
+- [ ] Update event-system to use published di-framework@1.0.0
+- [ ] Publish @chasenocap/event-system
+- [ ] Update report-templates to use published packages
+- [ ] Publish @chasenocap/report-templates
+- [ ] Publish @chasenocap/markdown-compiler (already uses cache@1.0.5)
+- [ ] Publish @chasenocap/report-components
+- [ ] Update main package.json to use all published versions
+- [ ] Remove all local file dependencies
+
+**Blockers**:
+- npm installation failing with "Cannot destructure property 'package' of 'node.target' as it is null"
+- Suggested fix: `npm cache clean --force && npm install -g npm@latest`
+
 ## High Priority Items
 
-### 4. Implement Automated Dependency Updates
+### 5. Implement Automated Dependency Updates
 **Status**: Not Started  
 **Description**: Set up automated consumption of new package versions using Renovate + GitHub Actions
 **Acceptance Criteria**:
