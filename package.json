@@ -28,7 +28,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@chasenocap/cache": "^1.0.5",
+    "@chasenocap/cache": "^1.0.7",
     "@chasenocap/di-framework": "^1.0.0",
     "@chasenocap/event-system": "^1.0.5",
     "@chasenocap/file-system": "^1.0.0",
