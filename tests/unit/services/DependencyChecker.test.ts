@@ -23,7 +23,7 @@ describe('DependencyChecker', () => {
     // Reset all mocks
     vi.clearAllMocks();
     mockLogger.clear();
-    testEventBus.clearRecordings();
+    testEventBus.clearEvents();
   });
 
   describe('checkDependency', () => {
