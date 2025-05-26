@@ -4,7 +4,11 @@ import { MockLogger } from '@chasenocap/test-mocks';
 import { TestEventBus } from '@chasenocap/event-system';
 import type { IDependencyChecker } from '@/core/interfaces/IDependencyChecker';
 import type { IFileSystem } from '@chasenocap/file-system';
-import type { IMarkdownProcessor, IProcessOptions, IProcessResult } from '@/core/interfaces/IMarkdownProcessor';
+import type {
+  IMarkdownProcessor,
+  IProcessOptions,
+  IProcessResult,
+} from '@/core/interfaces/IMarkdownProcessor';
 
 // Mock implementation of IMarkdownProcessor
 class MockMarkdownProcessor implements IMarkdownProcessor {
