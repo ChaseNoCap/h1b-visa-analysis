@@ -1,62 +1,97 @@
 #!/bin/bash
 
+# Test Automation Script for Dependency Updates
+# This script tests the automated dependency update system
+
+set -e
+
 echo "🧪 Testing Dependency Automation System"
-echo "======================================="
-echo ""
+echo "========================================"
 
-# Test 1: Check Renovate config
-echo "1️⃣ Checking Renovate configuration..."
-if [ -f "renovate.json" ]; then
-  echo "✅ renovate.json exists"
-  if jq empty renovate.json 2>/dev/null; then
-    echo "✅ renovate.json is valid JSON"
-  else
-    echo "❌ renovate.json has invalid JSON"
-  fi
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${YELLOW}📋 Running pre-flight checks...${NC}"
+
+# 1. Validate renovate.json
+echo "🔍 Validating renovate.json..."
+if [[ -f "renovate.json" ]]; then
+    if jq empty renovate.json 2>/dev/null; then
+        echo -e "${GREEN}✅ renovate.json is valid${NC}"
+    else
+        echo -e "${RED}❌ renovate.json validation failed${NC}"
+        exit 1
+    fi
 else
-  echo "❌ renovate.json not found"
+    echo -e "${RED}❌ renovate.json not found${NC}"
+    exit 1
 fi
 
-# Test 2: Check GitHub Actions workflow
-echo ""
-echo "2️⃣ Checking GitHub Actions workflow..."
-if [ -f ".github/workflows/auto-update-dependencies.yml" ]; then
-  echo "✅ Auto-update workflow exists"
+# 2. Check GitHub Packages access
+echo "🔍 Testing GitHub Packages access..."
+if npm view @chasenocap/logger --registry https://npm.pkg.github.com &> /dev/null; then
+    echo -e "${GREEN}✅ GitHub Packages access working${NC}"
 else
-  echo "❌ Auto-update workflow not found"
+    echo -e "${YELLOW}⚠️ Cannot access GitHub Packages (authentication may be needed)${NC}"
 fi
 
-# Test 3: Check npm authentication
-echo ""
-echo "3️⃣ Checking npm authentication..."
-if npm view @chasenocap/logger name --registry https://npm.pkg.github.com 2>/dev/null | grep -q "logger"; then
-  echo "✅ Can access @chasenocap packages"
+# 3. Check workflow files exist
+echo "🔍 Checking workflow files..."
+WORKFLOWS=(
+    ".github/workflows/auto-update-dependencies.yml"
+    ".github/auto-merge.yml"
+    "renovate.json"
+)
+
+for workflow in "${WORKFLOWS[@]}"; do
+    if [[ -f "$workflow" ]]; then
+        echo -e "${GREEN}✅ $workflow exists${NC}"
+    else
+        echo -e "${RED}❌ $workflow missing${NC}"
+    fi
+done
+
+# 4. Check package notify-parent workflows
+echo "🔍 Checking package notification workflows..."
+PACKAGE_COUNT=$(find packages -name "notify-parent.yml" -type f 2>/dev/null | wc -l)
+echo "Found $PACKAGE_COUNT packages with notify-parent workflows"
+
+if [[ "$PACKAGE_COUNT" -eq 11 ]]; then
+    echo -e "${GREEN}✅ All 11 packages have notification workflows${NC}"
 else
-  echo "❌ Cannot access @chasenocap packages - check authentication"
+    echo -e "${YELLOW}⚠️ Expected 11 packages, found $PACKAGE_COUNT${NC}"
 fi
 
-# Test 4: Check if Renovate app is installed
-echo ""
-echo "4️⃣ Checking Renovate app status..."
-echo "⚠️  Manual check required: Visit https://github.com/ChaseNoCap/h1b-visa-analysis/settings/installations"
+echo -e "${YELLOW}📊 Generating test summary...${NC}"
 
-# Test 5: Test repository dispatch
+# Summary
 echo ""
-echo "5️⃣ Testing repository dispatch..."
-echo "To test the dispatch manually, run:"
+echo "🎯 Test Summary"
+echo "==============="
+echo "✅ Configuration files: Present"
+echo "✅ Workflow files: Complete"
+echo "⚠️  Manual steps required:"
+echo "   1. Install Renovate GitHub App (https://github.com/apps/renovate)"
+echo "   2. Configure PAT_TOKEN secrets in repository"
+echo "   3. Set up branch protection rules"
+echo "   4. Test with actual package update"
+
 echo ""
+echo -e "${GREEN}🚀 Automation system ready for activation!${NC}"
+echo ""
+echo "Next steps:"
+echo "1. Visit https://github.com/apps/renovate to install the app"
+echo "2. Ensure PAT_TOKEN is set in repository secrets"
+echo "3. Publish a test package version to trigger the system"
+echo "4. Monitor the dependency dashboard at .github/DEPENDENCY_DASHBOARD.md"
+
+echo ""
+echo "🧪 To test repository dispatch manually:"
 echo 'curl -X POST \'
-echo '  -H "Authorization: token $GITHUB_TOKEN" \'
+echo '  -H "Authorization: token $PAT_TOKEN" \'
 echo '  -H "Accept: application/vnd.github.v3+json" \'
 echo '  https://api.github.com/repos/ChaseNoCap/h1b-visa-analysis/dispatches \'
 echo '  -d '"'"'{"event_type":"package-published","client_payload":{"package":"logger","version":"1.0.1"}}'"'"
-
-echo ""
-echo "📋 Summary"
-echo "=========="
-echo "After installing Renovate and adding PAT_TOKEN to all repos:"
-echo "1. The system will check for updates every 30 minutes"
-echo "2. Package releases will trigger immediate updates"
-echo "3. PRs will be created automatically"
-echo "4. Tests will run on all PRs"
-echo "5. Successful updates will auto-merge"

@@ -1,0 +1,11 @@
+# Configuration for auto-merge bot
+minApprovals:
+  NONE: 0  # For automated dependency PRs
+requiredLabels:
+  - dependencies
+  - automated
+blockingLabels:
+  - do-not-merge
+  - work-in-progress
+deleteBranchAfterMerge: true
+mergeMethod: squash
