@@ -50,8 +50,12 @@ jobs:
         run: |
           echo "Updating @chasenocap/${PACKAGE} to ${VERSION}"
           
-          # Update npm dependency
-          npm update "@chasenocap/${PACKAGE}@${VERSION}" --save
+          # Install specific version
+          if [ "${VERSION}" = "latest" ]; then
+            npm install "@chasenocap/${PACKAGE}@latest" --save
+          else
+            npm install "@chasenocap/${PACKAGE}@${VERSION}" --save
+          fi
           
           # Update submodule to matching tag
           if [ -d "packages/${PACKAGE}" ]; then

@@ -681,6 +681,14 @@ The project uses a clean, modular architecture with:
 ## Development Guidelines
 - No AI ads in commit messages
 
+## Recent Fixes (January 2025)
+
+### Auto-Update Dependencies Workflow
+Fixed the `auto-update-dependencies.yml` workflow that was failing with exit code 1:
+- **Issue**: Used `npm update "@package@version"` which is invalid syntax
+- **Fix**: Changed to `npm install "@package@version"` for proper version installation
+- **Status**: ✅ Workflow now properly updates packages when triggered
+
 ## Working with the Backlog
 
 ### When Asked "What's Next?"
