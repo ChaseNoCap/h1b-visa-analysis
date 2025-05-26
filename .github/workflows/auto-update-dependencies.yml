@@ -36,10 +36,9 @@ jobs:
           cache: 'npm'
 
       - name: Configure npm for GitHub Packages
-        env:
-          NPM_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          echo "NPM token configured for GitHub Packages"
+          echo "@chasenocap:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT_TOKEN }}" >> ~/.npmrc
 
       - name: Update specific package (repository_dispatch)
         if: github.event_name == 'repository_dispatch'
