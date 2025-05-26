@@ -17,7 +17,13 @@
     "prebuild": "npm run clean",
     "update-deps": "npm update",
     "submodule:update": "git submodule update --remote --merge",
-    "submodule:init": "git submodule update --init --recursive"
+    "submodule:init": "git submodule update --init --recursive",
+    "dev": "node scripts/smart-deps.js && npm run build:watch",
+    "dev:setup": "bash scripts/setup-dev.sh",
+    "dev:status": "node scripts/smart-deps.js status",
+    "dev:clean": "node scripts/smart-deps.js clean",
+    "publish:tagged": "bash scripts/publish-if-tagged.sh",
+    "test:mode": "node scripts/smart-deps.js mode"
   },
   "keywords": [
     "h1b",

@@ -14,7 +14,12 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
 
 #### **Know What's Next** 🎯
 → Check [Backlog](./backlog.md) for prioritized work items
-→ **NEW**: [CI Monitoring Plan](./ci-monitoring-plan.md) - Next high priority
+→ **NEW**: [Unified Dependency Strategy](./unified-dependency-strategy.md) - Current priority
+
+#### **Set Up Development** 🚀
+→ **Quick Start**: [Unified Dependency Developer Guide](./unified-dependency-developer-guide.md)
+→ Full setup: [Setup Guide](./setup-guide.md)
+→ One command: `npm run dev:setup`
 
 #### **Monitor CI/CD Health** 📊
 → See [CI Monitoring Plan](./ci-monitoring-plan.md) for implementation
@@ -26,13 +31,10 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
 #### **Work on a Package**
 → See [Package Catalog](./package-catalog.md) → [Developer Handbook](./developer-handbook.md)
 
-#### **Set Up Development**
-→ Follow [Setup Guide](./setup-guide.md)
-
 #### **Learn About Decomposition**
 → Study [Decomposition Guide](./decomposition-guide.md) → [Achievements](./achievements.md)
 
-## 📚 Consolidated Documentation (17 Files)
+## 📚 Consolidated Documentation (19 Files)
 
 ### Core Guides
 
@@ -65,49 +67,55 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
    - Patterns, shared code analysis, validation
    - *Consolidates 3 architecture documents*
 
-8. **[CI Monitoring Plan](./ci-monitoring-plan.md)** 🆕
-   - Comprehensive CI/CD health monitoring implementation
-   - gh CLI scripts, automated dashboards, metrics collection
-   - **Next high priority task**
+8. **[Unified Dependency Strategy](./unified-dependency-strategy.md)** 🆕
+   - Dual-mode dependency management system
+   - Local development with npm link, pipeline mode with tags
+   - **Current high priority implementation**
+
+9. **[Unified Dependency Developer Guide](./unified-dependency-developer-guide.md)** 🆕
+   - Quick start guide for developers
+   - Step-by-step workflows and troubleshooting
+   - One command setup: `npm run dev:setup`
+
+10. **[CI Monitoring Plan](./ci-monitoring-plan.md)**
+    - Comprehensive CI/CD health monitoring implementation
+    - gh CLI scripts, automated dashboards, metrics collection
 
 ### Supporting Documents
 
-8. **[Achievements](./achievements.md)**
-   - 100% decomposition success story and metrics
-   - *Consolidates completion and milestone documents*
+11. **[Achievements](./achievements.md)**
+    - 100% decomposition success story and metrics
+    - *Consolidates completion and milestone documents*
 
-9. **[Prompt Engineering](./prompt-engineering.md)**
-   - Context loading strategies for Claude Code
-   - *New guide for efficient AI interactions*
+12. **[Prompt Engineering](./prompt-engineering.md)**
+    - Context loading strategies for Claude Code
+    - *New guide for efficient AI interactions*
 
-10. **[Prompt XML Structured Guide](./prompt-xml-structured-guide.md)**
+13. **[Prompt XML Structured Guide](./prompt-xml-structured-guide.md)**
     - XML-based prompt engineering patterns
     - Hierarchical context loading and structured workflows
 
-11. **[Prompt Optimization Patterns](./prompt-optimization-patterns.md)**
+14. **[Prompt Optimization Patterns](./prompt-optimization-patterns.md)**
     - Efficient prompting techniques and anti-patterns
     - Task-focused requests and context loading strategies
 
-12. **[Prompt Migration Guide](./prompt-migration-guide.md)**
+15. **[Prompt Migration Guide](./prompt-migration-guide.md)**
     - XML-enhanced prompt package architecture
     - Mirror-based structure for system awareness
 
 ### Templates & References
 
-13. **[CLAUDE.md Template](./claude-md-template.md)**
+16. **[CLAUDE.md Template](./claude-md-template.md)**
     - Template for package documentation
 
-14. **[CLAUDE.md Guide](./claude-md-guide.md)**
+17. **[CLAUDE.md Guide](./claude-md-guide.md)**
     - Best practices for CLAUDE.md files
 
-15. **[GitHub Repositories](./github-repositories.md)**
+18. **[GitHub Repositories](./github-repositories.md)**
     - Links to related repositories
 
-16. **[Coverage Badges Guide](./coverage-badges-guide.md)**
+19. **[Coverage Badges Guide](./coverage-badges-guide.md)**
     - How to implement test coverage badges
-
-17. **[Index](./index.md)**
-    - This documentation hub
 
 ## 👥 Documentation by Role
 
