@@ -12,7 +12,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - **Report Generation**: ✅ Working with 119KB comprehensive output
 - **Dependency Automation**: ✅ Fully automated with monitoring
 
-**Next Priority**: Technical Debt Reduction (see technical-debt-plan.md)
+**Next Priority**: Package Dependency Updates (Item #6) - Update all 11 packages to latest versions
 
 ## How to Use This Backlog
 
@@ -95,17 +95,85 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## High Priority Items
 
-### ✨ 5. Technical Debt Reduction (IN PROGRESS)
-**Status**: In Progress  
-**Description**: Systematic reduction of technical debt across the codebase
-**Priority Justification**: Improving code quality will make future development faster and more reliable
-**Implementation Plan**: See `/docs/technical-debt-plan.md` for detailed 4-week plan
-**Week 1 Tasks**:
-- [ ] Update development dependencies to latest major versions
-- [ ] Create integration test suite
-- [ ] Fix breaking changes from updates
-**Week 2-4**: Code quality, architecture improvements, and documentation
-**Estimate**: 4 weeks total
+### ✨ 5. Technical Debt Reduction - Week 1 Meta Repo (COMPLETED)
+**Status**: Completed ✅  
+**Description**: Updated meta repository dependencies and created integration tests
+**Completed Tasks**:
+- ✅ Updated all dev dependencies to latest major versions
+- ✅ Migrated to ESLint v9 flat config
+- ✅ Created 15 integration tests (80% pass rate)
+- ✅ Fixed breaking changes from updates
+**Results**: Meta repo now on latest versions, ready for package updates
+
+### 🚀 6. Package Dependency Updates (IN PROGRESS)
+**Status**: In Progress - Week 2 of Technical Debt Plan
+**Description**: Update all 11 packages to match meta repo dependency versions
+**Priority Justification**: Ensure consistent tooling across all packages for maintainability
+**Implementation Order** (based on dependency hierarchy):
+
+#### 6.1 Core Infrastructure Packages
+- [ ] **di-framework** - No dependencies, update first
+  - Analyze current state and dependencies
+  - Update to ESLint v9, Vitest v3, TypeScript-ESLint v8
+  - Ensure all tests pass
+  - Version bump and publish
+- [ ] **logger** - Core package, no dependencies
+  - Analyze Winston compatibility
+  - Update dependencies
+  - Test logging functionality unchanged
+  - Version bump and publish
+- [ ] **file-system** - Core package, no dependencies  
+  - Analyze Node.js fs compatibility with @types/node v22
+  - Update dependencies
+  - Test all file operations
+  - Version bump and publish
+
+#### 6.2 Test Infrastructure Packages
+- [ ] **test-mocks** - Depends on inversify
+  - Analyze mock implementations
+  - Update to Vitest v3
+  - Ensure mocks work with new versions
+  - Version bump and publish
+- [ ] **test-helpers** - Depends on test-mocks, vitest
+  - CRITICAL: Vitest is production dependency
+  - Analyze Vitest v3 API changes
+  - Update and test thoroughly
+  - Version bump and publish
+
+#### 6.3 Feature Packages  
+- [ ] **event-system** - Depends on inversify
+  - Analyze decorator functionality
+  - Update dependencies
+  - Test event emission/subscription
+  - Version bump and publish
+- [ ] **cache** - Depends on inversify, optional event-system
+  - Analyze caching decorators
+  - Update dependencies
+  - Test TTL and cache operations
+  - Version bump and publish
+
+#### 6.4 Application Packages
+- [ ] **report-templates** - Depends on di-framework, file-system
+  - Analyze template generation
+  - Update dependencies
+  - Test report building
+  - Version bump and publish
+
+#### 6.5 Content/Documentation Packages
+- [ ] **prompts** - Documentation only
+  - Minimal updates needed
+  - Update any dev dependencies
+  - Version bump if needed
+- [ ] **markdown-compiler** - Complex dependencies
+  - Coordinate with team
+  - Extensive testing required
+  - Update carefully
+- [ ] **report-components** - Content package
+  - Update dependencies
+  - Fix missing template files if found
+  - Version bump and publish
+
+**Estimate**: 1-2 days per package group
 
 ### ✅ 5. Implement Automated Dependency Updates (COMPLETED)
 **Status**: Completed ✅  
@@ -146,8 +214,19 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - ✅ Generated 119KB report with comprehensive H1B analysis
 **Final Results**: Report generation working end-to-end with actual H1B content including research, references, and bibliographies
 
-### 7. Performance Optimizations
-**Status**: High Priority  
+### 7. Meta Repository Final Integration
+**Status**: Pending - After all package updates
+**Description**: Update meta repository to use all updated packages and verify integration
+**Tasks**:
+- [ ] Update all @chasenocap package versions in package.json
+- [ ] Run full test suite including integration tests
+- [ ] Fix any integration issues discovered
+- [ ] Update documentation with lessons learned
+- [ ] Ensure all 15 integration tests pass
+**Estimate**: 1 day
+
+### 8. Performance Optimizations
+**Status**: Medium Priority - After package updates  
 **Description**: Optimize report generation performance and add monitoring
 **Priority Justification**: Report generation is currently slow and needs optimization for better user experience
 **Tasks**:
