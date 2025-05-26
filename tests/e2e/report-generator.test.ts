@@ -59,7 +59,7 @@ describe('ReportGenerator E2E Tests', () => {
       // Read and verify content
       const content = await fileSystem.readFile(result.data!.outputPath);
       expect(content).toContain('# H1B Visa Analysis Report');
-      expect(content).toContain('## Dependency Status');
+      expect(content).toContain('generatedOn');
     });
 
     it('should include timestamp in filename when requested', async () => {
@@ -83,9 +83,9 @@ describe('ReportGenerator E2E Tests', () => {
 
       // Should check for our known dependencies
       const depNames = dependencies.map(d => d.name);
-      expect(depNames).toContain('prompts-shared');
-      expect(depNames).toContain('markdown-compiler');
-      expect(depNames).toContain('report-components');
+      expect(depNames).toContain('@chasenocap/prompts');
+      expect(depNames).toContain('@chasenocap/markdown-compiler');
+      expect(depNames).toContain('@chasenocap/report-components');
     });
 
     it('should report available and missing dependencies', async () => {
@@ -97,9 +97,9 @@ describe('ReportGenerator E2E Tests', () => {
       const content = await fileSystem.readFile(result.data!.outputPath);
 
       // Should show status for each dependency
-      expect(content).toMatch(/[✅❌] prompts-shared/);
-      expect(content).toMatch(/[✅❌] markdown-compiler/);
-      expect(content).toMatch(/[✅❌] report-components/);
+      expect(content).toMatch(/[✅❌] @chasenocap\/prompts/);
+      expect(content).toMatch(/[✅❌] @chasenocap\/markdown-compiler/);
+      expect(content).toMatch(/[✅❌] @chasenocap\/report-components/);
     });
   });
 
@@ -137,7 +137,7 @@ describe('ReportGenerator E2E Tests', () => {
       // Verify markdown structure
       expect(content).toMatch(/^# .+/m); // Has h1 heading
       expect(content).toMatch(/^## .+/m); // Has h2 headings
-      expect(content).toContain('Generated on:');
+      expect(content).toContain('generatedOn:');
 
       // Should not have any undefined values
       expect(content).not.toContain('undefined');

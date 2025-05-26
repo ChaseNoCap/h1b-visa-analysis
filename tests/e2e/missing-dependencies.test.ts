@@ -10,6 +10,7 @@ import { ContainerBuilder, Container } from '@chasenocap/di-framework';
 import { WinstonLogger } from '@chasenocap/logger';
 import { NodeFileSystem } from '@chasenocap/file-system';
 import { EventBus } from '@chasenocap/event-system';
+import type { IMarkdownProcessor } from '@/core/interfaces/IMarkdownProcessor';
 
 describe('ReportGenerator with Missing Dependencies', () => {
   let container: Container;
@@ -28,11 +29,21 @@ describe('ReportGenerator with Missing Dependencies', () => {
       },
       checkAllDependencies(): Promise<IDependencyStatus[]> {
         return Promise.resolve([
-          { name: 'prompts', available: false, error: 'Not found' },
-          { name: 'markdown-compiler', available: false, error: 'Not found' },
-          { name: 'report-components', available: false, error: 'Not found' },
+          { name: '@chasenocap/prompts', available: false, error: 'Not found' },
+          { name: '@chasenocap/markdown-compiler', available: false, error: 'Not found' },
+          { name: '@chasenocap/report-components', available: false, error: 'Not found' },
         ]);
       },
+    };
+
+    // Create a mock markdown processor for this test
+    const mockMarkdownProcessor: IMarkdownProcessor = {
+      process: async () => ({
+        content: 'Mock processed content',
+        success: true,
+        includedFiles: [],
+        errors: [],
+      }),
     };
 
     // Create a new container for this test
@@ -41,6 +52,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
       .addBinding(TYPES.IFileSystem, NodeFileSystem, 'Singleton')
       .addBinding(TYPES.IEventBus, EventBus, 'Singleton')
       .addConstant(TYPES.IDependencyChecker, mockDependencyChecker)
+      .addConstant(TYPES.IMarkdownProcessor, mockMarkdownProcessor)
       .addBinding(TYPES.IReportGenerator, ReportGenerator)
       .build();
 
@@ -74,10 +86,20 @@ describe('ReportGenerator with Missing Dependencies', () => {
   });
 
   it('should handle partial dependencies', async () => {
+    // Create mock markdown processor for this test too
+    const mockMarkdownProcessor: IMarkdownProcessor = {
+      process: async () => ({
+        content: 'Mock processed content',
+        success: true,
+        includedFiles: [],
+        errors: [],
+      }),
+    };
+
     // Create a mock that returns mixed results
     const mockDependencyChecker: IDependencyChecker = {
       checkDependency(name: string): Promise<IDependencyStatus> {
-        if (name === 'markdown-compiler') {
+        if (name === '@chasenocap/markdown-compiler') {
           return Promise.resolve({
             name,
             available: true,
@@ -93,9 +115,9 @@ describe('ReportGenerator with Missing Dependencies', () => {
       },
       checkAllDependencies(): Promise<IDependencyStatus[]> {
         return Promise.resolve([
-          { name: 'prompts', available: false, error: 'Not found' },
-          { name: 'markdown-compiler', available: true, version: '0.1.0', path: '/test/path' },
-          { name: 'report-components', available: false, error: 'Not found' },
+          { name: '@chasenocap/prompts', available: false, error: 'Not found' },
+          { name: '@chasenocap/markdown-compiler', available: true, version: '0.1.0', path: '/test/path' },
+          { name: '@chasenocap/report-components', available: false, error: 'Not found' },
         ]);
       },
     };
@@ -106,6 +128,7 @@ describe('ReportGenerator with Missing Dependencies', () => {
       .addBinding(TYPES.IFileSystem, NodeFileSystem, 'Singleton')
       .addBinding(TYPES.IEventBus, EventBus, 'Singleton')
       .addConstant(TYPES.IDependencyChecker, mockDependencyChecker)
+      .addConstant(TYPES.IMarkdownProcessor, mockMarkdownProcessor)
       .addBinding(TYPES.IReportGenerator, ReportGenerator)
       .build();
     reportGenerator = container.get<IReportGenerator>(TYPES.IReportGenerator);
@@ -119,12 +142,12 @@ describe('ReportGenerator with Missing Dependencies', () => {
     // Should succeed with partial dependencies
     expect(result.success).toBe(true);
     expect(result.data?.outputPath).toBeDefined();
-    expect(result.data?.metadata?.dependencies).toEqual(['markdown-compiler']);
+    expect(result.data?.metadata?.dependencies).toEqual(['@chasenocap/markdown-compiler']);
 
     // Verify content shows mixed status
     const content = await fs.readFile(result.data!.outputPath, 'utf-8');
-    expect(content).toContain('❌ prompts');
-    expect(content).toContain('✅ markdown-compiler');
-    expect(content).toContain('❌ report-components');
+    expect(content).toContain('❌ @chasenocap/prompts');
+    expect(content).toContain('✅ @chasenocap/markdown-compiler');
+    expect(content).toContain('❌ @chasenocap/report-components');
   });
 });
