@@ -48,7 +48,7 @@ cat > "$OUTPUT_FILE" << 'EOF'
 |------|-------------|--------|-------|
 | 🧪 **CI/Test** | Build, test, lint workflows | ⚠️ Limited | 1/11 packages |
 | 📢 **Notify** | Repository dispatch triggers | ✅ Working | 11/11 packages |
-| 📦 **Publish** | NPM publish workflows | N/A | 0/11 packages |
+| 📦 **Publish** | NPM publish workflows | ⚠️ Manual | See details below |
 | 🤖 **Automation** | Renovate, dependency updates | ✅ Active | Meta repo only |
 
 ### Package Breakdown
@@ -92,6 +92,23 @@ echo -e " ${GREEN}Done${NC}"
 
 # Add Renovate section
 cat >> "$OUTPUT_FILE" << 'EOF'
+
+## 📦 Package Publishing Status
+
+### Current State
+- **Method**: Manual (`npm publish` from developer machine)
+- **Registry**: GitHub Packages (@chasenocap scope)
+- **Automation**: ❌ No publish workflows detected
+
+### Publish Recommendations
+1. **Immediate**: Track which packages have unpublished changes
+2. **Short-term**: Add publish workflows to automate releases
+3. **Long-term**: Integrate semantic-release for version management
+
+**Note**: Currently packages are published manually when developers remember. This can lead to:
+- Outdated packages in the registry
+- Inconsistent versioning
+- Delayed updates to dependent projects
 
 ## 🤖 Automation Status
 

@@ -23,8 +23,12 @@ The documentation has been consolidated from 34 files to 12 core documents. Load
 13. **[/docs/prompt-optimization-patterns.md](/docs/prompt-optimization-patterns.md)** - Efficient prompting
 14. **[/docs/prompt-migration-guide.md](/docs/prompt-migration-guide.md)** - Prompt package architecture
 
+15. **[/docs/automated-publishing-critical-path.md](/docs/automated-publishing-critical-path.md)** - Critical path to automated publishing
+16. **[/docs/package-publish-monitoring-plan.md](/docs/package-publish-monitoring-plan.md)** - Package publish monitoring strategy
+
 ### 🔍 Context Loading by Task
 - **What's next?**: Load `/docs/backlog.md` - Always check backlog first
+- **Critical path work**: Load `/docs/automated-publishing-critical-path.md` for current priority
 - **Working on packages**: Load `/docs/package-catalog.md#[package-name]`
 - **Creating new package**: Load `/docs/developer-handbook.md#package-creation-process`
 - **Git submodules help**: Load `/docs/meta-repository-pattern.md` for submodule management
