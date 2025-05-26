@@ -153,36 +153,75 @@ else
   done
   echo ""
   
-  # Summary statistics
-  echo -e "${YELLOW}📈 Summary${NC}"
+  # Get real-time metrics
+  echo -e "${YELLOW}📈 Real-Time Metrics${NC}"
   echo -e "────────────────────────────────────────────────"
+  
+  # Calculate notify success rate from recent runs
+  notify_success=0
+  notify_runs=0
+  for package in "${PACKAGES[@]}"; do
+    runs=$(gh api "repos/$OWNER/$package/actions/workflows" --jq '.workflows[] | select(.name == "Notify Parent Repository on Publish") | .id' 2>/dev/null | head -1)
+    if [[ -n "$runs" ]]; then
+      recent=$(gh api "repos/$OWNER/$package/actions/workflows/$runs/runs?per_page=3" --jq '.workflow_runs[] | .conclusion' 2>/dev/null)
+      while IFS= read -r conclusion; do
+        if [[ -n "$conclusion" ]]; then
+          notify_runs=$((notify_runs + 1))
+          [[ "$conclusion" == "success" ]] && notify_success=$((notify_success + 1))
+        fi
+      done <<< "$recent"
+    fi
+  done
+  
+  notify_rate=0
+  [[ $notify_runs -gt 0 ]] && notify_rate=$((notify_success * 100 / notify_runs))
+  
+  # Check publish automation
+  publish_count=0
+  for package in "${PACKAGES[@]}"; do
+    if gh api "repos/$OWNER/$package/contents/.github/workflows" --jq '.[].name' 2>/dev/null | grep -q "publish"; then
+      publish_count=$((publish_count + 1))
+    fi
+  done
+  
   echo -e "Packages with CI: ${ci_packages}/11 ($((ci_packages * 100 / 11))%)"
-  if [[ $notify_total -gt 0 ]]; then
-    echo -e "Notify Success: ${notify_working}/${notify_total} ($((notify_working * 100 / notify_total))%)"
-  else
-    echo -e "Notify Success: No notify workflows found"
-  fi
+  echo -e "Notify Success Rate: ${notify_rate}% (${notify_success}/${notify_runs} recent runs)"
+  echo -e "Publish Automation: ${publish_count}/11 packages"
   
   # Renovate status
   renovate_info=$(check_renovate_status)
   IFS='|' read -r renovate_open renovate_total <<< "$renovate_info"
   echo -e "Renovate PRs: ${renovate_open} open"
-  echo ""
   
-  # Overall assessment
-  echo -e "${YELLOW}🎯 Overall Assessment${NC}"
+  # Calculate health score
+  health_score=$(( (notify_rate * 40 / 100) + (publish_count * 60 / 11) ))
+  echo ""
+  echo -e "${YELLOW}🎯 Overall Health Score: ${health_score}%${NC}"
   echo -e "────────────────────────────────────────────────"
+  
+  # Dynamic assessment based on metrics
+  if [[ $health_score -ge 80 ]]; then
+    echo -e "• Pipeline Status: ${GREEN}✅ Healthy${NC}"
+  elif [[ $health_score -ge 50 ]]; then
+    echo -e "• Pipeline Status: ${YELLOW}⚠️  Needs Improvement${NC}"
+  else
+    echo -e "• Pipeline Status: ${RED}❌ Critical Issues${NC}"
+  fi
+  
   echo -e "• Meta Repository: ${GREEN}✅ Working${NC}"
-  echo -e "• Package CI Coverage: ${RED}⚠️  Low (only 1/11)${NC}"
-  echo -e "• Instant Updates: ${YELLOW}⚠️  Notify works, auth issues${NC}"
-  echo -e "• Renovate: ${GREEN}✅ Active fallback${NC}"
+  echo -e "• Notify System: $([ $notify_rate -ge 80 ] && echo "${GREEN}✅ Operational${NC}" || echo "${YELLOW}⚠️  Issues Detected${NC}")"
+  echo -e "• Publish Automation: $([ $publish_count -ge 6 ] && echo "${GREEN}✅ Good Coverage${NC}" || echo "${RED}⚠️  Low Coverage${NC}")"
+  echo -e "• Renovate: ${GREEN}✅ Active Fallback${NC}"
   echo ""
   
-  # Recommendations
-  echo -e "${YELLOW}💡 Key Insights${NC}"
+  # Data-driven recommendations
+  echo -e "${YELLOW}💡 Data-Driven Next Steps${NC}"
   echo -e "────────────────────────────────────────────────"
-  echo -e "• The 'critical health' was misleading - it counted notify workflows"
-  echo -e "• Most packages don't have actual CI/CD tests"
-  echo -e "• Notify workflows are fixed and working (91% success)"
-  echo -e "• Updates still happen via Renovate (30 min delay)"
+  if [[ $publish_count -lt 11 ]]; then
+    echo -e "• Priority 1: Complete publish automation ($((11 - publish_count)) packages remaining)"
+  fi
+  if [[ $notify_rate -lt 95 ]]; then
+    echo -e "• Priority 2: Investigate notify workflow failures"
+  fi
+  echo -e "• Run ./scripts/generate-ci-dashboard.sh for detailed analysis"
 fi
