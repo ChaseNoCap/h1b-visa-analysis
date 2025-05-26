@@ -1,6 +1,6 @@
 # CI Pipeline Health Dashboard
 
-**Generated**: 2025-05-26T15:39:34Z  
+**Generated**: 2025-05-26T15:53:01Z  
 **Overall Health**: 🔴 Critical (54%)  
 **Automation Effectiveness**: 100%
 
@@ -19,7 +19,7 @@
 | Failing CI | 5 | ❌ |
 | Open PRs | 1 | ✅ |
 | PR Conflicts | 0 | ✅ |
-| API Rate Limit | 96% | ✅ |
+| API Rate Limit | 94% | ✅ |
 
 ## Package Status
 
@@ -43,11 +43,11 @@
 
 | Repository | Workflow | Status | Time | Link |
 |------------|----------|--------|------|------|
+| h1b-visa-analysis | Generate H1B Report | ❌ failure | 2025-05-26 | [View](https://github.com/ChaseNoCap/h1b-visa-analysis/actions/runs/15257820541) |
 | h1b-visa-analysis | Generate H1B Report | ❌ failure | 2025-05-26 | [View](https://github.com/ChaseNoCap/h1b-visa-analysis/actions/runs/15257169872) |
 | h1b-visa-analysis | Auto Update Dependencies | ❌ failure | 2025-05-26 | [View](https://github.com/ChaseNoCap/h1b-visa-analysis/actions/runs/15255355637) |
 | h1b-visa-analysis | Generate H1B Report | ❌ failure | 2025-05-26 | [View](https://github.com/ChaseNoCap/h1b-visa-analysis/actions/runs/15248618170) |
 | h1b-visa-analysis | Auto Update Dependencies | ❌ failure | 2025-05-26 | [View](https://github.com/ChaseNoCap/h1b-visa-analysis/actions/runs/15248566689) |
-| h1b-visa-analysis | Auto Update Dependencies | ❌ failure | 2025-05-26 | [View](https://github.com/ChaseNoCap/h1b-visa-analysis/actions/runs/15248566594) |
 
 ## Renovate Activity
 

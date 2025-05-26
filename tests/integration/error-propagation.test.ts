@@ -33,7 +33,7 @@ describe('Error Propagation Integration', () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.message).toContain('Permission denied');
+      expect(result.error!.message).toContain('Permission denied');
     }
   });
 
@@ -49,7 +49,7 @@ describe('Error Propagation Integration', () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.message).toContain('Failed to read package.json');
+      expect(result.error!.message).toContain('Failed to read package.json');
     }
   });
 
@@ -67,7 +67,7 @@ describe('Error Propagation Integration', () => {
     if (!result.success) {
       // Error should be properly wrapped with context
       expect(result.error).toBeDefined();
-      expect(result.error.message).toBeTruthy();
+      expect(result.error!.message).toBeTruthy();
     }
   });
 
@@ -84,8 +84,8 @@ describe('Error Propagation Integration', () => {
     // the report should still generate
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.outputPath).toBeDefined();
-      expect(result.data.metadata.generatedAt).toBeDefined();
+      expect(result.data!.outputPath).toBeDefined();
+      expect(result.data!.metadata.generatedAt).toBeDefined();
     }
   });
 });

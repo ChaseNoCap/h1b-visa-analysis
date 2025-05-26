@@ -3,7 +3,7 @@ import { containerPromise } from '../../src/core/container/container.js';
 import { TYPES } from '../../src/core/constants/injection-tokens.js';
 import type { IReportGenerator } from '../../src/core/interfaces/IReportGenerator.js';
 import type { IDependencyChecker } from '../../src/core/interfaces/IDependencyChecker.js';
-import { EventBus, TestEventBus } from '@chasenocap/event-system';
+import { TestEventBus } from '@chasenocap/event-system';
 
 describe('Event System Integration', () => {
   let reportGenerator: IReportGenerator;
@@ -90,7 +90,9 @@ describe('Event System Integration', () => {
     });
     
     expect(result.success).toBe(false);
-    expect(result.error).toBeDefined();
+    if (!result.success) {
+      expect(result.error).toBeDefined();
+    }
     
     // Just verify we got a failed result - event tracking might vary
   });
@@ -104,7 +106,7 @@ describe('Event System Integration', () => {
     
     // Events should be in chronological order
     for (let i = 1; i < events.length; i++) {
-      expect(events[i].timestamp).toBeGreaterThanOrEqual(events[i - 1].timestamp);
+      expect(events[i]!.timestamp).toBeGreaterThanOrEqual(events[i - 1]!.timestamp);
     }
     
     // Started events should have corresponding completed/failed events

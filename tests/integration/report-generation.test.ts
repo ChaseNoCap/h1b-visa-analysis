@@ -37,15 +37,15 @@ describe('Report Generation Integration', () => {
     // Assert
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.outputPath).toBeDefined();
-      expect(result.data.metadata).toBeDefined();
-      expect(result.data.metadata.generatedAt).toBeDefined();
+      expect(result.data!.outputPath).toBeDefined();
+      expect(result.data!.metadata).toBeDefined();
+      expect(result.data!.metadata.generatedAt).toBeDefined();
 
       // Verify file was created
-      expect(existsSync(result.data.outputPath)).toBe(true);
+      expect(existsSync(result.data!.outputPath)).toBe(true);
 
       // Read and verify content
-      const content = await fileSystem.readFile(result.data.outputPath);
+      const content = await fileSystem.readFile(result.data!.outputPath);
       expect(content).toContain('H1B Visa Analysis Report');
       expect(content).toContain('Executive Summary');
 
@@ -68,7 +68,7 @@ describe('Report Generation Integration', () => {
     
     expect(result.success).toBe(true);
     if (result.success) {
-      const content = await fileSystem.readFile(result.data.outputPath);
+      const content = await fileSystem.readFile(result.data!.outputPath);
 
       // Even with errors, should have basic structure
       expect(content).toContain('H1B Visa Analysis Report');
@@ -84,7 +84,7 @@ describe('Report Generation Integration', () => {
     
     expect(result.success).toBe(true);
     if (result.success) {
-      const content = await fileSystem.readFile(result.data.outputPath);
+      const content = await fileSystem.readFile(result.data!.outputPath);
 
       // Should include dependency status
       expect(content).toMatch(/✅.*@chasenocap\/markdown-compiler/);
@@ -102,8 +102,8 @@ describe('Report Generation Integration', () => {
     
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.outputPath).toBeDefined();
-      expect(result.data.outputPath).toMatch(/h1b-report-\d{4}-\d{2}-\d{2}\.md$/);
+      expect(result.data!.outputPath).toBeDefined();
+      expect(result.data!.outputPath).toMatch(/h1b-report-\d{4}-\d{2}-\d{2}\.md$/);
     }
   });
 });
