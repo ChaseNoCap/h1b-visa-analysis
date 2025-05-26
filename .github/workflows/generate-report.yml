@@ -36,6 +36,8 @@ jobs:
         # yamllint enable rule:line-length
     
     - name: Install dependencies
+      env:
+        NPM_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: npm install
     
     - name: Update GitHub dependencies
