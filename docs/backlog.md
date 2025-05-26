@@ -12,7 +12,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - **Report Generation**: ✅ Working with 119KB comprehensive output
 - **Dependency Automation**: ✅ Fully automated with monitoring
 
-**Next Priority**: Performance Optimizations (see item #7)
+**Next Priority**: Technical Debt Reduction (see technical-debt-plan.md)
 
 ## How to Use This Backlog
 
@@ -94,6 +94,18 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 **Results**: All packages now published and functioning. Main application generates reports successfully with published dependencies.
 
 ## High Priority Items
+
+### ✨ 5. Technical Debt Reduction (IN PROGRESS)
+**Status**: In Progress  
+**Description**: Systematic reduction of technical debt across the codebase
+**Priority Justification**: Improving code quality will make future development faster and more reliable
+**Implementation Plan**: See `/docs/technical-debt-plan.md` for detailed 4-week plan
+**Week 1 Tasks**:
+- [ ] Update development dependencies to latest major versions
+- [ ] Create integration test suite
+- [ ] Fix breaking changes from updates
+**Week 2-4**: Code quality, architecture improvements, and documentation
+**Estimate**: 4 weeks total
 
 ### ✅ 5. Implement Automated Dependency Updates (COMPLETED)
 **Status**: Completed ✅  
