@@ -189,6 +189,11 @@ git submodule update --remote --merge    # Update all submodules to latest
 
 # Package-specific commands (run within each submodule)
 cd packages/test-helpers && npm run coverage  # Check test-helpers coverage (91.89%)
+
+# CI/CD Monitoring commands
+./scripts/monitor-ci-health.sh          # Enhanced health monitor (transparent metrics)
+./scripts/monitor-ci-health.sh json     # JSON output for automation
+./scripts/generate-ci-dashboard.sh      # Generate detailed markdown dashboard
 ```
 
 ## Architecture
