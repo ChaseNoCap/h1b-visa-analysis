@@ -123,11 +123,13 @@ Converts scoped package references to local file references for development befo
 | di-framework | 1.0.0 | @chasenocap/di-framework | inversify | ✅ |
 | test-mocks | 0.1.0 | @chasenocap/test-mocks | event-system | ✅ |
 | test-helpers | 0.1.0 | @chasenocap/test-helpers | test-mocks | ✅ |
-| file-system | 0.1.0 | @chasenocap/file-system | - | ✅ |
-| cache | 1.0.0 | @chasenocap/cache | di-framework | ✅ |
-| report-templates | 1.0.0 | @chasenocap/report-templates | di-framework, file-system | ✅ |
-| event-system | 1.0.0 | @chasenocap/event-system | di-framework | ✅ |
+| file-system | 1.0.0 | @chasenocap/file-system | inversify | ✅ |
+| cache | 1.0.0 | @chasenocap/cache | di-framework | ✅ Built |
+| report-templates | 1.0.1 | @chasenocap/report-templates | di-framework, file-system | ✅ |
+| event-system | 1.0.3 | @chasenocap/event-system | di-framework | ✅ |
 | prompts | 1.0.0 | @chasenocap/prompts | - | ✅ |
+| markdown-compiler | 0.1.0 | @chasenocap/markdown-compiler | cache, inversify | ✅ Built |
+| report-components | 0.1.0 | @chasenocap/report-components | - | ✅ Has content |
 
 ## 🚀 Using GitHub Actions
 
