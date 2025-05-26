@@ -35,9 +35,12 @@ jobs:
         git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf https://github.com/
         # yamllint enable rule:line-length
     
+    - name: Configure npm authentication
+      run: |
+        echo "@chasenocap:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+        echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT_TOKEN }}" >> ~/.npmrc
+    
     - name: Install dependencies
-      env:
-        NPM_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: npm install
     
     - name: Update GitHub dependencies
