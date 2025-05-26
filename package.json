@@ -33,7 +33,7 @@
     "@chasenocap/event-system": "^1.0.5",
     "@chasenocap/file-system": "^1.0.0",
     "@chasenocap/logger": "^1.0.0",
-    "@chasenocap/markdown-compiler": "^0.1.1",
+    "@chasenocap/markdown-compiler": "^0.1.3",
     "@chasenocap/report-components": "^0.1.0",
     "@chasenocap/report-templates": "^1.0.2",
     "inversify": "^6.0.2",
