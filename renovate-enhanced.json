@@ -1,0 +1,145 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":semanticCommitTypeAll(chore)",
+    ":pinOnlyDevDependencies"
+  ],
+  "timezone": "America/New_York",
+  "cloneSubmodules": true,
+  "git-submodules": {
+    "enabled": true
+  },
+  "npmrc": "@chasenocap:registry=https://npm.pkg.github.com/",
+  "hostRules": [
+    {
+      "matchHost": "npm.pkg.github.com",
+      "hostType": "npm",
+      "username": "x-access-token",
+      "password": "{{ secrets.GITHUB_COM_TOKEN }}"
+    }
+  ],
+  "rangeStrategy": "update-lockfile",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 3am on Monday"],
+    "automerge": true,
+    "commitMessageAction": "Lock file maintenance",
+    "prBodyDefinitions": {
+      "Change": "All lock files updated"
+    }
+  },
+  "packageRules": [
+    {
+      "description": "Core Infrastructure - Immediate updates",
+      "matchPackagePatterns": ["^@chasenocap/(di-framework|logger)$"],
+      "groupName": "Core Infrastructure",
+      "groupSlug": "core",
+      "schedule": ["at any time"],
+      "automerge": true,
+      "automergeType": "pr",
+      "prPriority": 100,
+      "minimumReleaseAge": "0 minutes",
+      "separateMajorMinor": false,
+      "commitMessagePrefix": "⚡ core:"
+    },
+    {
+      "description": "Shared Utilities - 5 minute batching",
+      "matchPackagePatterns": ["^@chasenocap/(cache|file-system|event-system|test-mocks|test-helpers)$"],
+      "groupName": "Shared Utilities",
+      "groupSlug": "shared",
+      "schedule": ["every 5 minutes"],
+      "automerge": true,
+      "automergeType": "pr",
+      "prPriority": 50,
+      "minimumReleaseAge": "5 minutes",
+      "commitMessagePrefix": "📦 shared:"
+    },
+    {
+      "description": "Application Layer - 15 minute coordination",
+      "matchPackagePatterns": ["^@chasenocap/(report-templates|markdown-compiler|report-components|prompts)$"],
+      "groupName": "Application Layer",
+      "groupSlug": "app",
+      "schedule": ["every 15 minutes"],
+      "automerge": true,
+      "automergeType": "pr",
+      "prPriority": 10,
+      "minimumReleaseAge": "15 minutes",
+      "commitMessagePrefix": "🎨 app:"
+    },
+    {
+      "description": "Disable Renovate in package submodules",
+      "matchFiles": ["packages/*/package.json"],
+      "enabled": false
+    },
+    {
+      "description": "Security updates - always immediate",
+      "matchUpdateTypes": ["patch"],
+      "matchPackagePatterns": ["*"],
+      "automerge": true,
+      "minimumReleaseAge": "0 days",
+      "schedule": ["at any time"],
+      "prPriority": 999,
+      "vulnerabilityAlerts": {
+        "labels": ["security"],
+        "automerge": true
+      }
+    },
+    {
+      "description": "Group git submodule updates by tier",
+      "matchManagers": ["git-submodules"],
+      "matchPaths": ["packages/logger", "packages/di-framework"],
+      "groupName": "Core submodules",
+      "schedule": ["at any time"],
+      "automerge": true
+    },
+    {
+      "description": "Development dependencies",
+      "matchDepTypes": ["devDependencies"],
+      "rangeStrategy": "pin",
+      "automerge": false,
+      "schedule": ["after 10pm on weekdays"]
+    }
+  ],
+  "postUpgradeTasks": {
+    "commands": [
+      "node scripts/sync-submodules.js",
+      "npm run validate:dependencies"
+    ],
+    "fileFilters": ["package.json", "package-lock.json", ".gitmodules"],
+    "executionMode": "update"
+  },
+  "prCreation": "immediate",
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 10,
+  "rebaseWhen": "behind-base-branch",
+  "semanticCommits": "enabled",
+  "labels": ["dependencies", "automated"],
+  "postUpdateOptions": [
+    "npmDedupe"
+  ],
+  "ignorePaths": [
+    "packages/*/node_modules/**",
+    "packages/*/dist/**"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update git submodule references",
+      "fileMatch": ["^\\.gitmodules$"],
+      "matchStrings": [
+        "\\[submodule \"packages/(?<depName>[^\"]+)\"\\]\\s*path = [^\\n]+\\s*url = [^\\n]+\\s*branch = (?<currentValue>[^\\n]+)"
+      ],
+      "datasourceTemplate": "github-tags",
+      "lookupNameTemplate": "ChaseNoCap/{{{depName}}}"
+    }
+  ],
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "🔄 Dependency Updates Dashboard",
+  "dependencyDashboardHeader": "This dashboard shows all pending dependency updates organized by our tier strategy.",
+  "dependencyDashboardFooter": "Updates are grouped according to: Core (immediate), Shared (5min), App (15min)",
+  "suppressNotifications": ["prIgnoreNotification"],
+  "automergeStrategy": "squash",
+  "platformAutomerge": true
+}

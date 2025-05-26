@@ -2,17 +2,18 @@
 
 This document tracks future work items for the h1b-visa-analysis project. When asking "what's next?", consult this backlog for prioritized work items.
 
-## Current Status (January 2025)
+## Current Status (May 2025)
 
-**Project Health**: ✅ Excellent
-- **Decomposition**: 100% Complete (9/9 packages extracted)
+**Project Health**: 🔄 Transitioning to Unified Dependency Strategy
+- **Decomposition**: 100% Complete (11/11 packages extracted)
 - **Build Status**: ✅ Clean builds, no errors
 - **Test Coverage**: >90% average across packages
 - **Published Packages**: All 11 packages on GitHub Packages
 - **Report Generation**: ✅ Working with 119KB comprehensive output
 - **Dependency Automation**: ✅ Fully automated with monitoring
+- **CI Status**: ⚠️ 5/11 packages failing - unified strategy will fix
 
-**Next Priority**: Add Missing Test Suites (Item #16) - Enable quality automation for all packages
+**Next Priority**: Implement Unified Dependency Strategy (Item #27) - Transform developer experience
 
 ## How to Use This Backlog
 
@@ -21,10 +22,44 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 3. **Refinement**: Work items should be refined before starting implementation
 4. **Updates**: Mark items complete and add new discoveries as work progresses
 
-## Immediate Priority Items (Quality Automation)
+## Immediate Priority Items (CI Health)
 
-### 16. Add Missing Test Suites to Packages (NEXT PRIORITY)
-**Status**: High Priority - Enables quality automation  
+### 27. Implement Unified Dependency Strategy (HIGH PRIORITY)
+**Status**: High Priority - Transform dependency management  
+**Description**: Implement dual-mode system with local npm link for development and tag-based publishing for integration
+**Priority Justification**: Solves CI failures while providing superior developer experience
+**Current Problem**: Push-based publishing causes version conflicts, slow development feedback
+**Solution**: Unified strategy with automatic mode detection based on context
+**Implementation Plan**:
+1. Create smart-deps.js for automatic mode detection
+2. Setup npm link infrastructure for local development
+3. Modify workflows to publish only on tags
+4. Add strategic package grouping for pipeline mode
+5. Create developer setup scripts
+**Key Features**:
+- **Local Mode**: Instant updates via npm link during development
+- **Pipeline Mode**: Tag-triggered publishing with full validation
+- **Zero Config**: Automatic mode switching based on environment
+- **Strategic Grouping**: Core (instant), Shared (5min), App (15min)
+**Tasks**:
+- [ ] Implement smart-deps.js mode detection script
+- [ ] Create setup-dev.sh for developer environment
+- [ ] Update all package workflows for tag-based publishing
+- [ ] Add tier configuration to package.json files
+- [ ] Test local mode with npm link setup
+- [ ] Test pipeline mode with tagged commits
+- [ ] Update developer documentation
+- [ ] Create troubleshooting guide
+**Benefits**:
+- Instant feedback during development (< 1 second)
+- Reliable integration testing via tags
+- Fixes all CI version conflicts
+- Superior developer experience
+**Reference**: See `/docs/unified-dependency-strategy.md`
+**Estimate**: 4-6 hours
+
+### 16. Add Missing Test Suites to Packages
+**Status**: Medium Priority - After CI fixes  
 **Description**: Add comprehensive test suites to packages that currently have none
 **Priority Justification**: With 100% publish automation coverage, we need tests to ensure quality
 **Affected Packages**:
@@ -475,6 +510,17 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - [ ] Add progress tracking and download capabilities
 - [ ] Implement authentication and user management
 **Estimate**: 5-7 days
+
+### ✅ 26. Tag-Based Publishing Strategy (INCORPORATED)
+**Status**: Incorporated into Unified Dependency Strategy (Item #27)
+**Description**: Tag-based publishing is now part of the dual-mode system
+**Resolution**: The unified strategy uses tags for pipeline mode while supporting instant local development
+**Key Integration Points**:
+- Tags trigger pipeline mode and full integration testing
+- Local development uses npm link for instant feedback
+- Strategic grouping prevents update fatigue in pipeline mode
+- Automatic mode detection simplifies developer experience
+**See**: Item #27 - Implement Unified Dependency Strategy
 
 ## Technical Debt
 
