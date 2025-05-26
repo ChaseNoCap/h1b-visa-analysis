@@ -16,9 +16,9 @@ This catalog documents all packages in the meta repository, managed as Git submo
 | test-mocks | github.com/ChaseNoCap/test-mocks | @chasenocap/test-mocks | 400 lines | 100% | Mock implementations |
 | test-helpers | github.com/ChaseNoCap/test-helpers | @chasenocap/test-helpers | 500 lines | 91.89% | Test utilities |
 | file-system | github.com/ChaseNoCap/file-system | @chasenocap/file-system | 700 lines | 95%+ | File operations |
-| event-system | github.com/ChaseNoCap/event-system | @chasenocap/event-system | 800 lines | High | Event-driven debugging |
+| event-system | github.com/ChaseNoCap/event-system | @chasenocap/event-system | 248 lines | 100%/96.36% | Event-driven debugging |
 | cache | github.com/ChaseNoCap/cache | @chasenocap/cache | 400 lines | 94.79% | Caching decorators |
-| report-templates | github.com/ChaseNoCap/report-templates | @chasenocap/report-templates | 287 lines | 100% | Template engine |
+| report-templates | github.com/ChaseNoCap/report-templates | @chasenocap/report-templates | 199 lines | 100% | Template engine |
 | prompts | github.com/ChaseNoCap/prompts | @chasenocap/prompts | 400 lines | N/A | AI context management |
 | markdown-compiler | github.com/ChaseNoCap/markdown-compiler | Private | N/A | N/A | Markdown processing |
 | report-components | github.com/ChaseNoCap/report-components | Private | N/A | N/A | H1B research content |
