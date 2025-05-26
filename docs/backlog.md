@@ -12,7 +12,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - **Report Generation**: ✅ Working with 119KB comprehensive output
 - **Dependency Automation**: ✅ Fully automated with monitoring
 
-**Next Priority**: Performance Optimizations (Item #8) - Optimize report generation and add monitoring
+**Next Priority**: Fix All CI Failures (Item #9) - Use monitoring dashboard to systematically fix all failing packages
 
 ## How to Use This Backlog
 
@@ -226,8 +226,47 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - Core functionality fully verified
 - Minor test isolation issues in 2 edge case tests
 
-### 8. Performance Optimizations
-**Status**: Medium Priority - After package updates  
+### ✅ 8. CI Pipeline Monitoring System (COMPLETED)
+**Status**: Completed ✅  
+**Description**: Implemented comprehensive monitoring system for CI/CD pipeline health using gh CLI and native tools
+**Completed Tasks**:
+- ✅ Created `scripts/monitor-ci-health.sh` - Real-time health monitor with color output
+- ✅ Created `scripts/monitor-renovate.sh` - Renovate-specific monitoring
+- ✅ Built `scripts/generate-ci-dashboard.sh` - Automated dashboard generation
+- ✅ Created `scripts/monitor-ci-health-json.sh` - JSON output for automation
+- ✅ Documented in `docs/ci-monitoring-guide.md` - Complete usage guide
+- ✅ Created `docs/ci-iterative-fix-guide.md` - Systematic fix approach
+- ✅ Dashboard shows metrics, PR velocity, and health scores
+**Results**:
+- Dashboard reveals 54% health (6/11 packages passing)
+- Identified 5 failing packages needing fixes
+- Ready for iterative fix process
+**Next Step**: Use monitoring to fix all failing packages systematically
+
+### 9. Fix All CI Failures Using Monitoring Dashboard
+**Status**: High Priority - Next immediate task  
+**Description**: Systematically fix all failing packages using the monitoring dashboard as a feedback loop
+**Current State**: 54% health (6/11 packages passing)
+**Failing Packages**:
+- ❌ logger (core dependency)
+- ❌ file-system (core dependency)
+- ❌ test-helpers (test infrastructure)
+- ❌ di-framework (has 1 open PR)
+- ❌ event-system (depends on di-framework)
+**Tasks**:
+- [ ] Fix logger package CI failures
+- [ ] Fix file-system package CI failures
+- [ ] Fix test-helpers package CI failures
+- [ ] Fix di-framework package CI failures
+- [ ] Fix event-system package CI failures
+- [ ] Verify meta repository CI passes
+- [ ] Achieve 100% health score
+**Process**: Follow docs/ci-iterative-fix-guide.md
+**Success Criteria**: Dashboard shows 11/11 packages passing
+**Estimate**: 1-2 days
+
+### 10. Performance Optimizations
+**Status**: Medium Priority - After CI fixes  
 **Description**: Optimize report generation performance and add monitoring
 **Priority Justification**: Report generation is currently slow and needs optimization for better user experience
 **Tasks**:
@@ -240,7 +279,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Medium Priority Items
 
-### 8. Implement XML-Enhanced Prompt Templates
+### 10. Implement XML-Enhanced Prompt Templates
 **Status**: Not Started  
 **Description**: Convert all prompt templates to XML structure for better parseability
 **Tasks**:
@@ -251,7 +290,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 **Reference**: See `/docs/prompt-xml-structured-guide.md` for patterns
 **Estimate**: 1-2 days
 
-### 9. Add Prompt Context Optimization
+### 11. Add Prompt Context Optimization
 **Status**: Not Started  
 **Description**: Implement optimization patterns for efficient Claude interactions
 **Tasks**:
@@ -262,18 +301,9 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 **Reference**: See `/docs/prompt-optimization-patterns.md` for techniques
 **Estimate**: 1-2 days
 
-### 10. Performance Optimizations
-**Status**: Not Started  
-**Description**: Optimize report generation performance and add monitoring
-**Tasks**:
-- [ ] Profile current performance bottlenecks
-- [ ] Add caching to expensive operations (leverage cache package)
-- [ ] Implement streaming for large reports
-- [ ] Add performance metrics and monitoring
-- [ ] Create performance benchmarks
-**Estimate**: 2-3 days
+### 12. Add PDF Generation Support
 
-### 8. Add PDF Generation Support
+### 12. Add PDF Generation Support
 **Status**: Medium Priority  
 **Description**: Add ability to generate reports in PDF format
 **Tasks**:
@@ -284,7 +314,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - [ ] Ensure proper styling and page breaks
 **Estimate**: 2-3 days
 
-### 9. Create Web UI
+### 13. Create Web UI
 **Status**: Low Priority  
 **Description**: Build a web interface for report generation
 **Tasks**:
@@ -297,7 +327,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Technical Debt
 
-### 10. Improve Error Messages
+### 14. Improve Error Messages
 **Status**: Low Priority  
 **Description**: Enhance error messages across all packages for better debugging
 **Tasks**:
@@ -307,7 +337,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - [ ] Improve error context and suggestions
 **Estimate**: 1-2 days
 
-### 11. Add Integration Tests
+### 15. Add Integration Tests
 **Status**: Medium Priority  
 **Description**: Create integration tests between packages
 **Tasks**:
@@ -319,7 +349,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Documentation
 
-### 12. Create Architecture Decision Records (ADRs)
+### 16. Create Architecture Decision Records (ADRs)
 **Status**: Low Priority  
 **Description**: Document key architectural decisions
 **Tasks**:
@@ -329,7 +359,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - [ ] Link ADRs to relevant code
 **Estimate**: 1-2 days
 
-### 13. Add Coverage Badges to README
+### 17. Add Coverage Badges to README
 **Status**: Low Priority  
 **Description**: Add test coverage badges to the main README.md to show coverage status for each package
 **Tasks**:
@@ -341,7 +371,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## Infrastructure
 
-### 14. Set Up Continuous Deployment
+### 18. Set Up Continuous Deployment
 **Status**: Medium Priority  
 **Description**: Automate package publishing and deployment
 **Tasks**:

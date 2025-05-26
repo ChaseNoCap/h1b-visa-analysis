@@ -14,6 +14,11 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
 
 #### **Know What's Next** 🎯
 → Check [Backlog](./backlog.md) for prioritized work items
+→ **NEW**: [CI Monitoring Plan](./ci-monitoring-plan.md) - Next high priority
+
+#### **Monitor CI/CD Health** 📊
+→ See [CI Monitoring Plan](./ci-monitoring-plan.md) for implementation
+→ Check [Dependency Automation Guide](./dependency-automation-guide.md)
 
 #### **Understand the Architecture**
 → Read [Architecture Reference](./architecture-reference.md)
@@ -27,7 +32,7 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
 #### **Learn About Decomposition**
 → Study [Decomposition Guide](./decomposition-guide.md) → [Achievements](./achievements.md)
 
-## 📚 Consolidated Documentation (16 Files)
+## 📚 Consolidated Documentation (17 Files)
 
 ### Core Guides
 
@@ -59,6 +64,11 @@ Welcome to the H1B Visa Analysis project documentation. This hub provides stream
 7. **[Architecture Reference](./architecture-reference.md)**
    - Patterns, shared code analysis, validation
    - *Consolidates 3 architecture documents*
+
+8. **[CI Monitoring Plan](./ci-monitoring-plan.md)** 🆕
+   - Comprehensive CI/CD health monitoring implementation
+   - gh CLI scripts, automated dashboards, metrics collection
+   - **Next high priority task**
 
 ### Supporting Documents
 
