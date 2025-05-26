@@ -4,6 +4,19 @@ import { MockLogger } from '@chasenocap/test-mocks';
 import { TestEventBus } from '@chasenocap/event-system';
 import type { IDependencyChecker } from '@/core/interfaces/IDependencyChecker';
 import type { IFileSystem } from '@chasenocap/file-system';
+import type { IMarkdownProcessor, IProcessOptions, IProcessResult } from '@/core/interfaces/IMarkdownProcessor';
+
+// Mock implementation of IMarkdownProcessor
+class MockMarkdownProcessor implements IMarkdownProcessor {
+  async process(filePath: string, _options?: IProcessOptions): Promise<IProcessResult> {
+    return {
+      content: `# Mock Content from ${filePath}\n\nThis is mock processed content.`,
+      includedFiles: ['mock-file1.md', 'mock-file2.md'],
+      errors: [],
+      metadata: { processedAt: new Date().toISOString() },
+    };
+  }
+}
 
 // Mock implementation of IDependencyChecker
 class MockDependencyChecker implements IDependencyChecker {
@@ -135,6 +148,7 @@ describe('ReportGenerator', () => {
   let mockLogger: MockLogger;
   let mockFileSystem: SimpleMockFileSystem;
   let mockDependencyChecker: IDependencyChecker;
+  let mockMarkdownProcessor: MockMarkdownProcessor;
   let testEventBus: TestEventBus;
 
   beforeEach(() => {
@@ -142,6 +156,7 @@ describe('ReportGenerator', () => {
     mockLogger = new MockLogger();
     mockFileSystem = new SimpleMockFileSystem();
     testEventBus = new TestEventBus();
+    mockMarkdownProcessor = new MockMarkdownProcessor();
     mockDependencyChecker = new MockDependencyChecker([
       { name: 'prompts-shared', available: true, version: '1.0.0', path: '/path/to/prompts' },
       { name: 'markdown-compiler', available: true, version: '2.0.0', path: '/path/to/markdown' },
@@ -153,6 +168,7 @@ describe('ReportGenerator', () => {
       mockLogger,
       mockDependencyChecker,
       mockFileSystem,
+      mockMarkdownProcessor,
       testEventBus
     );
   });
@@ -207,6 +223,7 @@ describe('ReportGenerator', () => {
         mockLogger,
         mockDependencyChecker,
         mockFileSystem,
+        mockMarkdownProcessor,
         testEventBus
       );
 

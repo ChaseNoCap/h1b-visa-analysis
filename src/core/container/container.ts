@@ -6,6 +6,7 @@ import { TYPES } from '../constants/injection-tokens.js';
 import { WinstonLogger } from '@chasenocap/logger';
 import { NodeFileSystem } from '@chasenocap/file-system';
 import { EventBus } from '@chasenocap/event-system';
+import { container as mdContainer, TYPES as MD_TYPES } from '@chasenocap/markdown-compiler';
 import { ReportGenerator } from '../../services/ReportGenerator.js';
 import { DependencyChecker } from '../../services/DependencyChecker.js';
 
@@ -20,6 +21,10 @@ export async function createContainer(): Promise<Container> {
     .addBinding(TYPES.IReportGenerator, ReportGenerator)
     .addBinding(TYPES.IDependencyChecker, DependencyChecker)
     .build();
+
+  // Get the markdown processor from the markdown-compiler container
+  const markdownProcessor = mdContainer.get(MD_TYPES.IMarkdownProcessor);
+  container.bind(TYPES.IMarkdownProcessor).toConstantValue(markdownProcessor);
 
   return container;
 }

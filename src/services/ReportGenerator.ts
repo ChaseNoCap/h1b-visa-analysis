@@ -11,6 +11,7 @@ import type {
   IReportData,
 } from '../core/interfaces/IReportGenerator.js';
 import type { IDependencyChecker } from '../core/interfaces/IDependencyChecker.js';
+import type { IMarkdownProcessor } from '../core/interfaces/IMarkdownProcessor.js';
 import type { ILogger } from '@chasenocap/logger';
 import type { IFileSystem } from '@chasenocap/file-system';
 import type { IEventBus } from '@chasenocap/event-system';
@@ -25,6 +26,7 @@ export class ReportGenerator implements IReportGenerator {
     @inject(TYPES.ILogger) logger: ILogger,
     @inject(TYPES.IDependencyChecker) private readonly dependencyChecker: IDependencyChecker,
     @inject(TYPES.IFileSystem) private readonly fileSystem: IFileSystem,
+    @inject(TYPES.IMarkdownProcessor) private readonly markdownProcessor: IMarkdownProcessor,
     @inject(TYPES.IEventBus) eventBus: IEventBus
   ) {
     this.logger = logger.child({ service: 'ReportGenerator' });
@@ -71,7 +73,7 @@ export class ReportGenerator implements IReportGenerator {
       await this.fileSystem.createDirectory(outputDir);
 
       // Generate report content
-      const reportContent = this.generateReportContent(dependencies);
+      const reportContent = await this.generateReportContent(dependencies);
 
       // Determine output filename
       const timestamp = includeTimestamp ? `-${new Date().toISOString().split('T')[0]}` : '';
@@ -116,30 +118,78 @@ export class ReportGenerator implements IReportGenerator {
     }
   }
 
-  private generateReportContent(
+  private async generateReportContent(
     dependencies: Array<{ name: string; available: boolean; version?: string; path?: string }>
-  ): string {
+  ): Promise<string> {
     this.reportBuilder.clear();
     
     // Build report using the fluent API
     this.reportBuilder
       .addHeader('H1B Visa Analysis Report', {
         generatedOn: new Date().toISOString(),
-        format: 'markdown'
+        format: 'markdown',
+        author: 'H1B Analysis System',
+        version: '1.0'
       })
-      .addSection('Dependency Status', this.buildDependencyList(dependencies));
+      .addSection('Executive Summary', 'This report provides comprehensive analysis of H1B visa program impacts based on current research data.');
 
-    // Add report content section
-    const availableDeps = dependencies.filter(d => d.available);
-    if (availableDeps.length > 0) {
-      this.reportBuilder
-        .addSection('Report Content', '*Content generation from dependencies will be implemented here*')
-        .addSection('Available Components', '', 3)
-        .addList(availableDeps.map(dep => `${dep.name}: ${dep.path || 'N/A'}`));
+    // Add actual content from report-components
+    const reportComponentsDep = dependencies.find(d => d.name === '@chasenocap/report-components' && d.available);
+    
+    if (reportComponentsDep?.path) {
+      this.logger.debug('Processing report-components content', { path: reportComponentsDep.path });
+      
+      try {
+        // Process the entry-point.md file from report-components
+        const entryPointPath = this.fileSystem.join(reportComponentsDep.path, 'src', 'entry-point.md');
+        const processResult = await this.markdownProcessor.process(entryPointPath, {
+          basePath: this.fileSystem.join(reportComponentsDep.path, 'src'),
+        });
+
+        if (processResult.errors.length > 0) {
+          this.logger.warn('Errors processing content', { 
+            errors: processResult.errors,
+            includedFiles: processResult.includedFiles 
+          });
+          
+          this.reportBuilder.addSection('Content Processing Warnings', 
+            `Some content files could not be processed:\n${processResult.errors.map(e => `- ${e.message}`).join('\n')}`
+          );
+        }
+
+        if (processResult.content && processResult.content.trim()) {
+          this.reportBuilder.addSection('H1B Analysis Content', processResult.content);
+          
+          this.logger.info('Successfully processed report content', {
+            contentLength: processResult.content.length,
+            includedFiles: processResult.includedFiles.length,
+            errors: processResult.errors.length
+          });
+        } else {
+          this.reportBuilder.addSection('H1B Analysis Content', '⚠️ No content was generated from report-components');
+        }
+
+        // Add metadata about content processing
+        if (processResult.includedFiles.length > 0) {
+          this.reportBuilder
+            .addSection('Content Sources', '', 3)
+            .addList(processResult.includedFiles.map(file => `📄 ${file}`));
+        }
+
+      } catch (error) {
+        const err = error as Error;
+        this.logger.error('Failed to process report-components content', err);
+        this.reportBuilder.addSection('Content Processing Error', 
+          `❌ Failed to process content: ${err.message}`
+        );
+      }
     } else {
-      this.reportBuilder
-        .addSection('Report Content', '⚠️ No dependencies available for content generation');
+      this.reportBuilder.addSection('H1B Analysis Content', 
+        '⚠️ report-components package not available - using placeholder content');
     }
+
+    // Add dependency status
+    this.reportBuilder.addSection('System Information', this.buildDependencyList(dependencies));
 
     return this.reportBuilder.build();
   }
