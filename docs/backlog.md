@@ -26,11 +26,65 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - **Auto-Update Authentication**: 0% success rate for auto-update PR creation
 - **Submodule Reference Conflicts**: Auto-update workflows fail on submodule checkout
 
-**Next Priority**: Implement Meta GOTHIC framework (Items #48-59) - new development agent system
+**Next Priority**: Implement metaGOTHIC Framework (Items #48-59) - AI-guided development agent system
 
-## 🏗️ Meta GOTHIC Implementation Roadmap
+## 🏗️ metaGOTHIC Implementation Roadmap
 
-**GOTHIC** = **G**uided **O**rchestration **T**oolkit for **H**olistic **I**ntelligent **C**oding
+**metaGOTHIC** = **meta** + **G**itHub **O**rchestrated **T**ooling for **H**ierarchical **I**ntelligent **C**ontainers
+
+A complete AI-guided development agent framework that combines GitHub-native automation with intelligent context management and professional SDLC guidance, all delivered through a cohesive containerized architecture.
+
+### Framework Architecture Overview
+
+**GitHub (Platform Foundation)**
+- GitHub Repositories: 1 meta + N submodule packages
+- GitHub Actions: Automated CI/CD workflows with tag-based publishing
+- GitHub Packages: Scoped package registry for distribution
+- GitHub Dispatch: Repository communication and notification system
+- GitHub Secrets: Secure token management across ecosystem
+
+**Orchestrated (Intelligent Automation)**
+- SDLC State Machine: Managed workflow transitions
+- Dual-Mode Automation: Local npm link (<1s) vs pipeline tag-based publishing
+- Context Aggregation: Intelligent project understanding from multiple sources
+- Prompt Orchestration: Dynamic XML template generation with interpolation
+- Terminal Streaming: Real-time Claude subprocess with WebSocket responses
+
+**Tooling (Development Experience)**
+- Terminal UI: xterm.js with syntax highlighting and command history
+- File Tree Selection: Multi-select context building with package isolation
+- Kanban Board: AI-assisted task grooming and sprint planning
+- Smart Dependencies: Automatic mode detection and npm link management
+- CI/CD Monitoring: Real-time dashboards with health scoring
+
+**Hierarchical (Structured Architecture)**
+- Meta Repository Pattern: Central orchestration with independent submodules
+- Package Tiers: Core → Shared → App with strategic update grouping
+- SDLC Phases: Requirements → Design → Implementation → Testing → Deployment
+- Context Hierarchy: System → Package → Feature level loading
+- Template Inheritance: XML prompt templates with composition patterns
+
+**Intelligent (AI-Enhanced Development)**
+- Claude Code Integration: Subprocess wrapper with session management
+- Context-Aware Prompting: Progressive loading with token optimization
+- XML Prompt Templates: Structured SDLC guidance with thinking levels
+- Agentic Workflows: AI-guided development phase transitions
+- Knowledge Base: Expert guidance and best practices recommendations
+
+**Containers (Environment Consistency)**
+- Dev Container Setup: Consistent development environments
+- Containerized CI/CD: Docker-based automation pipelines
+- Package Isolation: Independent container contexts per package
+- Environment Detection: Automatic local vs pipeline mode switching
+- Session Management: Persistent contexts across container restarts
+
+### Tech Stack
+- **Core**: TypeScript, Node.js, Docker, Kubernetes
+- **Frontend**: React, xterm.js, WebSockets
+- **Backend**: Express/Fastify, GitHub API, WebSocket server
+- **Infrastructure**: GitHub Actions, GitHub Packages, Dev Containers
+- **Configuration**: XML (prompts), YAML (config), JSON Schema
+- **Documentation**: Markdown, Mermaid, Professional PDF generation
 
 ### Phase 1: Foundation (Week 1-2)
 **Critical Dependencies**: Items #48-50 must be completed first
@@ -564,48 +618,55 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## 🚨 NEW CRITICAL PRIORITY ITEMS (Meta GOTHIC Framework)
 
-### 48. Claude Subprocess Wrapper Package 🔥
+### 48. GitHub-Claude Integration Package 🔥
 **Status**: Not Started
-**Description**: Create atomic Claude Code execution wrapper with streaming support
-**Priority Justification**: Foundation component for entire Meta GOTHIC system - needed by all other components
+**Description**: Create atomic Claude Code execution wrapper with GitHub-hosted streaming support
+**Priority Justification**: Foundation component for entire metaGOTHIC system - enables GitHub-integrated AI development
 **Technical Requirements**:
-- Subprocess management for `claude` CLI
-- Streaming JSON response parsing
-- Session management and context preservation
+- Claude subprocess management for GitHub-hosted execution
+- Streaming JSON/WebSocket response parsing
+- Session management with persistent context preservation
 - Event-driven architecture with `@chasenocap/event-system`
-- Error handling and recovery patterns
+- Error handling, recovery patterns, and retry logic
+- Dev container compatibility for consistent environments
+- GitHub Actions integration for automated workflows
 
 **Tasks**:
-- [ ] Create new package `packages/claude-subprocess`
-- [ ] Implement `ClaudeSubprocess` class with DI
-- [ ] Add streaming response parser
-- [ ] Implement session management
-- [ ] Add comprehensive error handling
+- [ ] Create new package `packages/github-claude`
+- [ ] Implement `GitHubClaudeClient` class with DI
+- [ ] Add streaming response parser (JSON + WebSocket)
+- [ ] Implement session management with context persistence
+- [ ] Add comprehensive error handling and retry logic
+- [ ] Ensure dev container compatibility
 - [ ] Write unit tests (90%+ coverage)
-- [ ] Document API and usage patterns
+- [ ] Document API and GitHub integration patterns
 
 **Dependencies**: `@chasenocap/di-framework`, `@chasenocap/event-system`, `@chasenocap/logger`
+**Tech Stack**: TypeScript, Node.js, WebSockets, Docker
 **Estimate**: 2 days
 
-### 49. XML Prompt Templates Package 🔥
+### 49. XML SDLC Prompt Templates Package 🔥
 **Status**: Not Started
-**Description**: Create atomic XML-based prompt templates for SDLC phases and common development tasks
-**Priority Justification**: Core templates needed for intelligent SDLC guidance and development automation
+**Description**: Create atomic XML-based prompt templates for hierarchical SDLC guidance with GitHub integration
+**Priority Justification**: Core templates for orchestrated development workflows - enables intelligent phase transitions
 **Technical Requirements**:
-- XML schema for prompt templates with metadata
-- Template interpolation with context variables
-- Phase-specific prompts (requirements, design, implementation, testing, deployment)
-- Thinking level specifications per template
-- Validation and error handling
+- XML schema for hierarchical prompt templates with metadata
+- Template interpolation with GitHub context variables
+- Phase-specific prompts aligned with state machine transitions
+- Thinking level specifications (think/ultrathink) per template
+- Validation, error handling, and template inheritance
+- GitHub issue/PR template integration
+- Container environment awareness
 
 **Tasks**:
-- [ ] Create new package `packages/gothic-prompts`
-- [ ] Design XML schema for prompt templates
-- [ ] Create SDLC phase templates (requirements, design, implementation, testing, deployment)
-- [ ] Implement template interpolation engine
-- [ ] Add validation for template syntax
-- [ ] Create template catalog and documentation
-- [ ] Write comprehensive tests
+- [ ] Create new package `packages/sdlc-prompts`
+- [ ] Design hierarchical XML schema for prompt templates
+- [ ] Create SDLC phase templates (requirements → design → implementation → testing → deployment)
+- [ ] Implement template interpolation engine with GitHub context
+- [ ] Add validation for template syntax and phase compliance
+- [ ] Create template catalog with inheritance patterns
+- [ ] Integrate with GitHub issue/PR templates
+- [ ] Write comprehensive tests with container support
 
 **Example Template Structure**:
 ```xml
@@ -627,27 +688,31 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 ```
 
 **Dependencies**: None (foundational package)
+**Tech Stack**: TypeScript, XML parsing, YAML validation
 **Estimate**: 3 days
 
-### 50. SDLC Configuration Package 🔥
+### 50. Hierarchical SDLC Configuration Package 🔥
 **Status**: Not Started
-**Description**: YAML-based SDLC phase definitions, workflows, and best practices
-**Priority Justification**: Defines the guided development workflow and phase transitions
+**Description**: YAML-based hierarchical SDLC definitions with GitHub workflow integration
+**Priority Justification**: Orchestrates intelligent development phases - core for state machine transitions
 **Technical Requirements**:
-- YAML schema for phase definitions
-- Step-by-step workflows with dependencies
-- Validation checklists per phase
-- Best practices knowledge base
-- Deliverable templates and specifications
+- YAML schema for hierarchical phase definitions
+- GitHub Actions workflow integration points
+- Step-by-step workflows with dependency graphs
+- Validation checklists with automated verification
+- Best practices knowledge base per tier (core/shared/app)
+- Professional deliverable templates and specifications
+- Container configuration for consistent environments
 
 **Tasks**:
-- [ ] Create new package `packages/sdlc-config`
-- [ ] Design YAML schema for phase definitions
-- [ ] Create configuration files for all SDLC phases
-- [ ] Define phase transition rules and dependencies
-- [ ] Add validation checklists and best practices
-- [ ] Create deliverable templates (markdown)
+- [ ] Create new package `packages/sdlc-orchestration`
+- [ ] Design hierarchical YAML schema for phase definitions
+- [ ] Create configuration files for all SDLC phases with GitHub integration
+- [ ] Define phase transition rules with state machine compatibility
+- [ ] Add automated validation checklists and quality gates
+- [ ] Create professional deliverable templates (markdown/PDF)
 - [ ] Document configuration format and extension patterns
+- [ ] Add container environment specifications
 
 **Example Configuration**:
 ```yaml
@@ -669,240 +734,288 @@ phase:
 ```
 
 **Dependencies**: None (configuration only)
+**Tech Stack**: YAML, JSON Schema, Mermaid diagrams
 **Estimate**: 2 days
 
-### 51. Terminal UI Component Package 🔥
+### 51. GitHub Terminal UI Component Package 🔥
 **Status**: Not Started  
-**Description**: Reusable terminal component using xterm.js for Claude Code console interface
-**Priority Justification**: Core UI component for development console - primary user interface
+**Description**: Reusable terminal component using xterm.js for GitHub-integrated Claude console
+**Priority Justification**: Primary tooling interface - enables intelligent terminal interactions
 **Technical Requirements**:
-- xterm.js integration with full terminal capabilities
-- WebSocket streaming support for real-time responses
-- Command history and autocomplete
-- Syntax highlighting for code responses
-- Copy/paste and search functionality
-- Customizable themes and settings
+- xterm.js integration with GitHub Codespaces compatibility
+- WebSocket streaming for real-time Claude responses
+- GitHub-aware command history and context autocomplete
+- Syntax highlighting optimized for code responses
+- Copy/paste with GitHub markdown formatting
+- Theme system matching GitHub UI patterns
+- Container terminal session persistence
+- Multi-tab support for parallel workflows
 
 **Tasks**:
-- [ ] Create new package `packages/ui-terminal`
-- [ ] Integrate xterm.js with React wrapper
-- [ ] Implement WebSocket streaming handler
-- [ ] Add command history and autocomplete
-- [ ] Implement syntax highlighting for responses
-- [ ] Add copy/paste and search functionality
-- [ ] Create theme system and customization
-- [ ] Write component tests and documentation
-- [ ] Create Storybook stories for testing
+- [ ] Create new package `packages/ui-github-terminal`
+- [ ] Integrate xterm.js with React wrapper and GitHub themes
+- [ ] Implement WebSocket streaming with reconnection logic
+- [ ] Add GitHub-aware command history and context autocomplete
+- [ ] Implement syntax highlighting for multiple languages
+- [ ] Add copy/paste with GitHub markdown support
+- [ ] Create GitHub-compatible theme system
+- [ ] Add container session persistence
+- [ ] Write component tests and Storybook stories
+- [ ] Document GitHub integration patterns
 
-**Dependencies**: React, xterm.js, WebSocket client
+**Dependencies**: React, xterm.js, WebSocket client, `@chasenocap/event-system`
+**Tech Stack**: TypeScript, React, xterm.js, WebSockets, Storybook
 **Estimate**: 2 days
 
-### 52. SDLC State Machine Package
+### 52. Orchestrated SDLC State Machine Package
 **Status**: Not Started
-**Description**: State machine for SDLC phase transitions and workflow management
-**Priority Justification**: Core logic for guiding users through development phases
+**Description**: Hierarchical state machine for intelligent SDLC phase orchestration
+**Priority Justification**: Core orchestration engine - manages entire development lifecycle
 **Technical Requirements**:
-- Finite state machine implementation
-- Phase transition validation
-- Event-driven state changes
-- Rollback and skip capabilities
-- State persistence and recovery
-- Integration with event system
+- Hierarchical finite state machine with nested states
+- GitHub workflow integration for automated transitions
+- Phase transition validation with quality gates
+- Event-driven state changes via repository dispatch
+- Rollback, skip, and parallel state capabilities
+- State persistence with container session recovery
+- Real-time state visualization and debugging
+- Integration with GitHub Actions and event system
 
 **Tasks**:
-- [ ] Create new package `packages/sdlc-engine`
-- [ ] Implement generic state machine base class
-- [ ] Create SDLC-specific state machine
-- [ ] Add phase transition validation
-- [ ] Implement event-driven state changes
-- [ ] Add state persistence mechanisms
-- [ ] Create rollback and skip functionality
+- [ ] Create new package `packages/sdlc-orchestrator`
+- [ ] Implement hierarchical state machine base class
+- [ ] Create SDLC-specific state machine with GitHub hooks
+- [ ] Add phase transition validation with quality gates
+- [ ] Implement event-driven state changes via dispatch
+- [ ] Add state persistence with container support
+- [ ] Create rollback, skip, and parallel state features
+- [ ] Add real-time state visualization
 - [ ] Write comprehensive tests for all state transitions
-- [ ] Document state machine behavior and usage
+- [ ] Document orchestration patterns and GitHub integration
 
-**Dependencies**: `@chasenocap/event-system`
+**Dependencies**: `@chasenocap/event-system`, `@chasenocap/logger`
+**Tech Stack**: TypeScript, XState, GitHub API, Mermaid
 **Estimate**: 3 days
 
 ## 🔧 HIGH PRIORITY ITEMS (Meta GOTHIC Core)
 
-### 53. Context Aggregator Service Package
+### 53. Hierarchical Context Aggregator Package
 **Status**: Not Started
-**Description**: Service to aggregate and manage project context from multiple sources
-**Priority Justification**: Essential for providing relevant context to Claude for intelligent responses
+**Description**: Intelligent service to aggregate hierarchical project context with GitHub awareness
+**Priority Justification**: Essential tooling for intelligent context management - enables smart AI responses
 **Technical Requirements**:
-- File system scanning with pattern matching
-- Package-aware context building
-- Search and filtering capabilities
-- Context caching and optimization
-- Token count estimation and management
-- Integration with existing file system package
+- GitHub repository-aware file system scanning
+- Hierarchical package context building (meta/submodules)
+- Intelligent search with token optimization
+- Context caching with tier-based strategies
+- Token count estimation with cost management
+- GitHub issue/PR context integration
+- Container-aware context persistence
+- Progressive context loading patterns
 
 **Tasks**:
-- [ ] Create new package `packages/context-aggregator`
-- [ ] Implement file system scanning with filters
-- [ ] Add package-aware context building
-- [ ] Create search and filtering engine
-- [ ] Add context caching with `@chasenocap/cache`
-- [ ] Implement token count estimation
-- [ ] Add context optimization strategies
-- [ ] Write comprehensive tests
-- [ ] Document context building patterns
+- [ ] Create new package `packages/context-orchestrator`
+- [ ] Implement GitHub-aware file system scanning
+- [ ] Add hierarchical package context building
+- [ ] Create intelligent search and filtering engine
+- [ ] Add tier-based context caching with `@chasenocap/cache`
+- [ ] Implement token count and cost estimation
+- [ ] Add GitHub issue/PR context integration
+- [ ] Create context optimization strategies
+- [ ] Write comprehensive tests with containers
+- [ ] Document hierarchical context patterns
 
-**Dependencies**: `@chasenocap/file-system`, `@chasenocap/cache`
+**Dependencies**: `@chasenocap/file-system`, `@chasenocap/cache`, `@chasenocap/logger`
+**Tech Stack**: TypeScript, GitHub API, tiktoken
 **Estimate**: 3 days
 
-### 54. Prompt Builder Service Package
+### 54. Intelligent Prompt Orchestrator Package
 **Status**: Not Started
-**Description**: Service to construct prompts from XML templates and dynamic context
-**Priority Justification**: Bridge between templates and execution - enables dynamic prompt generation
+**Description**: Orchestrates dynamic prompt construction from hierarchical XML templates
+**Priority Justification**: Core tooling for intelligent prompting - bridges templates with execution
 **Technical Requirements**:
-- XML template parsing and validation
-- Context variable interpolation
-- Template inheritance and composition
-- Dynamic prompt optimization
-- Integration with prompt templates package
+- Hierarchical XML template parsing and validation
+- GitHub context variable interpolation
+- Template inheritance with override patterns
+- Dynamic optimization for token efficiency
+- Integration with SDLC phase templates
+- Real-time prompt preview and debugging
+- Cost estimation per prompt
+- Container environment awareness
 
 **Tasks**:
-- [ ] Create new package `packages/prompt-builder`
-- [ ] Implement XML template parser
-- [ ] Add context variable interpolation engine
+- [ ] Create new package `packages/prompt-orchestrator`
+- [ ] Implement hierarchical XML template parser
+- [ ] Add GitHub context interpolation engine
 - [ ] Create template inheritance system
-- [ ] Add prompt optimization logic
-- [ ] Implement template validation
-- [ ] Add prompt debugging and preview
+- [ ] Add dynamic optimization logic
+- [ ] Implement validation with phase compliance
+- [ ] Add real-time preview and debugging
+- [ ] Create cost estimation features
 - [ ] Write comprehensive tests
-- [ ] Document template syntax and usage
+- [ ] Document orchestration patterns
 
-**Dependencies**: `packages/gothic-prompts`
+**Dependencies**: `packages/sdlc-prompts`, `@chasenocap/logger`
+**Tech Stack**: TypeScript, XML parsing, JSON Schema
 **Estimate**: 2 days
 
-### 55. File Tree UI Component Package
+### 55. GitHub File Tree UI Component Package
 **Status**: Not Started
-**Description**: File/folder tree component with selection, filtering, and package isolation
-**Priority Justification**: Essential UI for context building and project navigation
+**Description**: Hierarchical file tree with GitHub repository awareness and intelligent selection
+**Priority Justification**: Essential tooling UI for hierarchical context building
 **Technical Requirements**:
-- Hierarchical file tree visualization
-- Multi-select with checkboxes
-- Real-time filtering and search
-- Package/folder isolation modes
-- Lazy loading for large directories
-- Integration with context aggregator
+- GitHub repository structure visualization
+- Submodule-aware hierarchical navigation
+- Multi-select with intelligent grouping
+- Real-time filtering with token impact
+- Package tier isolation modes (core/shared/app)
+- Lazy loading with virtual scrolling
+- Integration with context orchestrator
+- GitHub file status indicators
+- Container workspace support
 
 **Tasks**:
-- [ ] Create new package `packages/ui-file-tree`
-- [ ] Implement tree component with React
-- [ ] Add multi-select functionality
-- [ ] Implement real-time filtering
-- [ ] Add package isolation modes
-- [ ] Implement lazy loading for performance
-- [ ] Add drag-and-drop support
+- [ ] Create new package `packages/ui-github-tree`
+- [ ] Implement tree component with React and GitHub themes
+- [ ] Add submodule-aware navigation
+- [ ] Implement intelligent multi-select
+- [ ] Add real-time filtering with token counter
+- [ ] Create package tier isolation modes
+- [ ] Implement virtual scrolling for performance
+- [ ] Add GitHub status indicators
+- [ ] Add drag-and-drop with validation
 - [ ] Write component tests
 - [ ] Create Storybook stories
+- [ ] Document GitHub integration patterns
 
-**Dependencies**: React, UI component library
+**Dependencies**: React, UI component library, `packages/context-orchestrator`
+**Tech Stack**: TypeScript, React, Virtual scrolling library, GitHub API
 **Estimate**: 2 days
 
-### 56. Backlog Management Component Package
+### 56. Intelligent Backlog Orchestration UI Package
 **Status**: Not Started
-**Description**: Kanban-style backlog visualization with prioritization and grooming
-**Priority Justification**: Core feature for project management and task organization
+**Description**: AI-enhanced Kanban board with GitHub integration and intelligent task management
+**Priority Justification**: Core tooling for intelligent project management - orchestrates development workflow
 **Technical Requirements**:
-- Kanban board visualization
-- Drag-and-drop task management
-- Priority scoring and ranking
-- AI-assisted task grooming
-- Sprint planning integration
-- Export capabilities
+- GitHub Projects/Issues integrated Kanban board
+- Hierarchical task organization (epic/story/task)
+- Drag-and-drop with state machine validation
+- AI-powered priority scoring and suggestions
+- Intelligent task decomposition and grooming
+- Sprint planning with capacity management
+- GitHub milestone synchronization
+- Professional export capabilities (PDF/markdown)
+- Container workspace persistence
 
 **Tasks**:
-- [ ] Create new package `packages/ui-backlog-board`
-- [ ] Implement Kanban board component
-- [ ] Add drag-and-drop functionality
-- [ ] Create priority scoring system
-- [ ] Add task editing and details
-- [ ] Implement filtering and search
-- [ ] Add export capabilities
-- [ ] Write component tests
-- [ ] Create Storybook stories
+- [ ] Create new package `packages/ui-backlog-orchestrator`
+- [ ] Implement GitHub-integrated Kanban board
+- [ ] Add hierarchical task management
+- [ ] Implement drag-and-drop with validation
+- [ ] Create AI-powered scoring system
+- [ ] Add intelligent task grooming features
+- [ ] Implement sprint planning tools
+- [ ] Add GitHub synchronization
+- [ ] Create export capabilities
+- [ ] Write component tests and Storybook stories
+- [ ] Document AI integration patterns
 
-**Dependencies**: React, drag-and-drop library
+**Dependencies**: React, drag-and-drop library, `packages/github-claude`
+**Tech Stack**: TypeScript, React, GitHub API, react-beautiful-dnd
 **Estimate**: 3 days
 
 ## 📊 MEDIUM PRIORITY ITEMS (Meta GOTHIC Features)
 
-### 57. SDLC Document Templates Package
+### 57. Professional SDLC Document Templates Package
 **Status**: Not Started
-**Description**: Markdown templates for SDLC deliverables and documentation
-**Priority Justification**: Standardizes output and provides professional deliverables
+**Description**: Hierarchical markdown templates for professional SDLC deliverables
+**Priority Justification**: Enables intelligent document generation - professional output quality
 **Technical Requirements**:
-- Markdown templates with variable interpolation
-- Phase-specific document templates
-- Integration with markdown compiler
-- Template versioning and management
-- Export format support (PDF, HTML)
+- Hierarchical markdown templates with inheritance
+- GitHub-flavored markdown with mermaid diagrams
+- Phase-aligned document structure
+- Dynamic content interpolation
+- Multi-format export (PDF, HTML, DOCX)
+- Template versioning with Git integration
+- Professional styling and branding
+- Container-based PDF generation
 
 **Tasks**:
-- [ ] Create new package `packages/sdlc-templates`
-- [ ] Create markdown templates for each SDLC phase
-- [ ] Implement template interpolation
-- [ ] Add template validation
-- [ ] Create export functionality
-- [ ] Add template versioning
-- [ ] Write comprehensive documentation
-- [ ] Create template gallery
+- [ ] Create new package `packages/sdlc-documents`
+- [ ] Design hierarchical template structure
+- [ ] Create professional templates per SDLC phase
+- [ ] Implement dynamic interpolation engine
+- [ ] Add multi-format export pipeline
+- [ ] Create template versioning system
+- [ ] Add professional styling options
+- [ ] Implement container-based PDF generation
+- [ ] Write documentation and gallery
+- [ ] Create template best practices guide
 
-**Dependencies**: `@chasenocap/markdown-compiler`
+**Dependencies**: `@chasenocap/markdown-compiler`, puppeteer/playwright
+**Tech Stack**: TypeScript, Markdown, Mermaid, Puppeteer, Docker
 **Estimate**: 3 days
 
-### 58. Best Practices Knowledge Base Package
+### 58. Intelligent Best Practices Knowledge Base Package
 **Status**: Not Started
-**Description**: YAML-based best practices and guidelines per development phase
-**Priority Justification**: Provides expert guidance and improves development quality
+**Description**: Hierarchical knowledge base with AI-enhanced recommendations
+**Priority Justification**: Provides intelligent guidance - improves code quality through orchestrated knowledge
 **Technical Requirements**:
-- YAML-based knowledge structure
-- Searchable best practices database
-- Context-aware recommendations
-- Industry standard guidelines
-- Custom practice definitions
+- Hierarchical YAML knowledge structure
+- AI-powered recommendation engine
+- Context-aware best practice selection
+- GitHub community standards integration
+- Industry guidelines with tier mapping
+- Custom practice definitions with validation
+- Real-time practice suggestions
+- Container-based knowledge updates
 
 **Tasks**:
-- [ ] Create new package `packages/sdlc-knowledge`
-- [ ] Create YAML schema for best practices
-- [ ] Populate knowledge base with industry standards
-- [ ] Implement search and recommendation engine
-- [ ] Add context-aware filtering
-- [ ] Create practice validation rules
-- [ ] Add custom practice support
+- [ ] Create new package `packages/sdlc-intelligence`
+- [ ] Design hierarchical YAML schema
+- [ ] Populate with industry best practices
+- [ ] Implement AI recommendation engine
+- [ ] Add context-aware filtering logic
+- [ ] Integrate GitHub community standards
+- [ ] Create practice validation system
+- [ ] Add real-time suggestion features
+- [ ] Build knowledge update pipeline
 - [ ] Write comprehensive documentation
 
-**Dependencies**: None (data package)
+**Dependencies**: `packages/github-claude` (for AI recommendations)
+**Tech Stack**: TypeScript, YAML, AI/ML models, GitHub API
 **Estimate**: 5 days
 
-### 59. Meta GOTHIC Core Orchestrator
+### 59. metaGOTHIC Core Orchestrator
 **Status**: Not Started
-**Description**: Main orchestration service that integrates all components
-**Priority Justification**: Final integration layer that delivers the complete development agent
+**Description**: Master orchestration service integrating all metaGOTHIC components
+**Priority Justification**: Final integration - delivers complete GitHub-orchestrated intelligent development agent
 **Technical Requirements**:
-- Full dependency injection integration
-- API server with WebSocket support
-- React frontend with all components
-- Session management and persistence
-- Project lifecycle management
-- Integration testing and validation
+- Full hierarchical dependency injection
+- GitHub-integrated API with WebSocket streaming
+- React frontend with all orchestrated components
+- Intelligent session management with persistence
+- SDLC lifecycle orchestration
+- Container-based deployment architecture
+- Real-time monitoring and debugging
+- Professional deliverable generation
 
 **Tasks**:
-- [ ] Create new package `packages/meta-gothic-core`
-- [ ] Implement main orchestrator service
-- [ ] Create API server with REST endpoints
-- [ ] Add WebSocket streaming support
-- [ ] Build React frontend application
-- [ ] Integrate all UI components
-- [ ] Add session management
-- [ ] Implement project persistence
-- [ ] Create comprehensive integration tests
-- [ ] Write deployment documentation
+- [ ] Create new package `packages/metagothic-core`
+- [ ] Implement master orchestrator service
+- [ ] Create GitHub-integrated API server
+- [ ] Add WebSocket streaming infrastructure
+- [ ] Build React frontend with all components
+- [ ] Integrate hierarchical UI components
+- [ ] Implement intelligent session management
+- [ ] Add SDLC lifecycle orchestration
+- [ ] Create container deployment configs
+- [ ] Write comprehensive integration tests
+- [ ] Create professional documentation
+- [ ] Build monitoring dashboard
 
-**Dependencies**: All above packages
+**Dependencies**: All metaGOTHIC packages
+**Tech Stack**: TypeScript, Node.js, React, Docker, Kubernetes, GitHub API
 **Estimate**: 3 days
 
 ## Normal Priority Items
