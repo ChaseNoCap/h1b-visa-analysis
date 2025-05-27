@@ -21,12 +21,37 @@ jobs:
   update-dependencies:
     runs-on: ubuntu-latest
     steps:
+      - name: Configure Git
+        run: |
+          git config --global pull.rebase true
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Configure git for authenticated HTTPS
+        run: |
+          # yamllint disable rule:line-length
+          git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf ssh://git@github.com/
+          git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf git@github.com:
+          git config --global url."https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/".insteadOf https://github.com/
+          # yamllint enable rule:line-length
+
       - name: Checkout with submodules
         uses: actions/checkout@v4
         with:
-          submodules: recursive
           token: ${{ secrets.PAT_TOKEN }}
+          submodules: recursive
           fetch-depth: 0
+
+      - name: Update submodules to latest
+        run: |
+          # Ensure all submodules are initialized
+          git submodule init
+          
+          # Update all submodules to their latest versions
+          git submodule foreach 'git fetch origin && git checkout main && git pull origin main || echo "Warning: Failed to update $name"'
+          
+          # Fetch all tags for version checking
+          git submodule foreach 'git fetch --tags origin || true'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -72,8 +97,9 @@ jobs:
             elif git rev-parse "${VERSION}" >/dev/null 2>&1; then
               git checkout "${VERSION}"
             else
-              echo "Warning: Could not find tag ${VERSION} or v${VERSION}"
-              git pull origin main
+              echo "Warning: Could not find tag ${VERSION} or v${VERSION}, updating to latest main"
+              git fetch origin main
+              git reset --hard origin/main
             fi
             cd ../..
           fi
@@ -88,20 +114,26 @@ jobs:
           # Update npm dependencies
           npm update
           
-          # Update all submodules to latest
-          git submodule update --remote --merge
+          # Update all submodules to latest (without trying to clone missing ones)
+          git submodule foreach 'git fetch origin && git reset --hard origin/main || true'
 
       - name: Check for changes
         id: changes
         run: |
+          echo "Checking for changes..."
+          git status --porcelain
+          
           if [[ -n $(git status --porcelain) ]]; then
             echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected - will create PR"
           else
             echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected - skipping PR creation"
           fi
 
       - name: Create Pull Request
         if: steps.changes.outputs.has_changes == 'true' && github.event_name == 'repository_dispatch'
+        id: pr-dispatch
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT_TOKEN }}
@@ -130,6 +162,7 @@ jobs:
 
       - name: Create Pull Request (scheduled)
         if: steps.changes.outputs.has_changes == 'true' && github.event_name != 'repository_dispatch'
+        id: pr-scheduled
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT_TOKEN }}
@@ -152,3 +185,16 @@ jobs:
           labels: |
             dependencies
             automated
+            
+      - name: PR Creation Summary
+        if: always()
+        run: |
+          echo "=== PR Creation Summary ==="
+          echo "Has changes: ${{ steps.changes.outputs.has_changes }}"
+          echo "Event type: ${{ github.event_name }}"
+          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            echo "Package: ${{ github.event.client_payload.package }}"
+            echo "Version: ${{ github.event.client_payload.version }}"
+          fi
+          echo "PR created (dispatch): ${{ steps.pr-dispatch.outputs.pull-request-number || 'N/A' }}"
+          echo "PR created (scheduled): ${{ steps.pr-scheduled.outputs.pull-request-number || 'N/A' }}"

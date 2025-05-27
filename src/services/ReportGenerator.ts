@@ -79,22 +79,22 @@ export class ReportGenerator implements IReportGenerator {
 
       // Determine filenames
       const fullTimestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+      const dateOnly = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
       const extension = format === 'markdown' ? 'md' : format;
       
-      // Static name for current report
-      const currentFilename = `analysis.${extension}`;
-      const currentPath = this.fileSystem.join(outputDir, currentFilename);
+      // Determine main filename based on includeTimestamp option
+      const mainFilename = includeTimestamp 
+        ? `h1b-report-${dateOnly}.${extension}`
+        : `h1b-report.${extension}`;
+      const outputPath = this.fileSystem.join(outputDir, mainFilename);
       
       // History filename with full timestamp
-      const historyFilename = `analysis-${fullTimestamp}.${extension}`;
+      const historyFilename = `h1b-report-${fullTimestamp}.${extension}`;
       const historyPath = this.fileSystem.join(historyDir, historyFilename);
       
       // Write to both locations
-      await this.fileSystem.writeFile(currentPath, reportContent);
+      await this.fileSystem.writeFile(outputPath, reportContent);
       await this.fileSystem.writeFile(historyPath, reportContent);
-      
-      // Use the current path for return value
-      const outputPath = currentPath;
 
       const duration = Date.now() - startTime;
       const fileStats = await this.fileSystem.getStats(outputPath);

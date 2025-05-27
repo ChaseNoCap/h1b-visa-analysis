@@ -45,14 +45,14 @@ analyze_package_workflows() {
   local has_ci=false
   local notify_status="none"
   
-  # Check for CI workflows
-  if gh api "repos/$OWNER/$package/contents/.github/workflows" --jq '.[].name' 2>/dev/null | grep -qE "(ci|test|build)\.yml"; then
+  # Check for CI workflows (including unified workflow)
+  if gh api "repos/$OWNER/$package/contents/.github/workflows" --jq '.[].name' 2>/dev/null | grep -qE "(ci|test|build|unified-workflow)\.yml"; then
     has_ci=true
   fi
   
-  # Check notify workflow
+  # Check notify workflow (unified workflow includes notify functionality)
   local notify_runs=$(gh run list --repo "$OWNER/$package" \
-    --workflow "Notify Parent Repository on Publish" \
+    --workflow "Unified Package Workflow" \
     --limit 5 --json conclusion 2>/dev/null || echo "[]")
   
   if [[ "$notify_runs" != "[]" && $(echo "$notify_runs" | jq 'length') -gt 0 ]]; then
@@ -176,10 +176,10 @@ else
   notify_rate=0
   [[ $notify_runs -gt 0 ]] && notify_rate=$((notify_success * 100 / notify_runs))
   
-  # Check publish automation
+  # Check publish automation (unified workflows include publish functionality)
   publish_count=0
   for package in "${PACKAGES[@]}"; do
-    if gh api "repos/$OWNER/$package/contents/.github/workflows" --jq '.[].name' 2>/dev/null | grep -q "publish"; then
+    if gh api "repos/$OWNER/$package/contents/.github/workflows" --jq '.[].name' 2>/dev/null | grep -qE "(publish|unified-workflow)"; then
       publish_count=$((publish_count + 1))
     fi
   done
