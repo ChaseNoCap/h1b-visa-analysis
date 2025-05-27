@@ -69,20 +69,32 @@ export class ReportGenerator implements IReportGenerator {
         throw new Error('No dependencies available for report generation');
       }
 
-      // Create output directory
+      // Create output directory and history subdirectory
       await this.fileSystem.createDirectory(outputDir);
+      const historyDir = this.fileSystem.join(outputDir, 'history');
+      await this.fileSystem.createDirectory(historyDir);
 
       // Generate report content
       const reportContent = await this.generateReportContent(dependencies);
 
-      // Determine output filename
-      const timestamp = includeTimestamp ? `-${new Date().toISOString().split('T')[0]}` : '';
+      // Determine filenames
+      const fullTimestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
       const extension = format === 'markdown' ? 'md' : format;
-      const outputFilename = `h1b-report${timestamp}.${extension}`;
-      const outputPath = this.fileSystem.join(outputDir, outputFilename);
-
-      // Write report
-      await this.fileSystem.writeFile(outputPath, reportContent);
+      
+      // Static name for current report
+      const currentFilename = `analysis.${extension}`;
+      const currentPath = this.fileSystem.join(outputDir, currentFilename);
+      
+      // History filename with full timestamp
+      const historyFilename = `analysis-${fullTimestamp}.${extension}`;
+      const historyPath = this.fileSystem.join(historyDir, historyFilename);
+      
+      // Write to both locations
+      await this.fileSystem.writeFile(currentPath, reportContent);
+      await this.fileSystem.writeFile(historyPath, reportContent);
+      
+      // Use the current path for return value
+      const outputPath = currentPath;
 
       const duration = Date.now() - startTime;
       const fileStats = await this.fileSystem.getStats(outputPath);

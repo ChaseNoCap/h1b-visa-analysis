@@ -13,7 +13,7 @@ describe('ReportGenerator E2E Tests', () => {
   let dependencyChecker: IDependencyChecker;
   let fileSystem: IFileSystem;
   // let fixtures: FixtureManager;
-  const testOutputDir = 'tests/e2e/fixtures/output';
+  const testOutputDir = 'reports/test';
 
   beforeEach(async () => {
     // Use real implementations from container

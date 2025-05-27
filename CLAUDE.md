@@ -198,7 +198,7 @@ As of May 2025, this project has been migrated to TypeScript with dependency inj
 # Install dependencies
 npm install
 
-# Build and generate report (outputs to dist/)
+# Build and generate report (outputs to reports/h1b/)
 npm run build
 
 # Development

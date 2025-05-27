@@ -9,7 +9,7 @@ import { rm } from 'fs/promises';
 describe('Report Generation Integration', () => {
   let reportGenerator: IReportGenerator;
   let fileSystem: IFileSystem;
-  const testOutputDir = 'tests/integration/output';
+  const testOutputDir = 'reports/test';
 
   beforeEach(async () => {
     const container = await containerPromise;

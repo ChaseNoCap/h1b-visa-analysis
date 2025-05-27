@@ -5,6 +5,9 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+# Generated reports
+reports/
+
 # Test outputs
 tests/e2e/output/
 tests/**/*.md

@@ -24,7 +24,7 @@ git submodule update --init --recursive
 # Install dependencies
 npm install
 
-# Generate report
+# Generate report (outputs to reports/h1b/analysis.md)
 npm run build
 ```
 
@@ -108,6 +108,39 @@ h1b-visa-analysis/
 - [`.github/DEPENDENCY_DASHBOARD.md`](.github/DEPENDENCY_DASHBOARD.md) - Status monitoring
 
 See [`docs/dependency-automation-guide.md`](docs/dependency-automation-guide.md) for complete setup guide.
+
+## 📊 Generated Reports
+
+All generated reports are stored in the gitignored `/reports` directory:
+
+```
+reports/
+├── h1b/                    # H1B analysis reports
+│   ├── analysis.md         # Current report (always latest)
+│   └── history/            # Historical reports with timestamps
+├── ci/                     # CI/CD monitoring dashboards  
+│   ├── dashboard.md        # Current CI status
+│   ├── dashboard-enhanced.md  # Detailed metrics
+│   └── history/            # Historical dashboards
+└── test/                   # Test results
+    └── history/            # Historical test outputs
+```
+
+**Key Commands**:
+```bash
+# Generate H1B report
+npm run build
+
+# Generate CI dashboards
+./scripts/generate-ci-dashboard.sh          # Enhanced dashboard
+./scripts/generate-ci-dashboard-basic.sh    # Basic dashboard
+
+# View current reports
+cat reports/h1b/analysis.md
+cat reports/ci/dashboard.md
+```
+
+See [`docs/reports-structure.md`](docs/reports-structure.md) for complete documentation.
 
 ## 🛠️ Development
 

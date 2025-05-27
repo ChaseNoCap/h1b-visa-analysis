@@ -24,7 +24,11 @@ PACKAGES=(
 echo -e "${BLUE}📊 Generating Enhanced CI Dashboard...${NC}"
 
 # Output file
-OUTPUT_FILE="docs/ci-dashboard-enhanced.md"
+OUTPUT_FILE="reports/ci/dashboard-enhanced.md"
+HISTORY_FILE="reports/ci/history/dashboard-enhanced-$(date +%Y-%m-%d-%H%M%S).md"
+
+# Ensure reports directory exists
+mkdir -p reports/ci/history
 
 # Start dashboard
 cat > "$OUTPUT_FILE" << 'EOF'
@@ -312,7 +316,11 @@ cat >> "$OUTPUT_FILE" << EOFHEALTH2
 *Dashboard generated with real-time GitHub API data*
 EOFHEALTH2
 
+# Copy to history
+cp "$OUTPUT_FILE" "$HISTORY_FILE"
+
 echo -e "\n${GREEN}✅ Enhanced dashboard generated at: $OUTPUT_FILE${NC}"
+echo -e "   📂 History saved at: $HISTORY_FILE"
 echo -e "\n${YELLOW}📊 Real Metrics Summary:${NC}"
 echo "- Notify workflows: ${notify_rate}% success rate"
 echo "- Auto-update PRs: ${auto_rate}% auto-merge rate" 
