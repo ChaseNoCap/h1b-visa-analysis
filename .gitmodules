@@ -31,3 +31,6 @@
 [submodule "packages/report-components"]
 	path = packages/report-components
 	url = https://github.com/ChaseNoCap/report-components.git
+[submodule "packages/claude-client"]
+	path = packages/claude-client
+	url = https://github.com/ChaseNoCap/claude-client.git
