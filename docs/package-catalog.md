@@ -5,7 +5,7 @@
 This catalog documents all packages in the meta repository, managed as Git submodules. Each package is maintained in its own GitHub repository and published to GitHub Packages.
 
 **Decomposition Status**: 9/9 packages (100%) ✅  
-**Total Packages**: 13 (11 H1B + 2 metaGOTHIC)
+**Total Packages**: 14 (11 H1B + 3 metaGOTHIC)
 
 ## Package Summary
 
@@ -24,6 +24,7 @@ This catalog documents all packages in the meta repository, managed as Git submo
 | report-components | github.com/ChaseNoCap/report-components | Private | N/A | N/A | H1B research content |
 | claude-client | github.com/ChaseNoCap/claude-client | @chasenocap/claude-client | 1500 lines | 95%+ | Claude CLI subprocess wrapper |
 | prompt-toolkit | github.com/ChaseNoCap/prompt-toolkit | @chasenocap/prompt-toolkit | 1500 lines | 100% | XML template system |
+| sdlc-config | github.com/ChaseNoCap/sdlc-config | @chasenocap/sdlc-config | 1200 lines | 93% | SDLC configuration management |
 
 All packages are Git submodules integrated via `.gitmodules` configuration
 
@@ -424,6 +425,46 @@ const prompt = await toolkit.constructor.construct('analysis', {
 
 **Key Achievement**: 100% test coverage with 32 tests
 
+### 14. sdlc-config (metaGOTHIC)
+**Repository**: [github.com/ChaseNoCap/sdlc-config](https://github.com/ChaseNoCap/sdlc-config)  
+**NPM Package**: `@chasenocap/sdlc-config`  
+**Purpose**: YAML-based SDLC configuration management for the metaGOTHIC framework
+
+**Features**:
+- YAML configuration parsing with JSON schema validation
+- Phase and task management with transition rules
+- Environment-specific configuration overrides
+- Configuration merging and inheritance
+- Comprehensive validation with helpful error messages
+- Default SDLC workflow included (6 phases)
+
+**Components**:
+- `ConfigLoader`: YAML parsing and schema validation
+- `ConfigMerger`: Configuration merging and environment application
+- `PhaseManager`: Phase navigation and transition management
+
+**Configuration Structure**:
+```yaml
+workflows:
+  - id: standard-sdlc
+    phases:
+      - id: requirements
+        objectives: ["Understand needs"]
+        tasks: [{id: "task1", type: "manual"}]
+        nextPhases: ["design"]
+    transitions:
+      - from: requirements
+        to: design
+        conditions: ["Requirements approved"]
+```
+
+**Integration**:
+- Works with `@chasenocap/sdlc-engine` for state machine execution
+- Provides configuration for `@chasenocap/prompt-toolkit` templates
+- Links to `@chasenocap/sdlc-content` for documentation
+
+**Key Achievement**: 93% test coverage with 39 tests
+
 ## Architecture Patterns
 
 ### Dependency Flow
@@ -444,7 +485,8 @@ Meta Repository (h1b-visa-analysis)
     │   │   └── report-components
     │   └── metaGOTHIC Packages:
     │       ├── @chasenocap/claude-client
-    │       └── @chasenocap/prompt-toolkit
+    │       ├── @chasenocap/prompt-toolkit
+    │       └── @chasenocap/sdlc-config
     │
     └── NPM Dependencies (package.json)
         ├── @chasenocap/di-framework

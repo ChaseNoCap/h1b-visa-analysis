@@ -37,3 +37,6 @@
 [submodule "packages/prompt-toolkit"]
 	path = packages/prompt-toolkit
 	url = https://github.com/ChaseNoCap/prompt-toolkit.git
+[submodule "packages/sdlc-config"]
+	path = packages/sdlc-config
+	url = https://github.com/ChaseNoCap/sdlc-config.git
