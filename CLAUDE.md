@@ -5,37 +5,50 @@ This file provides guidance to Claude Code when working with code in this reposi
 ## 🎯 Context Loading Guide
 
 ### Efficient Documentation Access
-The documentation has been consolidated from 34 files to 12 core documents. Load only what's needed:
+The documentation has been consolidated and organized by purpose. Load only what's needed for your specific task.
 
-### 📚 Documentation Structure (16 Core Files)
-1. **[/docs/index.md](/docs/index.md)** - Documentation hub and navigation
-2. **[/docs/backlog.md](/docs/backlog.md)** - Prioritized work items and future tasks
-3. **[/docs/decomposition-guide.md](/docs/decomposition-guide.md)** - Principles, patterns, and governance
-4. **[/docs/migration-guide.md](/docs/migration-guide.md)** - Package extraction process
-5. **[/docs/package-catalog.md](/docs/package-catalog.md)** - All 9 packages with details (including prompts)
-6. **[/docs/developer-handbook.md](/docs/developer-handbook.md)** - Templates, guidelines, and prompt development
-7. **[/docs/setup-guide.md](/docs/setup-guide.md)** - Environment configuration
-8. **[/docs/architecture-reference.md](/docs/architecture-reference.md)** - Technical patterns and prompt architecture
-9. **[/docs/achievements.md](/docs/achievements.md)** - Success metrics
-10. **[/docs/meta-repository-pattern.md](/docs/meta-repository-pattern.md)** - Git submodules architecture
-11. **[/docs/prompt-engineering.md](/docs/prompt-engineering.md)** - Context loading strategies
-12. **[/docs/prompt-xml-structured-guide.md](/docs/prompt-xml-structured-guide.md)** - XML prompt patterns
-13. **[/docs/prompt-optimization-patterns.md](/docs/prompt-optimization-patterns.md)** - Efficient prompting
-14. **[/docs/prompt-migration-guide.md](/docs/prompt-migration-guide.md)** - Prompt package architecture
+### 📚 Core Documentation Structure
 
-15. **[/docs/automated-publishing-critical-path.md](/docs/automated-publishing-critical-path.md)** - Critical path to automated publishing
-16. **[/docs/package-publish-monitoring-plan.md](/docs/package-publish-monitoring-plan.md)** - Package publish monitoring strategy
+**System Overview**:
+- **[/docs/index.md](/docs/index.md)** - Documentation hub and navigation
+- **[/docs/backlog.md](/docs/backlog.md)** - Prioritized work items and future tasks  
+- **[/docs/achievements.md](/docs/achievements.md)** - Success metrics and milestones
+
+**Architecture & Patterns**:
+- **[/docs/architecture-reference.md](/docs/architecture-reference.md)** - Technical patterns and system architecture
+- **[/docs/meta-repository-pattern.md](/docs/meta-repository-pattern.md)** - Git submodules architecture
+- **[/docs/decomposition-guide.md](/docs/decomposition-guide.md)** - Principles, patterns, and governance
+
+**Operations Guides**:
+- **[/docs/unified-dependency-strategy.md](/docs/unified-dependency-strategy.md)** - Dependency management strategy
+- **[/docs/package-operations-guide.md](/docs/package-operations-guide.md)** - Package publishing and management
+- **[/docs/ci-monitoring-operations-guide.md](/docs/ci-monitoring-operations-guide.md)** - CI/CD monitoring and health
+
+**Development Resources**:
+- **[/docs/package-catalog.md](/docs/package-catalog.md)** - Package details and usage
+- **[/docs/developer-handbook.md](/docs/developer-handbook.md)** - Templates and guidelines
+- **[/docs/setup-guide.md](/docs/setup-guide.md)** - Environment configuration
+
+**AI Context & Prompts**:
+- **[/docs/prompt-xml-structured-guide.md](/docs/prompt-xml-structured-guide.md)** - XML prompt patterns
+- **[/docs/prompt-optimization-patterns.md](/docs/prompt-optimization-patterns.md)** - Efficient prompting
+- **[/docs/prompt-migration-guide.md](/docs/prompt-migration-guide.md)** - Prompt package architecture
+
+**Architectural Decisions**:
+- **[/docs/ADR-001-unified-dependency-strategy.md](/docs/ADR-001-unified-dependency-strategy.md)** - Dependency strategy decisions
+- **[/docs/ADR-002-git-submodules-architecture.md](/docs/ADR-002-git-submodules-architecture.md)** - Submodules architecture decisions
 
 ### 🔍 Context Loading by Task
 - **What's next?**: Load `/docs/backlog.md` - Always check backlog first
-- **Critical path work**: Load `/docs/automated-publishing-critical-path.md` for current priority
+- **Package operations**: Load `/docs/package-operations-guide.md` for publishing and management
 - **Working on packages**: Load `/docs/package-catalog.md#[package-name]`
 - **Creating new package**: Load `/docs/developer-handbook.md#package-creation-process`
 - **Git submodules help**: Load `/docs/meta-repository-pattern.md` for submodule management
+- **Dependency strategy**: Load `/docs/unified-dependency-strategy.md` for development workflow
+- **CI/monitoring issues**: Load `/docs/ci-monitoring-operations-guide.md` for troubleshooting
 - **Prompt engineering**: Load `/docs/prompt-xml-structured-guide.md` for XML patterns
 - **Optimizing prompts**: Load `/docs/prompt-optimization-patterns.md` for efficiency
-- **Prompt package work**: Load `/docs/prompt-migration-guide.md` for architecture
-- **Architecture questions**: Load `/docs/architecture-reference.md#prompt-architecture-patterns`
+- **Architecture questions**: Load `/docs/architecture-reference.md` for technical patterns
 - **Setup/GitHub Actions**: Load `/docs/setup-guide.md`
 - **Understanding decomposition**: Load `/docs/decomposition-guide.md`
 
@@ -60,9 +73,9 @@ Use XML patterns for structured, parseable prompts:
   </requirements>
   
   <constraints>
-    <constraint>Package must remain under 1000 lines</constraint>
+    <constraint>Follow package size guidelines (see decomposition-guide.md)</constraint>
     <constraint>Follow existing decorator patterns</constraint>
-    <constraint>Maintain 90%+ test coverage</constraint>
+    <constraint>Maintain test coverage targets (see package standards)</constraint>
   </constraints>
 </task_definition>
 ```
@@ -149,7 +162,7 @@ Comprehensive prompt engineering resources:
 ### Key Principles:
 1. **Single Purpose**: Each package has exactly ONE reason to exist
 2. **Clear Boundaries**: Package names clearly indicate their purpose
-3. **Size Limits**: Packages target < 2000 lines with < 5 public exports (ideal: < 1000)
+3. **Size Guidelines**: Packages follow size limits defined in decomposition principles
 4. **Dependency Direction**: Dependencies flow from specific → general
 5. **Test in Isolation**: If you can't test it alone, it's too coupled
 
@@ -201,7 +214,7 @@ git submodule update --init --recursive  # Initialize all submodules
 git submodule update --remote --merge    # Update all submodules to latest
 
 # Package-specific commands (run within each submodule)
-cd packages/test-helpers && npm run coverage  # Check test-helpers coverage (91.89%)
+cd packages/test-helpers && npm run coverage  # Check package coverage
 
 # Automation & CI/CD Monitoring commands
 ./scripts/monitor-ci-health.sh          # Enhanced health monitor (transparent metrics)
@@ -296,7 +309,7 @@ const service = container.get<IReportGenerator>(TYPES.IReportGenerator);
 - Located in `tests/unit/`
 - Test individual services in isolation
 - Use mocks for dependencies
-- High coverage target (80%+)
+- Coverage targets per package guidelines
 
 ### Running Tests
 ```bash
@@ -414,110 +427,24 @@ This project follows the same patterns as the markdown-compiler package. Both ma
 
 For shared patterns and strategies, see `/docs/decomposition-analysis.md`.
 
-### Recent Improvements (January 2025)
+### Recent Improvements
 1. **Enhanced Logging**: All services now use child loggers with operation context
 2. **Simplified Testing**: Removed Sinon dependency, using only Vitest mocks
-3. **Improved Coverage**: test-helpers package now at 91.89% coverage
-4. **Clean Imports**: All logger imports now use @chasenocap/logger
+3. **Clean Imports**: All logger imports now use @chasenocap/logger
 
-## Current Status: Package Decomposition Progress
+## Package Status Overview
 
-### ✅ Completed Packages (May 2025)
+All packages have been successfully extracted, integrated, and automated. For current package details including features, status, and usage information, see:
 
-Successfully extracted and integrated the following packages:
+- **Package Catalog**: `/docs/package-catalog.md` - Complete package information
+- **Operations Guide**: `/docs/package-operations-guide.md` - Publishing and management  
+- **Architecture**: `/docs/ADR-002-git-submodules-architecture.md` - Architecture decisions
 
-#### di-framework ✅
-- **Status**: Built, tested, fully integrated
-- **Size**: ~689 lines (well within 1000 line limit)
-- **Coverage**: 84% statement coverage
-- **Location**: `/packages/di-framework/`
-- **Features**: Container builders, tokens, base interfaces, testing utilities
-- **Usage**: Core dependency - used by main project and other packages
-
-#### logger ✅  
-- **Status**: Extracted to GitHub package @chasenocap/logger
-- **Size**: ~300 lines (well within 1000 line limit)
-- **Location**: Published to GitHub Packages
-- **Features**: Winston-based logging with daily rotation, structured logging, child loggers
-- **Usage**: Production dependency - imported as `import type { ILogger } from '@chasenocap/logger'`
-- **Integration**: ✅ Fully integrated, duplicate code removed
-
-#### test-mocks ✅
-- **Status**: Built, tested, 100% statement coverage
-- **Size**: ~400 lines (well within 1000 line limit)
-- **Location**: `/packages/test-mocks/`
-- **Features**: MockLogger, MockFileSystem, MockCache with assertion helpers
-- **Usage**: Dev dependency - used in test suites
-
-#### test-helpers ✅
-- **Status**: Built, tested with excellent coverage
-- **Size**: ~500 lines (well within 1000 line limit)
-- **Coverage**: 91.89% (exceeded 90% target) ✅ 
-- **Location**: `/packages/test-helpers/`
-- **Features**: TestContainer, FixtureManager, async utilities, createSpiedInstance, shared config
-- **Usage**: Dev dependency - used in test suites
-
-#### file-system ✅
-- **Status**: Built, tested, fully integrated
-- **Size**: ~700 lines (well within 1000 line limit)
-- **Coverage**: 95%+ statement coverage
-- **Location**: `/packages/file-system/`
-- **Features**: File operations abstraction with async/sync methods
-- **Usage**: Production dependency - abstracts all file I/O
-
-#### event-system ✅
-- **Status**: Built, tested, fully integrated
-- **Size**: ~800 lines (well within 1000 line limit)
-- **Coverage**: High coverage with comprehensive tests
-- **Location**: `/packages/event-system/`
-- **Features**: Event-driven debugging, decorators, TestEventBus
-- **Usage**: Optional peer dependency for enhanced debugging
-
-#### cache ✅
-- **Status**: Built, tested, fully integrated
-- **Size**: ~400 lines (well within 1000 line limit)
-- **Coverage**: 94.79% statement coverage (exceeded 90% target) ✅
-- **Location**: `/packages/cache/`
-- **Features**: @Cacheable and @InvalidateCache decorators, MemoryCache with TTL
-- **Usage**: Production dependency - shared between h1b-visa-analysis and markdown-compiler
-
-#### report-templates ✅
-- **Status**: Built, tested, fully integrated
-- **Size**: ~287 lines (well within 1000 line limit)
-- **Coverage**: 100% statement coverage ✅
-- **Location**: `/packages/report-templates/`
-- **Features**: Template engine, MarkdownReportBuilder, template registry
-- **Usage**: Production dependency - used by ReportGenerator for formatting
-
-#### prompts ✅
-- **Status**: Implemented and fully functional
-- **Size**: ~400 lines (well within 1000 line limit)
-- **Coverage**: N/A (documentation package)
-- **Location**: `/packages/prompts/`
-- **Features**: XML-structured prompts, mirror-based architecture, status automation
-- **Usage**: Development dependency - AI context management and optimization
-- **Implementation**: Complete mirror-based prompt system with automation scripts
-
-### ✅ Complete Automation Infrastructure Achieved! (May 2025)
-
-**Achievement Unlocked**: 11/11 packages (100%) extracted, integrated, and FULLY automated! 🎉🚀✨
-**Automated Ecosystem**: Complete with AI context management, real-time publishing, and zero manual intervention! 🤖
-
-**Infrastructure Milestones Achieved**:
-- ✅ All 11 packages have standardized automated publishing workflows
-- ✅ Real-time dependency updates via repository_dispatch (no delays)
-- ✅ Complete authentication pipeline resolved (PAT_TOKEN scopes + npm config)
-- ✅ Consistent npm configuration across all packages (no auth failures)
-- ✅ End-to-end automation: publish → notify → auto-update → PR creation
-- ✅ Monitoring infrastructure ready for real metrics
-- ✅ All packages under 1000 lines with clear boundaries
-- ✅ Test coverage exceeds targets across all packages
-
-**Automation Breakthrough**:
-- 🚀 **Zero Manual Intervention**: Complete hands-off dependency management
-- 🔧 **Consistent Patterns**: Standardized workflows and configuration
-- ⚡ **Instant Updates**: Real-time propagation across ecosystem
-- 🛡️ **Reliable Authentication**: No more intermittent failures
+### Infrastructure Status
+- ✅ **Package Decomposition**: Complete (11 packages operational)
+- ✅ **Automation**: Fully operational publishing and dependency updates
+- ✅ **Quality Gates**: Testing and quality standards enforced
+- ✅ **Documentation**: Comprehensive guides and troubleshooting available
 
 **Recent Critical Achievements**:
 1. **✅ Complete Automation Infrastructure** 🚀 (May 2025)
@@ -728,21 +655,14 @@ The project uses a clean, modular architecture with:
 ## Recent Achievements (January 2025)
 
 ### ✅ Complete Dependency Automation System (May 2025)
-Implemented comprehensive automated dependency update system across all 11 packages:
-- **Status**: ✅ All packages updated with consistent versions
-- **Coverage**: 11/11 packages (100% complete)
-- **Target Versions**: TypeScript 5.7.3, @types/node 22.10.2, Vitest 2.1.8, ESLint 9.18.0
-- **Process**: Automated npm install → commit → push across entire ecosystem
+Implemented comprehensive automated dependency update system:
+- **Status**: ✅ All packages updated with consistent dependency versions
+- **Process**: Automated dependency updates across entire ecosystem
 - **Benefits**: Version consistency, security updates, unified toolchain
 
-**Phase 1 Complete**: di-framework, logger, file-system, test-mocks, test-helpers
-**Phase 2 Complete**: event-system, cache, report-templates, prompts, markdown-compiler, report-components
-
 ### Auto-Update Dependencies Workflow 
-Fixed the `auto-update-dependencies.yml` workflow that was failing with exit code 1:
-- **Issue**: Used `npm update "@package@version"` which is invalid syntax
-- **Fix**: Changed to `npm install "@package@version"` for proper version installation
-- **Status**: ✅ Workflow now properly updates packages when triggered
+- **Status**: ✅ Workflow operational and properly updating packages when triggered
+- **Process**: Uses correct npm install syntax for version-specific updates
 
 ## Working with the Backlog
 

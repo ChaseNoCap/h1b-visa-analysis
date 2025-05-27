@@ -652,6 +652,146 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - ✅ Added automation scripts for updates
 - ✅ Published as @chasenocap/prompts v1.0.0
 
+### 28. Implement Automated Metrics Reporting System
+**Status**: Not Started  
+**Description**: Create automated system to generate real-time metrics instead of hardcoded documentation values
+**Priority Justification**: Documentation should reference reports for metrics rather than maintaining hardcoded values
+**Tasks**:
+- [ ] Create metrics collection system for package stats (line counts, test coverage, etc.)
+- [ ] Implement automated reporting dashboard generation
+- [ ] Add CI integration to update metrics on changes
+- [ ] Create guidelines against hardcoded metrics in documentation
+- [ ] Design progressive disclosure for metrics (overview → detailed reports)
+**Benefits**:
+- Eliminates documentation maintenance churn from metric updates
+- Provides always-current data
+- Reduces human error in metric tracking
+- Enables trend analysis over time
+**Estimate**: 2-3 days
+
+### 29. Establish Documentation Anti-Pattern Guidelines 
+**Status**: Not Started  
+**Description**: Create comprehensive guidelines to prevent documentation debt accumulation
+**Tasks**:
+- [ ] Document anti-patterns: hardcoded metrics, specific file counts, outdated status claims
+- [ ] Create linting rules for documentation quality
+- [ ] Establish documentation review checklist
+- [ ] Add automated checks for common documentation issues
+- [ ] Create templates that follow best practices
+**Estimate**: 1 day
+
+### 30. Package Documentation Remediation
+**Status**: Not Started  
+**Description**: Apply documentation debt remediation to all package-specific documentation
+**Priority Justification**: Package docs have same issues as meta-repo docs but need focused attention
+**Tasks**:
+- [ ] Audit all CLAUDE.md files in packages for outdated information
+- [ ] Update package README.md files to reflect current state
+- [ ] Remove redundant AUTOMATION.md files if covered elsewhere
+- [ ] Ensure package docs follow established anti-patterns guidelines
+- [ ] Create package-specific ARDs where appropriate
+**Benefits**:
+- Consistent documentation quality across entire ecosystem
+- Reduced confusion from outdated package information
+- Better developer experience when working on specific packages
+**Estimate**: 3-4 days
+
+### 31. Document NPM Scripts and Development Workflows
+**Status**: Not Started  
+**Description**: Document all undocumented npm scripts and development workflows
+**Priority Justification**: Critical developer workflows are undocumented, causing onboarding friction
+**Tasks**:
+- [ ] Document smart dependency scripts (dev, dev:setup, dev:status, dev:clean)
+- [ ] Document publish:tagged workflow and when to use it
+- [ ] Document test:mode and its purpose
+- [ ] Add these to developer handbook or setup guide
+- [ ] Include examples and common use cases
+**Benefits**:
+- Faster developer onboarding
+- Reduced confusion about available commands
+- Better understanding of development workflows
+**Estimate**: 1 day
+
+### 32. Create End-to-End Report Generation Documentation
+**Status**: Not Started  
+**Description**: Document how report generation actually works from input to output
+**Priority Justification**: Core functionality lacks comprehensive documentation
+**Tasks**:
+- [ ] Document ReportGenerator orchestration flow
+- [ ] Explain markdown-compiler integration
+- [ ] Show how report-components provides content
+- [ ] Create sequence diagram of data flow
+- [ ] Document error handling and recovery
+**Benefits**:
+- Developers understand the core system
+- Easier debugging of report issues
+- Better architectural understanding
+**Estimate**: 1-2 days
+
+### 33. Document Key Scripts in /scripts Directory
+**Status**: Not Started  
+**Description**: Create documentation for undocumented utility scripts
+**Priority Justification**: Critical automation scripts lack usage documentation
+**Tasks**:
+- [ ] Document smart-deps.js implementation and usage
+- [ ] Document all monitoring scripts (monitor-ci-health.sh, etc.)
+- [ ] Document setup and configuration scripts
+- [ ] Create scripts/README.md with comprehensive guide
+- [ ] Add inline documentation to complex scripts
+**Benefits**:
+- Scripts become discoverable and usable
+- Reduced fear of using automation
+- Better understanding of available tools
+**Estimate**: 2 days
+
+### 34. Create Package Addition Guide
+**Status**: Not Started  
+**Description**: Document the complete process for adding new packages to the ecosystem
+**Priority Justification**: No documentation exists for this common task
+**Tasks**:
+- [ ] Document creating new package repository
+- [ ] Explain Git submodule integration steps
+- [ ] Detail GitHub Packages publishing setup
+- [ ] Show how to integrate with automation
+- [ ] Create checklist for package addition
+**Benefits**:
+- Standardized package creation process
+- Reduced errors in new package setup
+- Faster ecosystem expansion
+**Estimate**: 1 day
+
+### 35. Create Troubleshooting Guide
+**Status**: Not Started  
+**Description**: Comprehensive troubleshooting guide for common issues
+**Priority Justification**: Developers waste time solving common problems
+**Tasks**:
+- [ ] Document npm link troubleshooting
+- [ ] Cover submodule update issues
+- [ ] Explain GitHub Packages auth problems
+- [ ] Include report generation debugging
+- [ ] Add CI/CD failure resolution steps
+**Benefits**:
+- Faster problem resolution
+- Reduced support burden
+- Better developer experience
+**Estimate**: 2 days
+
+### 36. Document Testing Strategy
+**Status**: Not Started  
+**Description**: Document testing approach at meta-repository level
+**Priority Justification**: Testing strategy is implicit, not documented
+**Tasks**:
+- [ ] Document unit vs integration test approach
+- [ ] Explain E2E test structure and fixtures
+- [ ] Document test helper usage patterns
+- [ ] Clarify cleanupAllTests() commenting
+- [ ] Create testing best practices guide
+**Benefits**:
+- Consistent test quality
+- Clear testing expectations
+- Better test coverage
+**Estimate**: 1 day
+
 ---
 
 ## Adding New Items
