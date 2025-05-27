@@ -29,7 +29,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - **Auto-Update Authentication**: 0% success rate for auto-update PR creation
 - **Submodule Reference Conflicts**: Auto-update workflows fail on submodule checkout
 
-**Next Priority**: Continue metaGOTHIC Package Development - @chasenocap/graph-service (Item #51.5)
+**Next Priority**: Continue metaGOTHIC Package Development - @chasenocap/sdlc-content (Item #51.5)
 
 **Progress Update**: Rapid development pace achieved - 4 packages completed in 3 days (44% of metaGOTHIC foundation)
 
