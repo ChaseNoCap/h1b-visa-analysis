@@ -7,7 +7,6 @@ import { TestEventBus } from '@chasenocap/event-system';
 
 describe('Event System Integration', () => {
   let reportGenerator: IReportGenerator;
-  let dependencyChecker: IDependencyChecker;
   let testEventBus: TestEventBus;
 
   beforeEach(async () => {
@@ -21,7 +20,6 @@ describe('Event System Integration', () => {
     container.rebind(TYPES.IEventBus).toConstantValue(testEventBus);
     
     reportGenerator = container.get<IReportGenerator>(TYPES.IReportGenerator);
-    dependencyChecker = container.get<IDependencyChecker>(TYPES.IDependencyChecker);
   });
 
   it('should emit events during report generation', async () => {
