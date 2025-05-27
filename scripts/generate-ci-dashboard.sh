@@ -3,7 +3,8 @@
 # Generate Enhanced CI Dashboard
 # Creates a comprehensive dashboard with workflow categorization
 
-set -euo pipefail
+# Remove 'set -e' to prevent early exit on errors
+set -uo pipefail
 
 # Colors
 GREEN='\033[0;32m'
@@ -24,8 +25,8 @@ PACKAGES=(
 echo -e "${BLUE}📊 Generating Enhanced CI Dashboard...${NC}"
 
 # Output file
-OUTPUT_FILE="reports/ci/dashboard-enhanced.md"
-HISTORY_FILE="reports/ci/history/dashboard-enhanced-$(date +%Y-%m-%d-%H%M%S).md"
+OUTPUT_FILE="reports/ci/dashboard.md"
+HISTORY_FILE="reports/ci/history/dashboard-$(date +%Y-%m-%d-%H%M%S).md"
 
 # Ensure reports directory exists
 mkdir -p reports/ci/history
@@ -68,26 +69,46 @@ echo -e "\n${YELLOW}Checking packages...${NC}"
 for package in "${PACKAGES[@]}"; do
   echo -n "."
   
-  # Check for CI workflow
+  # Check for CI workflow (with error handling)
   has_ci="❌"
-  if gh api "repos/$OWNER/$package/contents/.github/workflows" --jq '.[].name' 2>/dev/null | grep -q "ci\\.yml"; then
+  # Check for traditional CI workflows or Unified Package Workflow
+  workflows=$(gh api "repos/$OWNER/$package/contents/.github/workflows" 2>/dev/null | jq -r '.[].name' 2>/dev/null || echo "")
+  if echo "$workflows" | grep -qE "(ci\.yml|test\.yml|build\.yml|unified-workflow\.yml)" 2>/dev/null; then
     has_ci="✅"
   fi
   
-  # Check notify workflow status
+  # Check notify workflow status (with error handling)
   notify_status="❓"
-  latest_notify=$(gh run list --repo "$OWNER/$package" --workflow "Notify Parent Repository on Publish" --limit 1 --json conclusion,createdAt 2>/dev/null | jq -r '.[0]')
-  if [[ -n "$latest_notify" && "$latest_notify" != "null" ]]; then
-    conclusion=$(echo "$latest_notify" | jq -r '.conclusion')
-    if [[ "$conclusion" == "success" ]]; then
-      notify_status="✅"
-    elif [[ "$conclusion" == "failure" ]]; then
-      notify_status="❌"
+  # First check if Unified Package Workflow exists
+  has_workflow=$(gh api "repos/$OWNER/$package/actions/workflows" --jq '.workflows[] | select(.name == "Unified Package Workflow") | .name' 2>/dev/null || echo "")
+  
+  if [[ -z "$has_workflow" ]]; then
+    notify_status="⚠️ No workflow"
+    latest_notify="[]"
+  else
+    latest_notify=$(gh run list --repo "$OWNER/$package" --workflow "Unified Package Workflow" --limit 1 --json conclusion,createdAt 2>/dev/null || echo "[]")
+  fi
+  
+  if [[ -n "$latest_notify" && "$latest_notify" != "[]" ]]; then
+    notify_json=$(echo "$latest_notify" | jq -r '.[0]' 2>/dev/null || echo "null")
+    if [[ -n "$notify_json" && "$notify_json" != "null" ]]; then
+      conclusion=$(echo "$notify_json" | jq -r '.conclusion' 2>/dev/null || echo "")
+      if [[ "$conclusion" == "success" ]]; then
+        notify_status="✅"
+      elif [[ "$conclusion" == "failure" ]]; then
+        notify_status="❌"
+      fi
     fi
   fi
   
-  # Get last activity
-  last_activity=$(echo "$latest_notify" | jq -r '.createdAt // "Unknown"' | cut -d'T' -f1)
+  # Get last activity (with error handling)
+  last_activity="Unknown"
+  if [[ -n "$latest_notify" && "$latest_notify" != "[]" ]]; then
+    activity_date=$(echo "$latest_notify" | jq -r '.[0].createdAt // "Unknown"' 2>/dev/null || echo "Unknown")
+    if [[ "$activity_date" != "Unknown" ]]; then
+      last_activity=$(echo "$activity_date" | cut -d'T' -f1)
+    fi
+  fi
   
   # Add to dashboard
   echo "| $package | $has_ci | $notify_status | $last_activity |" >> "$OUTPUT_FILE"
@@ -113,10 +134,12 @@ for package in "${PACKAGES[@]}"; do
   # Get version from package.json
   version=$(echo "$pkg_json" | jq -r ".dependencies[\"@chasenocap/$package\"] // .devDependencies[\"@chasenocap/$package\"] // \"N/A\"" | sed 's/^\^//')
   
-  # Check if package has publish workflow
+  # Check if package has publish workflow (unified or standalone)
   has_publish="❌"
   if gh api "repos/$OWNER/$package/contents/.github/workflows/publish.yml" --silent 2>/dev/null; then
     has_publish="✅"
+  elif gh api "repos/$OWNER/$package/contents/.github/workflows/unified-workflow.yml" --silent 2>/dev/null; then
+    has_publish="✅ (Unified)"
   fi
   
   if [[ "$version" != "N/A" ]]; then
@@ -133,10 +156,11 @@ cat >> "$OUTPUT_FILE" << 'EOFPUB'
 ### Publishing Automation Status
 EOFPUB
 
-# Check for publish workflows
+# Check for publish workflows (with error handling)
 publish_count=0
 for package in "${PACKAGES[@]}"; do
-  if gh api "repos/$OWNER/$package/contents/.github/workflows" --jq '.[].name' 2>/dev/null | grep -q "publish"; then
+  workflows=$(gh api "repos/$OWNER/$package/contents/.github/workflows" 2>/dev/null | jq -r '.[].name' 2>/dev/null || echo "")
+  if echo "$workflows" | grep -qE "(publish|unified-workflow)" 2>/dev/null; then
     publish_count=$((publish_count + 1))
   fi
 done
@@ -156,9 +180,9 @@ cat >> "$OUTPUT_FILE" << EOF
 ### Renovate Activity
 EOF
 
-# Check Renovate PRs
-renovate_prs=$(gh pr list --repo "$OWNER/$META_REPO" --author "renovate[bot]" --json number,title,state --limit 10)
-open_count=$(echo "$renovate_prs" | jq -r 'map(select(.state == "OPEN")) | length')
+# Check Renovate PRs (with error handling)
+renovate_prs=$(gh pr list --repo "$OWNER/$META_REPO" --author "renovate[bot]" --json number,title,state --limit 10 2>/dev/null || echo "[]")
+open_count=$(echo "$renovate_prs" | jq -r 'map(select(.state == "OPEN")) | length' 2>/dev/null || echo "0")
 
 echo "- **Open PRs**: $open_count" >> "$OUTPUT_FILE"
 echo "- **Schedule**: Every 30 minutes" >> "$OUTPUT_FILE"
@@ -182,7 +206,7 @@ Package Push → Notify Workflow → Repository Dispatch → Auto-update PR → 
 ### Success Rates (Last 7 Days)
 EOF
 
-# Calculate real success rates
+# Calculate real success rates (with error handling)
 echo -e "\n${YELLOW}Calculating real metrics...${NC}"
 
 # Get notify workflow success rate (sample 3 packages for speed)
@@ -190,26 +214,43 @@ notify_success=0
 notify_total=0
 for package in cache logger file-system; do
   echo -n "."
-  runs=$(gh run list --repo "$OWNER/$package" --workflow "Notify Parent Repository on Publish" --limit 5 --json conclusion --jq '.[].conclusion' 2>/dev/null || echo "")
-  for conclusion in $runs; do
-    notify_total=$((notify_total + 1))
-    [[ "$conclusion" == "success" ]] && notify_success=$((notify_success + 1))
-  done
+  # Check if workflow exists first
+  has_workflow=$(gh api "repos/$OWNER/$package/actions/workflows" --jq '.workflows[] | select(.name == "Unified Package Workflow") | .name' 2>/dev/null || echo "")
+  
+  if [[ -z "$has_workflow" ]]; then
+    # No workflow found
+    continue
+  fi
+  
+  runs=$(gh run list --repo "$OWNER/$package" --workflow "Unified Package Workflow" --limit 5 --json conclusion 2>/dev/null || echo "[]")
+  if [[ -n "$runs" && "$runs" != "[]" ]]; then
+    conclusions=$(echo "$runs" | jq -r '.[].conclusion' 2>/dev/null || echo "")
+    for conclusion in $conclusions; do
+      if [[ -n "$conclusion" ]]; then
+        notify_total=$((notify_total + 1))
+        [[ "$conclusion" == "success" ]] && notify_success=$((notify_success + 1))
+      fi
+    done
+  fi
 done
 # Extrapolate for UI display
 echo -n " (sampled)"
 
 notify_rate=0
-[[ $notify_total -gt 0 ]] && notify_rate=$((notify_success * 100 / notify_total))
+if [[ $notify_total -gt 0 ]]; then
+  notify_rate=$((notify_success * 100 / notify_total))
+fi
 
 # Get auto-update PR success rate (using gh pr list for efficiency)
 echo -n "."
 auto_prs=$(gh pr list --repo "$OWNER/$META_REPO" --author "github-actions[bot]" --state all --limit 10 --json title,state,mergedAt 2>/dev/null || echo "[]")
-auto_total=$(echo "$auto_prs" | jq '[.[] | select(.title | contains("auto-update"))] | length')
-auto_merged=$(echo "$auto_prs" | jq '[.[] | select(.title | contains("auto-update")) | select(.mergedAt != null)] | length')
+auto_total=$(echo "$auto_prs" | jq '[.[] | select(.title | contains("auto-update"))] | length' 2>/dev/null || echo "0")
+auto_merged=$(echo "$auto_prs" | jq '[.[] | select(.title | contains("auto-update")) | select(.mergedAt != null)] | length' 2>/dev/null || echo "0")
 
 auto_rate=0
-[[ $auto_total -gt 0 ]] && auto_rate=$((auto_merged * 100 / auto_total))
+if [[ $auto_total -gt 0 ]]; then
+  auto_rate=$((auto_merged * 100 / auto_total))
+fi
 
 # Get Renovate PR stats
 renovate_stats=$(gh api "repos/$OWNER/$META_REPO/pulls?state=all&per_page=30&creator=app/renovate" --jq 'length' 2>/dev/null || echo 0)
@@ -223,7 +264,7 @@ cat >> "$OUTPUT_FILE" << EOF
 ### Update Velocity (Real Data)
 EOF
 
-# Calculate real update times
+# Calculate real update times (with error handling)
 echo -n "."
 avg_pr_time=0
 pr_times=()
@@ -241,7 +282,7 @@ while IFS= read -r pr; do
       fi
     fi
   fi
-done < <(gh api "repos/$OWNER/$META_REPO/pulls?state=closed&per_page=10" --jq '.[] | select(.user.login == "github-actions[bot]" or .user.login == "renovate[bot]") | {created_at: .created_at, merged_at: .merged_at}' 2>/dev/null)
+done < <(gh api "repos/$OWNER/$META_REPO/pulls?state=closed&per_page=10" 2>/dev/null --jq '.[] | select(.user.login == "github-actions[bot]" or .user.login == "renovate[bot]") | {created_at: .created_at, merged_at: .merged_at}' 2>/dev/null || echo "")
 
 # Calculate average
 if [[ ${#pr_times[@]} -gt 0 ]]; then
@@ -279,10 +320,10 @@ cat >> "$OUTPUT_FILE" << EOF
 gh pr list --author "renovate[bot]"
 
 # Manually trigger update
-gh workflow run "Auto Update Dependencies"
+# gh workflow run "Auto Update Dependencies"
 
-# Check notify workflow health
-gh workflow list --repo ChaseNoCap/cache 2>/dev/null | head -5
+# Check notify workflow health  
+# gh workflow list --repo ChaseNoCap/cache 2>/dev/null | head -5
 
 # Monitor real-time (macOS users: install watch with brew install watch)
 # watch -n 30 "./scripts/monitor-ci-health.sh"
@@ -292,8 +333,11 @@ gh workflow list --repo ChaseNoCap/cache 2>/dev/null | head -5
 *Dashboard generated by enhanced monitoring system*
 EOF
 
-# Calculate overall health score based on real metrics
-overall_score=$(( (notify_rate * 30 / 100) + (auto_rate * 40 / 100) + (publish_count * 30 / 11) ))
+# Calculate overall health score based on real metrics (with error handling)
+overall_score=0
+if [[ $publish_count -gt 0 || $notify_rate -gt 0 || $auto_rate -gt 0 ]]; then
+  overall_score=$(( (notify_rate * 30 / 100) + (auto_rate * 40 / 100) + (publish_count * 30 / 11) ))
+fi
 
 cat >> "$OUTPUT_FILE" << EOFHEALTH2
 
@@ -316,13 +360,35 @@ cat >> "$OUTPUT_FILE" << EOFHEALTH2
 *Dashboard generated with real-time GitHub API data*
 EOFHEALTH2
 
-# Copy to history
-cp "$OUTPUT_FILE" "$HISTORY_FILE"
+# Copy to history (ensure this happens even if errors occurred)
+if [[ -f "$OUTPUT_FILE" ]]; then
+  cp "$OUTPUT_FILE" "$HISTORY_FILE" || echo "Warning: Could not copy to history"
+  echo -e "\n${GREEN}✅ Enhanced dashboard generated at: $OUTPUT_FILE${NC}"
+  echo -e "   📂 History saved at: $HISTORY_FILE"
+else
+  echo -e "\n${RED}❌ Failed to generate dashboard${NC}"
+fi
 
-echo -e "\n${GREEN}✅ Enhanced dashboard generated at: $OUTPUT_FILE${NC}"
-echo -e "   📂 History saved at: $HISTORY_FILE"
 echo -e "\n${YELLOW}📊 Real Metrics Summary:${NC}"
-echo "- Notify workflows: ${notify_rate}% success rate"
-echo "- Auto-update PRs: ${auto_rate}% auto-merge rate" 
+if [[ $notify_total -eq 0 ]]; then
+  echo "- Notify workflows: No recent runs found (looking for 'Unified Package Workflow')"
+else
+  echo "- Notify workflows: ${notify_rate}% success rate (${notify_success}/${notify_total} runs)"
+fi
+
+if [[ $auto_total -eq 0 ]]; then
+  echo "- Auto-update PRs: No auto-update PRs found"
+else
+  echo "- Auto-update PRs: ${auto_rate}% auto-merge rate (${auto_merged}/${auto_total} PRs)"
+fi
+
 echo "- Package publishing: ${publish_count}/11 automated"
 echo "- Overall health: ${overall_score}%"
+
+# Add diagnostic info if all metrics are 0
+if [[ $overall_score -eq 0 ]]; then
+  echo -e "\n${YELLOW}⚠️  Diagnostics:${NC}"
+  echo "- Check if 'Unified Package Workflow' exists in package repos"
+  echo "- Verify workflows have been triggered recently"
+  echo "- Ensure GitHub token has necessary permissions"
+fi
