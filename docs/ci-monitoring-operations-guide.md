@@ -7,8 +7,7 @@ This comprehensive guide covers CI/CD monitoring, dashboard usage, and operation
 ## Quick Reference
 
 **Live Dashboards** (Auto-generated):
-- `reports/ci/dashboard-enhanced.md` - Real-time health metrics (current)
-- `reports/ci/dashboard.md` - Package status overview (current)
+- `reports/ci/dashboard.md` - Real-time health metrics and package status (current)
 - `reports/ci/history/` - Historical dashboard snapshots
 - `.github/DEPENDENCY_DASHBOARD.md` - Renovate dependency tracking
 
@@ -54,15 +53,11 @@ watch -n 30 './scripts/monitor-ci-health.sh'
 
 ### Dashboard Operations
 ```bash
-# Generate enhanced dashboard (saves to reports/ci/)
+# Generate dashboard (saves to reports/ci/)
 ./scripts/generate-ci-dashboard.sh
 
-# Generate basic dashboard (saves to reports/ci/)
-./scripts/generate-ci-dashboard-basic.sh
-
-# View current dashboards
+# View current dashboard
 cat reports/ci/dashboard.md
-cat reports/ci/dashboard-enhanced.md
 
 # Fast metrics to stdout only
 ./scripts/monitor-ci-health.sh

@@ -10,10 +10,10 @@ All generated reports are now stored in a gitignored `/reports` directory with a
 reports/                    # Gitignored root directory
 ├── ci/                     # CI/CD dashboards and monitoring
 │   ├── dashboard.md        # Current basic CI dashboard (static name)
-│   ├── dashboard-enhanced.md  # Current enhanced dashboard (static name)
+│   ├── dashboard.md           # Current enhanced dashboard (static name)
 │   └── history/            # Historical snapshots
 │       ├── dashboard-YYYY-MM-DD-HHMMSS.md
-│       └── dashboard-enhanced-YYYY-MM-DD-HHMMSS.md
+│       └── dashboard-YYYY-MM-DD-HHMMSS.md
 ├── h1b/                    # H1B analysis reports
 │   ├── analysis.md         # Current H1B report (static name)
 │   └── history/            # Historical reports
@@ -29,7 +29,7 @@ reports/                    # Gitignored root directory
 
 ### Current Reports (Static Names)
 - **CI Dashboard**: `dashboard.md`
-- **CI Enhanced**: `dashboard-enhanced.md`
+- **CI Enhanced**: `dashboard.md`
 - **H1B Analysis**: `analysis.md`
 - **E2E Tests**: `e2e-results.md`
 - **Integration Tests**: `integration-results.md`
@@ -53,13 +53,8 @@ When a report is generated:
 
 #### CI Dashboards
 ```bash
-# Generate enhanced dashboard
+# Generate dashboard
 ./scripts/generate-ci-dashboard.sh
-# Output: reports/ci/dashboard-enhanced.md
-# History: reports/ci/history/dashboard-enhanced-TIMESTAMP.md
-
-# Generate basic dashboard
-./scripts/generate-ci-dashboard-basic.sh
 # Output: reports/ci/dashboard.md
 # History: reports/ci/history/dashboard-TIMESTAMP.md
 ```
@@ -119,8 +114,8 @@ The `ReportGenerator` service automatically:
 4. Returns the current location path
 
 ### Script Updates
-- `generate-ci-dashboard.sh`: Updated to write to reports/ci/
-- `monitor-ci-health.sh`: Wrapped by generate-ci-dashboard-basic.sh
+- `generate-ci-dashboard.sh`: Updated to write to reports/ci/dashboard.md
+- `monitor-ci-health.sh`: Used for real-time monitoring to stdout
 - Test configurations: Updated to use reports/test/
 
 ### Gitignore
@@ -133,7 +128,7 @@ reports/
 ## Migration Notes
 
 ### From Old Locations
-- `/docs/ci-dashboard*.md` → `/reports/ci/`
+- `/docs/ci-dashboard*.md` → `/reports/ci/dashboard.md`
 - `/dist/h1b-report*.md` → `/reports/h1b/`
 - `/tests/*/output/` → `/reports/test/`
 

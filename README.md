@@ -24,7 +24,7 @@ git submodule update --init --recursive
 # Install dependencies
 npm install
 
-# Generate report (outputs to reports/h1b/analysis.md)
+# Generate report (outputs to dist/)
 npm run build
 ```
 
@@ -119,8 +119,7 @@ reports/
 │   ├── analysis.md         # Current report (always latest)
 │   └── history/            # Historical reports with timestamps
 ├── ci/                     # CI/CD monitoring dashboards  
-│   ├── dashboard.md        # Current CI status
-│   ├── dashboard-enhanced.md  # Detailed metrics
+│   ├── dashboard.md        # Current CI status (enhanced)
 │   └── history/            # Historical dashboards
 └── test/                   # Test results
     └── history/            # Historical test outputs
@@ -132,11 +131,10 @@ reports/
 npm run build
 
 # Generate CI dashboards
-./scripts/generate-ci-dashboard.sh          # Enhanced dashboard
-./scripts/generate-ci-dashboard-basic.sh    # Basic dashboard
+./scripts/generate-ci-dashboard.sh          # Generate CI dashboard
 
 # View current reports
-cat reports/h1b/analysis.md
+cat dist/h1b-report-*.md
 cat reports/ci/dashboard.md
 ```
 
