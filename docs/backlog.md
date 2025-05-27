@@ -26,7 +26,44 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - **Auto-Update Authentication**: 0% success rate for auto-update PR creation
 - **Submodule Reference Conflicts**: Auto-update workflows fail on submodule checkout
 
-**Next Priority**: Fix notify workflow failures (Item #44) - blocking automation pipeline
+**Next Priority**: Implement Meta GOTHIC framework (Items #48-59) - new development agent system
+
+## 🏗️ Meta GOTHIC Implementation Roadmap
+
+**GOTHIC** = **G**uided **O**rchestration **T**oolkit for **H**olistic **I**ntelligent **C**oding
+
+### Phase 1: Foundation (Week 1-2)
+**Critical Dependencies**: Items #48-50 must be completed first
+- #48: Claude Subprocess Wrapper (2 days) - Foundation for all Claude integration
+- #49: XML Prompt Templates (3 days) - Core SDLC guidance templates  
+- #50: SDLC Configuration (2 days) - Phase definitions and workflows
+
+### Phase 2: Core Components (Week 3-4)  
+**Parallel Development**: Items #51-52 can be developed concurrently
+- #51: Terminal UI Component (2 days) - Primary user interface
+- #52: SDLC State Machine (3 days) - Phase transition logic
+
+### Phase 3: Services Layer (Week 5-6)
+**Service Integration**: Items #53-54 build on foundation
+- #53: Context Aggregator Service (3 days) - Project context management
+- #54: Prompt Builder Service (2 days) - Dynamic prompt generation
+
+### Phase 4: Advanced UI (Week 7-8)
+**UI Enhancement**: Items #55-56 complete user experience
+- #55: File Tree UI Component (2 days) - Context selection interface
+- #56: Backlog Management Component (3 days) - Project management UI
+
+### Phase 5: Content & Knowledge (Week 9-10)
+**Content Creation**: Items #57-58 add professional deliverables
+- #57: SDLC Document Templates (3 days) - Professional output templates
+- #58: Best Practices Knowledge Base (5 days) - Expert guidance system
+
+### Phase 6: Integration (Week 11)
+**Final Assembly**: Item #59 brings everything together
+- #59: Meta GOTHIC Core Orchestrator (3 days) - Complete system integration
+
+**Total Effort**: 30 development days (approximately 6 weeks with parallel work)
+**Total Items**: 12 new packages following atomic decomposition principles
 
 ## How to Use This Backlog
 
@@ -524,6 +561,349 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - Graceful handling of API failures
 
 **Estimate**: 4-6 hours
+
+## 🚨 NEW CRITICAL PRIORITY ITEMS (Meta GOTHIC Framework)
+
+### 48. Claude Subprocess Wrapper Package 🔥
+**Status**: Not Started
+**Description**: Create atomic Claude Code execution wrapper with streaming support
+**Priority Justification**: Foundation component for entire Meta GOTHIC system - needed by all other components
+**Technical Requirements**:
+- Subprocess management for `claude` CLI
+- Streaming JSON response parsing
+- Session management and context preservation
+- Event-driven architecture with `@chasenocap/event-system`
+- Error handling and recovery patterns
+
+**Tasks**:
+- [ ] Create new package `packages/claude-subprocess`
+- [ ] Implement `ClaudeSubprocess` class with DI
+- [ ] Add streaming response parser
+- [ ] Implement session management
+- [ ] Add comprehensive error handling
+- [ ] Write unit tests (90%+ coverage)
+- [ ] Document API and usage patterns
+
+**Dependencies**: `@chasenocap/di-framework`, `@chasenocap/event-system`, `@chasenocap/logger`
+**Estimate**: 2 days
+
+### 49. XML Prompt Templates Package 🔥
+**Status**: Not Started
+**Description**: Create atomic XML-based prompt templates for SDLC phases and common development tasks
+**Priority Justification**: Core templates needed for intelligent SDLC guidance and development automation
+**Technical Requirements**:
+- XML schema for prompt templates with metadata
+- Template interpolation with context variables
+- Phase-specific prompts (requirements, design, implementation, testing, deployment)
+- Thinking level specifications per template
+- Validation and error handling
+
+**Tasks**:
+- [ ] Create new package `packages/gothic-prompts`
+- [ ] Design XML schema for prompt templates
+- [ ] Create SDLC phase templates (requirements, design, implementation, testing, deployment)
+- [ ] Implement template interpolation engine
+- [ ] Add validation for template syntax
+- [ ] Create template catalog and documentation
+- [ ] Write comprehensive tests
+
+**Example Template Structure**:
+```xml
+<prompt_template id="requirements_elicitation" phase="requirements">
+  <metadata>
+    <thinking_level>ultrathink</thinking_level>
+    <max_turns>15</max_turns>
+    <estimated_cost>0.05</estimated_cost>
+  </metadata>
+  <context>
+    <project>{{project.name}}</project>
+    <description>{{project.description}}</description>
+  </context>
+  <instructions>
+    <thinking>ultrathink about comprehensive requirements</thinking>
+    <task>Elicit functional and non-functional requirements</task>
+  </instructions>
+</prompt_template>
+```
+
+**Dependencies**: None (foundational package)
+**Estimate**: 3 days
+
+### 50. SDLC Configuration Package 🔥
+**Status**: Not Started
+**Description**: YAML-based SDLC phase definitions, workflows, and best practices
+**Priority Justification**: Defines the guided development workflow and phase transitions
+**Technical Requirements**:
+- YAML schema for phase definitions
+- Step-by-step workflows with dependencies
+- Validation checklists per phase
+- Best practices knowledge base
+- Deliverable templates and specifications
+
+**Tasks**:
+- [ ] Create new package `packages/sdlc-config`
+- [ ] Design YAML schema for phase definitions
+- [ ] Create configuration files for all SDLC phases
+- [ ] Define phase transition rules and dependencies
+- [ ] Add validation checklists and best practices
+- [ ] Create deliverable templates (markdown)
+- [ ] Document configuration format and extension patterns
+
+**Example Configuration**:
+```yaml
+phase:
+  id: requirements
+  name: Requirements Gathering
+  steps:
+    - id: stakeholder_analysis
+      prompt_template: requirements_stakeholder_analysis
+      deliverables: [stakeholder_matrix.md]
+    - id: functional_requirements
+      prompt_template: requirements_elicitation
+      deliverables: [functional_requirements.md]
+  validation:
+    checklist:
+      - All stakeholders identified
+      - Requirements are testable
+      - Priorities assigned (MoSCoW)
+```
+
+**Dependencies**: None (configuration only)
+**Estimate**: 2 days
+
+### 51. Terminal UI Component Package 🔥
+**Status**: Not Started  
+**Description**: Reusable terminal component using xterm.js for Claude Code console interface
+**Priority Justification**: Core UI component for development console - primary user interface
+**Technical Requirements**:
+- xterm.js integration with full terminal capabilities
+- WebSocket streaming support for real-time responses
+- Command history and autocomplete
+- Syntax highlighting for code responses
+- Copy/paste and search functionality
+- Customizable themes and settings
+
+**Tasks**:
+- [ ] Create new package `packages/ui-terminal`
+- [ ] Integrate xterm.js with React wrapper
+- [ ] Implement WebSocket streaming handler
+- [ ] Add command history and autocomplete
+- [ ] Implement syntax highlighting for responses
+- [ ] Add copy/paste and search functionality
+- [ ] Create theme system and customization
+- [ ] Write component tests and documentation
+- [ ] Create Storybook stories for testing
+
+**Dependencies**: React, xterm.js, WebSocket client
+**Estimate**: 2 days
+
+### 52. SDLC State Machine Package
+**Status**: Not Started
+**Description**: State machine for SDLC phase transitions and workflow management
+**Priority Justification**: Core logic for guiding users through development phases
+**Technical Requirements**:
+- Finite state machine implementation
+- Phase transition validation
+- Event-driven state changes
+- Rollback and skip capabilities
+- State persistence and recovery
+- Integration with event system
+
+**Tasks**:
+- [ ] Create new package `packages/sdlc-engine`
+- [ ] Implement generic state machine base class
+- [ ] Create SDLC-specific state machine
+- [ ] Add phase transition validation
+- [ ] Implement event-driven state changes
+- [ ] Add state persistence mechanisms
+- [ ] Create rollback and skip functionality
+- [ ] Write comprehensive tests for all state transitions
+- [ ] Document state machine behavior and usage
+
+**Dependencies**: `@chasenocap/event-system`
+**Estimate**: 3 days
+
+## 🔧 HIGH PRIORITY ITEMS (Meta GOTHIC Core)
+
+### 53. Context Aggregator Service Package
+**Status**: Not Started
+**Description**: Service to aggregate and manage project context from multiple sources
+**Priority Justification**: Essential for providing relevant context to Claude for intelligent responses
+**Technical Requirements**:
+- File system scanning with pattern matching
+- Package-aware context building
+- Search and filtering capabilities
+- Context caching and optimization
+- Token count estimation and management
+- Integration with existing file system package
+
+**Tasks**:
+- [ ] Create new package `packages/context-aggregator`
+- [ ] Implement file system scanning with filters
+- [ ] Add package-aware context building
+- [ ] Create search and filtering engine
+- [ ] Add context caching with `@chasenocap/cache`
+- [ ] Implement token count estimation
+- [ ] Add context optimization strategies
+- [ ] Write comprehensive tests
+- [ ] Document context building patterns
+
+**Dependencies**: `@chasenocap/file-system`, `@chasenocap/cache`
+**Estimate**: 3 days
+
+### 54. Prompt Builder Service Package
+**Status**: Not Started
+**Description**: Service to construct prompts from XML templates and dynamic context
+**Priority Justification**: Bridge between templates and execution - enables dynamic prompt generation
+**Technical Requirements**:
+- XML template parsing and validation
+- Context variable interpolation
+- Template inheritance and composition
+- Dynamic prompt optimization
+- Integration with prompt templates package
+
+**Tasks**:
+- [ ] Create new package `packages/prompt-builder`
+- [ ] Implement XML template parser
+- [ ] Add context variable interpolation engine
+- [ ] Create template inheritance system
+- [ ] Add prompt optimization logic
+- [ ] Implement template validation
+- [ ] Add prompt debugging and preview
+- [ ] Write comprehensive tests
+- [ ] Document template syntax and usage
+
+**Dependencies**: `packages/gothic-prompts`
+**Estimate**: 2 days
+
+### 55. File Tree UI Component Package
+**Status**: Not Started
+**Description**: File/folder tree component with selection, filtering, and package isolation
+**Priority Justification**: Essential UI for context building and project navigation
+**Technical Requirements**:
+- Hierarchical file tree visualization
+- Multi-select with checkboxes
+- Real-time filtering and search
+- Package/folder isolation modes
+- Lazy loading for large directories
+- Integration with context aggregator
+
+**Tasks**:
+- [ ] Create new package `packages/ui-file-tree`
+- [ ] Implement tree component with React
+- [ ] Add multi-select functionality
+- [ ] Implement real-time filtering
+- [ ] Add package isolation modes
+- [ ] Implement lazy loading for performance
+- [ ] Add drag-and-drop support
+- [ ] Write component tests
+- [ ] Create Storybook stories
+
+**Dependencies**: React, UI component library
+**Estimate**: 2 days
+
+### 56. Backlog Management Component Package
+**Status**: Not Started
+**Description**: Kanban-style backlog visualization with prioritization and grooming
+**Priority Justification**: Core feature for project management and task organization
+**Technical Requirements**:
+- Kanban board visualization
+- Drag-and-drop task management
+- Priority scoring and ranking
+- AI-assisted task grooming
+- Sprint planning integration
+- Export capabilities
+
+**Tasks**:
+- [ ] Create new package `packages/ui-backlog-board`
+- [ ] Implement Kanban board component
+- [ ] Add drag-and-drop functionality
+- [ ] Create priority scoring system
+- [ ] Add task editing and details
+- [ ] Implement filtering and search
+- [ ] Add export capabilities
+- [ ] Write component tests
+- [ ] Create Storybook stories
+
+**Dependencies**: React, drag-and-drop library
+**Estimate**: 3 days
+
+## 📊 MEDIUM PRIORITY ITEMS (Meta GOTHIC Features)
+
+### 57. SDLC Document Templates Package
+**Status**: Not Started
+**Description**: Markdown templates for SDLC deliverables and documentation
+**Priority Justification**: Standardizes output and provides professional deliverables
+**Technical Requirements**:
+- Markdown templates with variable interpolation
+- Phase-specific document templates
+- Integration with markdown compiler
+- Template versioning and management
+- Export format support (PDF, HTML)
+
+**Tasks**:
+- [ ] Create new package `packages/sdlc-templates`
+- [ ] Create markdown templates for each SDLC phase
+- [ ] Implement template interpolation
+- [ ] Add template validation
+- [ ] Create export functionality
+- [ ] Add template versioning
+- [ ] Write comprehensive documentation
+- [ ] Create template gallery
+
+**Dependencies**: `@chasenocap/markdown-compiler`
+**Estimate**: 3 days
+
+### 58. Best Practices Knowledge Base Package
+**Status**: Not Started
+**Description**: YAML-based best practices and guidelines per development phase
+**Priority Justification**: Provides expert guidance and improves development quality
+**Technical Requirements**:
+- YAML-based knowledge structure
+- Searchable best practices database
+- Context-aware recommendations
+- Industry standard guidelines
+- Custom practice definitions
+
+**Tasks**:
+- [ ] Create new package `packages/sdlc-knowledge`
+- [ ] Create YAML schema for best practices
+- [ ] Populate knowledge base with industry standards
+- [ ] Implement search and recommendation engine
+- [ ] Add context-aware filtering
+- [ ] Create practice validation rules
+- [ ] Add custom practice support
+- [ ] Write comprehensive documentation
+
+**Dependencies**: None (data package)
+**Estimate**: 5 days
+
+### 59. Meta GOTHIC Core Orchestrator
+**Status**: Not Started
+**Description**: Main orchestration service that integrates all components
+**Priority Justification**: Final integration layer that delivers the complete development agent
+**Technical Requirements**:
+- Full dependency injection integration
+- API server with WebSocket support
+- React frontend with all components
+- Session management and persistence
+- Project lifecycle management
+- Integration testing and validation
+
+**Tasks**:
+- [ ] Create new package `packages/meta-gothic-core`
+- [ ] Implement main orchestrator service
+- [ ] Create API server with REST endpoints
+- [ ] Add WebSocket streaming support
+- [ ] Build React frontend application
+- [ ] Integrate all UI components
+- [ ] Add session management
+- [ ] Implement project persistence
+- [ ] Create comprehensive integration tests
+- [ ] Write deployment documentation
+
+**Dependencies**: All above packages
+**Estimate**: 3 days
 
 ## Normal Priority Items
 
