@@ -483,6 +483,48 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 **Estimate**: 2 hours
 
+### 47. Fix CI Dashboard Data Collection Issues 🐛
+**Status**: Not Started
+**Description**: CI dashboard script hangs during data collection from GitHub Actions API
+**Priority Justification**: Dashboard shows outdated data, preventing accurate CI/CD health monitoring
+**Root Cause Analysis**:
+- Script hangs when looping through 12 repositories making multiple API calls
+- Individual `gh run list` commands work fine in isolation
+- Issue appears to be with gh CLI blocking in loops or complex jq pipelines
+- No timeout mechanism on macOS (missing `timeout` command)
+- Private repository access works but bulk operations hang
+
+**Technical Details**:
+- `gh run list` returns data immediately for single calls
+- Script hangs indefinitely when iterating through all repos
+- Rate limiting not the issue (4000+ requests remaining)
+- Authentication confirmed working (proper token scopes)
+- Workflow names changed from separate to "Unified Package Workflow"
+
+**Attempted Solutions**:
+1. ❌ Direct API calls with gh api - returns 404 for private repos
+2. ❌ Added error handling and caching - still hangs
+3. ❌ Timeout implementation - macOS lacks timeout command
+4. ✅ Single repo queries work - proves gh CLI functions
+5. ❌ Background process approach - still hangs in loops
+
+**Tasks**:
+- [ ] Create minimal reproduction case to isolate hanging point
+- [ ] Implement chunked/sequential processing with delays
+- [ ] Add progress indicators to identify exact hang location
+- [ ] Consider alternative data collection approach (batch API calls)
+- [ ] Implement proper async/parallel processing
+- [ ] Add configurable timeout mechanism for macOS
+- [ ] Cache individual repo results to prevent re-fetching
+
+**Expected Results**:
+- Dashboard generates within 30 seconds
+- Real-time metrics displayed accurately
+- No hanging or blocking during data collection
+- Graceful handling of API failures
+
+**Estimate**: 4-6 hours
+
 ## Normal Priority Items
 
 ### ✅ 41. Remove Template Error Messages from Report Body (COMPLETED)
