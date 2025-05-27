@@ -108,6 +108,42 @@ This index provides a comprehensive overview of all architectural decisions made
 - AI-integrated guidance
 - Progress tracking metrics
 
+### ADR-012: Fastify Over Express 📋
+**Status**: Accepted  
+**Summary**: Choose Fastify as web framework for superior performance and TypeScript support  
+**Key Decisions**:
+- 2.5x performance improvement over Express
+- Native TypeScript support
+- Rich plugin ecosystem
+- Seamless Mercurius integration
+
+### ADR-013: Mercurius Over Apollo Server 📋
+**Status**: Accepted  
+**Summary**: Choose Mercurius for GraphQL server with federation support  
+**Key Decisions**:
+- 5x faster than Apollo Gateway
+- Native Fastify integration
+- Apollo Federation v1 compatibility
+- Built-in performance optimizations
+
+### ADR-014: GraphQL Federation Architecture 📋
+**Status**: Accepted  
+**Summary**: Implement federated GraphQL across three services  
+**Key Decisions**:
+- Service independence with unified API
+- Entity ownership per service
+- Cross-service type relationships
+- Real-time subscription federation
+
+### ADR-015: GitHub API Hybrid Strategy 📋
+**Status**: Accepted  
+**Summary**: Use both GitHub REST and GraphQL APIs based on operation type  
+**Key Decisions**:
+- GraphQL for complex relationship queries
+- REST for CRUD operations and webhooks
+- Smart routing based on use case
+- Optimized rate limiting strategy
+
 ## Cross-Cutting Architectural Themes
 
 ### 1. **Package Independence**
@@ -161,15 +197,23 @@ This index provides a comprehensive overview of all architectural decisions made
 ```
 ADR-006 (GOTHIC Pattern)
     ├── ADR-005 (GraphQL-First)
+    │   ├── ADR-012 (Fastify Framework)
+    │   ├── ADR-013 (Mercurius GraphQL)
+    │   └── ADR-014 (Federation Architecture)
     ├── ADR-007 (Meta Repository)
     ├── ADR-008 (Event-Driven)
     ├── ADR-009 (Caching)
     ├── ADR-010 (Context Loading)
-    └── ADR-011 (SDLC State Machine)
+    ├── ADR-011 (SDLC State Machine)
+    └── ADR-015 (GitHub API Strategy)
 
 ADR-001 (Dependencies)
     ├── ADR-002 (Git Submodules)
     └── ADR-003 (Publishing)
+
+Technology Stack Dependencies:
+ADR-012 (Fastify) → ADR-013 (Mercurius) → ADR-014 (Federation)
+ADR-014 (Federation) → ADR-015 (GitHub API Strategy)
 ```
 
 ## References
