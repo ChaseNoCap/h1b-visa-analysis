@@ -21,11 +21,11 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - **Cache Package Tests**: Fixed all failing tests, achieved 100% coverage
 
 **⚠️ REMAINING ITEMS**:
-- **Notify Workflows**: 25% success rate - needs investigation
-- **Auto-Update PRs**: Ready to test with next package publish
-- **Package Workflow Failures**: Some packages have failing workflows
+- **Package Workflow Failures**: 75% of packages have failing workflows (CRITICAL)
+- **Template Errors**: Still showing in report body
+- **Auto-Update Testing**: Needs real package publish to verify
 
-**Next Priority**: Test the full automation pipeline by publishing cache package v1.0.8
+**Next Priority**: Fix package workflow failures (Item #40) - 75% failure rate blocking automation
 
 ## How to Use This Backlog
 
@@ -34,7 +34,33 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 3. **Refinement**: Work items should be refined before starting implementation
 4. **Updates**: Mark items complete and add new discoveries as work progresses
 
-## 🚨 CRITICAL PRIORITY ITEMS (CI/CD Health)
+## 🚨 CRITICAL PRIORITY ITEMS (Package Workflow Health)
+
+### 40. Fix Package Workflow Failures 🔥
+**Status**: Critical Priority - 75% Failure Rate
+**Description**: Dashboard shows only 25% success rate for package workflows, with many packages failing
+**Priority Justification**: Automation pipeline cannot function properly with failing workflows
+**Problems Identified**:
+- Cache, file-system, prompts, report-components, test-helpers, test-mocks showing ❌
+- Only di-framework, event-system, logger, markdown-compiler, report-templates showing ✅
+- Need to investigate actual failure reasons in each package
+
+**Tasks**:
+- [ ] Check workflow logs for each failing package
+- [ ] Identify common failure patterns
+- [ ] Fix authentication issues if present
+- [ ] Fix test failures if that's the cause
+- [ ] Ensure all packages can build and test successfully
+- [ ] Verify workflows trigger correctly on push
+
+**Expected Results**:
+- All 11 packages showing ✅ for workflow status
+- >90% success rate for notify workflows
+- Automation pipeline fully functional
+
+**Estimate**: 3-4 hours
+
+## 🚨 COMPLETED CRITICAL ITEMS (CI/CD Health)
 
 ### ✅ 37. Fix Unified Package Workflow Names and Configuration 🔥 (COMPLETED)
 **Status**: ✅ COMPLETED - Dashboard now correctly detects workflows  
@@ -377,6 +403,41 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 - ✅ Main application builds and runs successfully
 
 **Results**: All packages now published and functioning. Main application generates reports successfully with published dependencies.
+
+## Normal Priority Items
+
+### 41. Remove Template Error Messages from Report Body
+**Status**: Not Started
+**Description**: Markdown compiler shows [ERROR] messages in report body for missing templates
+**Priority Justification**: Makes reports look unprofessional
+**Tasks**:
+- [ ] Update markdown-compiler to suppress error output in content
+- [ ] Or fix error handling in report processing
+- [ ] Ensure errors only appear in logs, not report content
+**Estimate**: 1-2 hours
+
+### 42. Test Auto-Update PR Creation with Real Package Publish
+**Status**: Ready to Test
+**Description**: Auto-update workflow is fixed but needs real package publish to verify
+**Priority Justification**: Need to confirm end-to-end automation works
+**Tasks**:
+- [ ] Publish a patch version of any package (cache v1.0.8 is ready)
+- [ ] Monitor repository_dispatch trigger
+- [ ] Verify PR is created automatically
+- [ ] Check if auto-merge works
+- [ ] Document any remaining issues
+**Estimate**: 1 hour
+
+### 43. Investigate and Fix Integration Test Timeouts
+**Status**: Not Started
+**Description**: Two cache package integration tests were skipped due to timeouts
+**Priority Justification**: Reduces test coverage confidence
+**Tasks**:
+- [ ] Debug why multi-level caching test times out
+- [ ] Debug why batch request caching test times out
+- [ ] Fix root cause (likely fake timers issue)
+- [ ] Re-enable tests
+**Estimate**: 2-3 hours
 
 ## High Priority Items
 
