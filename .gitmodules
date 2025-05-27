@@ -34,3 +34,6 @@
 [submodule "packages/claude-client"]
 	path = packages/claude-client
 	url = https://github.com/ChaseNoCap/claude-client.git
+[submodule "packages/prompt-toolkit"]
+	path = packages/prompt-toolkit
+	url = https://github.com/ChaseNoCap/prompt-toolkit.git

@@ -5,7 +5,7 @@
 This catalog documents all packages in the meta repository, managed as Git submodules. Each package is maintained in its own GitHub repository and published to GitHub Packages.
 
 **Decomposition Status**: 9/9 packages (100%) ✅  
-**Total Packages**: 11 (including domain dependencies)
+**Total Packages**: 13 (11 H1B + 2 metaGOTHIC)
 
 ## Package Summary
 
@@ -22,6 +22,8 @@ This catalog documents all packages in the meta repository, managed as Git submo
 | prompts | github.com/ChaseNoCap/prompts | @chasenocap/prompts | 400 lines | N/A | AI context management |
 | markdown-compiler | github.com/ChaseNoCap/markdown-compiler | Private | N/A | N/A | Markdown processing |
 | report-components | github.com/ChaseNoCap/report-components | Private | N/A | N/A | H1B research content |
+| claude-client | github.com/ChaseNoCap/claude-client | @chasenocap/claude-client | 1500 lines | 95%+ | Claude CLI subprocess wrapper |
+| prompt-toolkit | github.com/ChaseNoCap/prompt-toolkit | @chasenocap/prompt-toolkit | 1500 lines | 100% | XML template system |
 
 All packages are Git submodules integrated via `.gitmodules` configuration
 
@@ -325,23 +327,124 @@ prompts/
 **Purpose**: H1B research content and analysis components  
 **Integration**: Domain-specific dependency providing report content
 
+### 12. claude-client (metaGOTHIC)
+**Repository**: [github.com/ChaseNoCap/claude-client](https://github.com/ChaseNoCap/claude-client)  
+**NPM Package**: `@chasenocap/claude-client`  
+**Purpose**: Claude CLI subprocess wrapper with streaming support for metaGOTHIC framework  
+**Status**: ✅ Implemented
+
+**Features**:
+- Claude subprocess lifecycle management
+- Real-time streaming with buffering
+- Session management and persistence
+- Configuration with sensible defaults
+- Comprehensive error handling (Result pattern)
+- Full dependency injection integration
+
+**API Example**:
+```typescript
+import { createClaudeClient } from '@chasenocap/claude-client';
+
+const client = await createClaudeClient();
+
+// Simple command execution
+const result = await client.execute({
+  command: 'claude',
+  args: ['--help']
+});
+
+// Session-based execution
+const sessionId = await client.createSession({
+  id: 'dev-session',
+  workingDirectory: '/project'
+});
+
+await client.execute(command, { sessionId });
+
+// Streaming responses
+await client.executeStream(command, (chunk) => {
+  process.stdout.write(chunk);
+});
+```
+
+**Key Design**:
+- Subprocess wrapper pattern
+- Session isolation
+- Streaming with event emitters
+- Graceful cleanup on shutdown
+
+### 13. prompt-toolkit (metaGOTHIC)
+**Repository**: [github.com/ChaseNoCap/prompt-toolkit](https://github.com/ChaseNoCap/prompt-toolkit)  
+**NPM Package**: `@chasenocap/prompt-toolkit`  
+**Purpose**: XML template system and prompt construction utilities for metaGOTHIC framework  
+**Status**: ✅ Implemented
+
+**Features**:
+- XML template schema with full parsing
+- Variable interpolation (conditionals, loops, switches)
+- Template inheritance with caching
+- Progressive context loading strategies
+- Comprehensive validation and error handling
+- Token estimation for AI interactions
+
+**API Example**:
+```typescript
+import { createPromptToolkit } from '@chasenocap/prompt-toolkit';
+
+const toolkit = await createPromptToolkit();
+
+// Parse XML template
+const xmlTemplate = `
+<prompt_template id="analysis" name="Code Analysis">
+  <variables>
+    <variable name="file_path" type="string" required="true" />
+  </variables>
+  <content>
+    Analyze the code in {{file_path}}.
+    {{#if complexity}}
+    Pay special attention to {{complexity}} complexity.
+    {{/if}}
+  </content>
+</prompt_template>
+`;
+
+// Register and use template
+await toolkit.registry.register(template);
+const prompt = await toolkit.constructor.construct('analysis', {
+  variables: { file_path: 'src/index.ts', complexity: 'high' }
+});
+```
+
+**Interpolation Patterns**:
+- Simple: `{{variable}}`
+- Conditionals: `{{#if condition}}...{{/if}}`
+- Loops: `{{#each array}}{{this}}{{/each}}`
+- Equality: `{{#if_equals var "value"}}...{{/if_equals}}`
+- Switch: `{{#switch var}}{{#case "val"}}...{{/case}}{{/switch}}`
+
+**Key Achievement**: 100% test coverage with 32 tests
+
 ## Architecture Patterns
 
 ### Dependency Flow
 ```
 Meta Repository (h1b-visa-analysis)
     ├── Git Submodules (packages/)
-    │   ├── @chasenocap/di-framework
-    │   ├── @chasenocap/logger
-    │   ├── @chasenocap/test-mocks
-    │   ├── @chasenocap/test-helpers
-    │   ├── @chasenocap/file-system
-    │   ├── @chasenocap/event-system
-    │   ├── @chasenocap/cache
-    │   ├── @chasenocap/report-templates
-    │   ├── @chasenocap/prompts
-    │   ├── markdown-compiler
-    │   └── report-components
+    │   ├── H1B Analysis Packages:
+    │   │   ├── @chasenocap/di-framework
+    │   │   ├── @chasenocap/logger
+    │   │   ├── @chasenocap/test-mocks
+    │   │   ├── @chasenocap/test-helpers
+    │   │   ├── @chasenocap/file-system
+    │   │   ├── @chasenocap/event-system
+    │   │   ├── @chasenocap/cache
+    │   │   ├── @chasenocap/report-templates
+    │   │   ├── @chasenocap/prompts
+    │   │   ├── markdown-compiler
+    │   │   └── report-components
+    │   └── metaGOTHIC Packages:
+    │       ├── @chasenocap/claude-client
+    │       └── @chasenocap/prompt-toolkit
     │
     └── NPM Dependencies (package.json)
         ├── @chasenocap/di-framework
