@@ -51,6 +51,8 @@ The documentation has been consolidated and organized by purpose. Load only what
 - **Architecture questions**: Load `/docs/architecture-reference.md` for technical patterns
 - **Setup/GitHub Actions**: Load `/docs/setup-guide.md`
 - **Understanding decomposition**: Load `/docs/decomposition-guide.md`
+- **metaGOTHIC development**: Load `/metaGOTHIC/CLAUDE.md` for nested repo context
+- **metaGOTHIC UI work**: Load `/metaGOTHIC/packages/ui-components/` for dashboard
 
 ## 🤖 Advanced Prompt Engineering
 
@@ -170,11 +172,21 @@ Comprehensive prompt engineering resources:
 
 This is a dual-purpose meta repository that:
 1. **H1B Analysis System**: Orchestrates 11 Git submodules for H1B visa report generation
-2. **metaGOTHIC Framework**: Developing 9 additional packages (6 complete) for AI-guided development
+2. **metaGOTHIC Framework**: Nested meta repository with 8 packages for AI-guided development
 
-The project uses a meta repository pattern where each package is maintained in its own GitHub repository and integrated via Git submodules. Total packages: 17 (11 H1B + 6 metaGOTHIC).
+### Nested Meta Repository Architecture
+- **Main Repository**: h1b-visa-analysis (contains H1B packages + metaGOTHIC directory)
+- **Nested Repository**: metaGOTHIC/ (contains only metaGOTHIC-specific packages)
+- **Benefits**: Clear separation, focused tooling, independent CI/CD pipelines
 
-The H1B system automatically generates reports when dependencies update via GitHub Actions.
+The project uses a meta repository pattern where each package is maintained in its own GitHub repository and integrated via Git submodules. The H1B system automatically generates reports when dependencies update via GitHub Actions.
+
+### metaGOTHIC UI Dashboard
+The metaGOTHIC framework now includes a comprehensive health monitoring and CI/CD control dashboard:
+- **Health Monitoring**: Real-time package health, build status, test coverage
+- **Pipeline Control**: Trigger workflows, publish packages, manage deployments
+- **Location**: `/metaGOTHIC/packages/ui-components/`
+- **Development**: `cd metaGOTHIC && npm run dev`
 
 ## Current Architecture (TypeScript + DI + Full Automation)
 
@@ -251,8 +263,7 @@ h1b-visa-analysis/
 │   │   ├── fixtures/          # Test fixtures
 │   │   └── output/           # Test output (gitignored)
 │   └── unit/                  # Unit tests
-├── packages/                  # Git submodules (17 total)
-│   ├── # H1B Analysis Packages (11)
+├── packages/                  # Git submodules (H1B packages only)
 │   ├── di-framework/          # → github.com/ChaseNoCap/di-framework ✅
 │   ├── logger/               # → github.com/ChaseNoCap/logger ✅
 │   ├── test-mocks/            # → github.com/ChaseNoCap/test-mocks ✅
@@ -263,14 +274,20 @@ h1b-visa-analysis/
 │   ├── report-templates/     # → github.com/ChaseNoCap/report-templates ✅
 │   ├── prompts/              # → github.com/ChaseNoCap/prompts ✅
 │   ├── markdown-compiler/    # → github.com/ChaseNoCap/markdown-compiler ✅
-│   ├── report-components/    # → github.com/ChaseNoCap/report-components ✅
-│   ├── # metaGOTHIC Packages (6/9)
-│   ├── claude-client/        # → github.com/ChaseNoCap/claude-client 🚀
-│   ├── prompt-toolkit/       # → github.com/ChaseNoCap/prompt-toolkit 🚀
-│   ├── sdlc-config/          # → github.com/ChaseNoCap/sdlc-config 🚀
-│   ├── sdlc-engine/          # → github.com/ChaseNoCap/sdlc-engine 🚀
-│   ├── sdlc-content/         # → github.com/ChaseNoCap/sdlc-content ✅
-│   └── ui-components/        # → (ready for GitHub repo creation) 🚀
+│   └── report-components/    # → github.com/ChaseNoCap/report-components ✅
+├── metaGOTHIC/               # NESTED META REPOSITORY 🚀
+│   ├── packages/             # metaGOTHIC-specific packages
+│   │   ├── claude-client/    # → github.com/ChaseNoCap/claude-client
+│   │   ├── prompt-toolkit/   # → github.com/ChaseNoCap/prompt-toolkit
+│   │   ├── sdlc-config/      # → github.com/ChaseNoCap/sdlc-config
+│   │   ├── sdlc-engine/      # → github.com/ChaseNoCap/sdlc-engine
+│   │   ├── sdlc-content/     # → github.com/ChaseNoCap/sdlc-content
+│   │   ├── graphql-toolkit/  # → github.com/ChaseNoCap/graphql-toolkit
+│   │   ├── context-aggregator/# → github.com/ChaseNoCap/context-aggregator
+│   │   └── ui-components/    # → github.com/ChaseNoCap/ui-components
+│   ├── CLAUDE.md             # metaGOTHIC-specific context
+│   ├── package.json          # metaGOTHIC package management
+│   └── .gitmodules           # metaGOTHIC submodule configuration
 ├── dist/                      # Build output (gitignored)
 ├── logs/                      # Application logs (gitignored)
 ├── coverage/                  # Test coverage (gitignored)
