@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide explains how to set up authentication for GitHub Packages in the h1b-visa-analysis project.
+This guide explains how to set up authentication for GitHub Packages in the h1b-visa-analysis project using the NPM_TOKEN environment variable approach defined in ADR-016.
 
 ## Local Development
 
@@ -14,9 +14,9 @@ This guide explains how to set up authentication for GitHub Packages in the h1b-
    - **Note**: `h1b-packages-access`
    - **Expiration**: 90 days (or your preference)
    - **Scopes**:
-     - ✅ `repo` (Full control of private repositories)
-     - ✅ `write:packages` (Upload packages)
-     - ✅ `read:packages` (Download packages)
+     - ✅ `repo` (Full control of private repositories) - for CI/CD only
+     - ✅ `write:packages` (Upload packages) - for publishing
+     - ✅ `read:packages` (Download packages) - required
 4. Click "Generate token" and copy it
 
 ### 2. Set Environment Variable
@@ -30,6 +30,17 @@ export NPM_TOKEN="ghp_your_token_here"
 Then reload:
 ```bash
 source ~/.zshrc  # or ~/.bashrc
+```
+
+### 3. Verify Configuration
+
+Check that packages have correct .npmrc files:
+
+```bash
+# Should show:
+# @chasenocap:registry=https://npm.pkg.github.com
+# //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
+cat packages/any-package/.npmrc
 ```
 
 ### 3. Test Authentication

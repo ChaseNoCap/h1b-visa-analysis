@@ -144,6 +144,15 @@ This index provides a comprehensive overview of all architectural decisions made
 - Smart routing based on use case
 - Optimized rate limiting strategy
 
+### ADR-016: Local NPM Authentication ✅
+**Status**: Accepted  
+**Summary**: Environment variable-based authentication for GitHub Packages access  
+**Key Decisions**:
+- NPM_TOKEN environment variable for all authentication
+- .npmrc files use ${NPM_TOKEN} placeholder
+- Same token approach for local development and CI/CD
+- Personal Access Token with read:packages and write:packages scopes
+
 ## Cross-Cutting Architectural Themes
 
 ### 1. **Package Independence**
