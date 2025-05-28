@@ -16,9 +16,12 @@ async function initializeGitHubService() {
       
       if (githubToken) {
         try {
-          // Real GitHub service temporarily disabled due to dependency issues
-          // Will use enhanced mock instead
-          console.log('⚠️ Real GitHub service temporarily disabled, using enhanced mock');
+          // Try to initialize real GitHub service
+          const { githubService: realGithubService } = await import('./githubService.js');
+          githubService = realGithubService;
+          useEnhancedMock = false;
+          console.log('✅ Using real GitHub API with token');
+          return; // Exit early if real service works
         } catch (error) {
           console.log('⚠️ Real GitHub service failed, falling back to enhanced mock:', error);
         }
