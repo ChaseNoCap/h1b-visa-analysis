@@ -1,54 +1,7 @@
-[submodule "packages/di-framework"]
-	path = packages/di-framework
-	url = https://github.com/ChaseNoCap/di-framework.git
-[submodule "packages/logger"]
-	path = packages/logger
-	url = https://github.com/ChaseNoCap/logger.git
-[submodule "packages/test-mocks"]
-	path = packages/test-mocks
-	url = https://github.com/ChaseNoCap/test-mocks.git
-[submodule "packages/test-helpers"]
-	path = packages/test-helpers
-	url = https://github.com/ChaseNoCap/test-helpers.git
-[submodule "packages/file-system"]
-	path = packages/file-system
-	url = https://github.com/ChaseNoCap/file-system.git
-[submodule "packages/event-system"]
-	path = packages/event-system
-	url = https://github.com/ChaseNoCap/event-system.git
-[submodule "packages/cache"]
-	path = packages/cache
-	url = https://github.com/ChaseNoCap/cache.git
-[submodule "packages/report-templates"]
-	path = packages/report-templates
-	url = https://github.com/ChaseNoCap/report-templates.git
-[submodule "packages/prompts"]
-	path = packages/prompts
-	url = https://github.com/ChaseNoCap/prompts.git
-[submodule "packages/markdown-compiler"]
-	path = packages/markdown-compiler
-	url = https://github.com/ChaseNoCap/markdown-compiler.git
-[submodule "packages/report-components"]
-	path = packages/report-components
-	url = https://github.com/ChaseNoCap/report-components.git
-[submodule "packages/claude-client"]
-	path = packages/claude-client
-	url = https://github.com/ChaseNoCap/claude-client.git
-[submodule "packages/prompt-toolkit"]
-	path = packages/prompt-toolkit
-	url = https://github.com/ChaseNoCap/prompt-toolkit.git
+# Active Git Submodules
 [submodule "packages/sdlc-config"]
 	path = packages/sdlc-config
 	url = https://github.com/ChaseNoCap/sdlc-config.git
-[submodule "packages/sdlc-content"]
-	path = packages/sdlc-content
-	url = https://github.com/ChaseNoCap/sdlc-content.git
-[submodule "packages/sdlc-engine"]
-	path = packages/sdlc-engine
-	url = https://github.com/ChaseNoCap/sdlc-engine.git
-[submodule "packages/context-aggregator"]
-	path = packages/context-aggregator
-	url = https://github.com/ChaseNoCap/context-aggregator.git
-[submodule "packages/graphql-toolkit"]
-	path = packages/graphql-toolkit
-	url = https://github.com/ChaseNoCap/graphql-toolkit.git
+[submodule "packages/di-framework"]
+	path = packages/di-framework
+	url = https://github.com/ChaseNoCap/di-framework.git
