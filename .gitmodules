@@ -49,3 +49,6 @@
 [submodule "packages/context-aggregator"]
 	path = packages/context-aggregator
 	url = https://github.com/ChaseNoCap/context-aggregator.git
+[submodule "packages/graphql-toolkit"]
+	path = packages/graphql-toolkit
+	url = https://github.com/ChaseNoCap/graphql-toolkit.git
