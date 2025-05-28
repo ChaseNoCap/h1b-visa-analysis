@@ -5,7 +5,7 @@
 This catalog documents all packages in the meta repository, managed as Git submodules. Each package is maintained in its own GitHub repository and published to GitHub Packages.
 
 **Decomposition Status**: 9/9 packages (100%) ✅  
-**Total Packages**: 14 (11 H1B + 3 metaGOTHIC)
+**Total Packages**: 18 (11 H1B + 7 metaGOTHIC)
 
 ## Package Summary
 
@@ -25,6 +25,7 @@ This catalog documents all packages in the meta repository, managed as Git submo
 | claude-client | github.com/ChaseNoCap/claude-client | @chasenocap/claude-client | 1500 lines | 95%+ | Claude CLI subprocess wrapper |
 | prompt-toolkit | github.com/ChaseNoCap/prompt-toolkit | @chasenocap/prompt-toolkit | 1500 lines | 100% | XML template system |
 | sdlc-config | github.com/ChaseNoCap/sdlc-config | @chasenocap/sdlc-config | 1200 lines | 93% | SDLC configuration management |
+| context-aggregator | github.com/ChaseNoCap/context-aggregator | @chasenocap/context-aggregator | 4500 lines | 100% | Intelligent context management |
 
 All packages are Git submodules integrated via `.gitmodules` configuration
 
@@ -557,6 +558,55 @@ export class ReportGenerator implements IReportGenerator {
   }
 }
 ```
+
+### 15. context-aggregator (metaGOTHIC)
+**Repository**: [github.com/ChaseNoCap/context-aggregator](https://github.com/ChaseNoCap/context-aggregator)  
+**NPM Package**: `@chasenocap/context-aggregator`  
+**Purpose**: Intelligent context aggregation and optimization for AI-assisted development workflows
+
+**Features**:
+- Project structure analysis with framework detection and complexity metrics
+- Intelligent context loading strategies (Progressive, Focused, BreadthFirst) 
+- Token optimization for memory-efficient AI consumption
+- Relevance scoring for content prioritization based on queries
+- Multi-layer caching integration with cache package
+- File system analysis with pattern matching and exclusion rules
+- Context chunking and streaming for large projects
+
+**Components**:
+- `ProjectAnalyzer`: Analyzes codebase structure, detects frameworks, calculates complexity
+- `ContextAggregator`: Main orchestrator with caching and loading strategy management
+- `ContextOptimizer`: Token counting, content optimization, and chunking utilities
+- `RelevanceScorer`: Query-based file ranking and relevance calculation
+- `Loading Strategies`: Progressive, Focused, and BreadthFirst loading patterns
+
+**Usage Example**:
+```typescript
+import { createContextAggregator } from '@chasenocap/context-aggregator';
+
+const aggregator = await createContextAggregator({ 
+  projectRoot: '.',
+  cache: { type: 'hybrid', ttl: 3600000 }
+});
+
+// Load context with progressive strategy
+const context = await aggregator.loadContext({
+  query: 'authentication middleware',
+  strategy: 'progressive', 
+  maxTokens: 8000,
+  relevanceThreshold: 0.7
+});
+
+// Optimize for token limits
+const optimized = await aggregator.optimizeContext({
+  files: ['src/**/*.ts'],
+  maxTokens: 4000,
+  technique: 'selective',
+  preserveStructure: true
+});
+```
+
+**Key Achievement**: 100% test coverage with 14 tests, intelligent project understanding
 
 ## Migration Success Metrics
 
