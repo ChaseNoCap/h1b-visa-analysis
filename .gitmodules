@@ -43,3 +43,6 @@
 [submodule "packages/sdlc-content"]
 	path = packages/sdlc-content
 	url = https://github.com/ChaseNoCap/sdlc-content.git
+[submodule "packages/sdlc-engine"]
+	path = packages/sdlc-engine
+	url = https://github.com/ChaseNoCap/sdlc-engine.git
