@@ -19,7 +19,93 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 
 ## 🚨 Critical Priority Items
 
-### 1. ✅ Fix GitHub Service Dependency Issues for Meta GOTHIC Dashboard (COMPLETE)
+> **IMMEDIATE NEXT SPRINT**: Real GitHub API Enforcement
+> The dashboard currently falls back to mock data when GitHub API fails or token is missing. This must be changed to enforce real data consumption with proper error handling and loading states.
+
+### 1. Enforce Real GitHub API Usage with Proper Error Handling
+**Status**: Not Started  
+**Effort**: 2-3 days  
+**Priority**: URGENT - Next Sprint  
+**ADRs**: ADR-015 (GitHub API Hybrid Strategy), ADR-004 (CI Dashboard Data)  
+**Description**: Ensure dashboard consumes real GitHub data exclusively, with proper error handling and loading states. Mock data should only be used for testing, not production fallback.
+
+**User Stories**:
+
+#### Story 1.1: GitHub Token Validation and Error Display
+- **As a** dashboard user  
+- **I want to** see a clear error message when GitHub token is missing or invalid
+- **So that** I know exactly what configuration is needed to access real data
+- **Acceptance Criteria**:
+  - ✅ Display prominent error banner when `VITE_GITHUB_TOKEN` is missing
+  - ✅ Show specific error message for invalid/expired tokens
+  - ✅ Provide clear instructions for token setup
+  - ✅ Error state is visually distinct from loading state
+  - ✅ Error includes link to GitHub token creation documentation
+
+#### Story 1.2: Initial Loading State with Timeout
+- **As a** dashboard user  
+- **I want to** see a professional loading screen while GitHub data is being fetched
+- **So that** I understand the application is working and not frozen
+- **Acceptance Criteria**:
+  - ✅ Show skeleton loading UI for 30 seconds maximum
+  - ✅ Display "Connecting to GitHub API..." message
+  - ✅ Show progress indicators for different data types (repos, metrics, workflows)
+  - ✅ Timeout after 30 seconds with clear error message
+  - ✅ Retry button available after timeout
+
+#### Story 1.3: Real-time Data Validation
+- **As a** dashboard user  
+- **I want to** see actual metaGOTHIC repository data from GitHub
+- **So that** I can monitor real project health and activity
+- **Acceptance Criteria**:
+  - ✅ Dashboard displays actual ChaseNoCap organization repositories
+  - ✅ Repository data includes real commit history, issues, PRs
+  - ✅ Workflow data shows actual GitHub Actions runs
+  - ✅ Package versions match actual published versions
+  - ✅ All timestamps reflect real GitHub activity
+
+#### Story 1.4: API Error Recovery and Retry Logic
+- **As a** dashboard user  
+- **I want to** have the system gracefully handle GitHub API failures
+- **So that** temporary issues don't completely break the dashboard
+- **Acceptance Criteria**:
+  - ✅ Implement exponential backoff for rate limit errors
+  - ✅ Show specific error messages for different API failure types
+  - ✅ Provide manual retry button for failed requests
+  - ✅ Cache last successful data during API outages
+  - ✅ Display "Last updated" timestamp when using cached data
+
+#### Story 1.5: Remove Mock Data from Production Code
+- **As a** developer  
+- **I want to** ensure mock data is only used in test environments
+- **So that** the dashboard never accidentally shows fake data in production
+- **Acceptance Criteria**:
+  - ✅ Remove mock fallback from production API service
+  - ✅ Mock services only available in test/development modes
+  - ✅ Environment variable controls mock vs real data
+  - ✅ Clear logging indicates data source (real vs test)
+  - ✅ Production builds exclude mock service code
+
+**Technical Tasks**:
+- [ ] Add environment-based service selection (real vs test only)
+- [ ] Implement comprehensive error boundary components
+- [ ] Add GitHub token validation with specific error messages
+- [ ] Create loading skeleton components for all dashboard sections
+- [ ] Implement API timeout and retry logic with exponential backoff
+- [ ] Add "Last updated" timestamps and data freshness indicators
+- [ ] Remove mock service fallback from production api.ts
+- [ ] Add integration tests for error scenarios
+- [ ] Create GitHub token setup documentation
+- [ ] Implement proper API rate limit handling
+
+**Definition of Done**: 
+✅ Dashboard exclusively uses real GitHub data  
+✅ Clear error states for authentication/API failures  
+✅ Professional loading states with reasonable timeouts  
+✅ Mock data only available in test environments  
+✅ Comprehensive error recovery and retry mechanisms  
+
+### 2. ✅ Fix GitHub Service Dependency Issues for Meta GOTHIC Dashboard (COMPLETE)
 **Status**: ✅ COMPLETE  
 **Completed**: May 28, 2025  
 **Effort**: 1 day (actual)  
@@ -60,7 +146,7 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 **Current State**: ✅ Architecture complete, enhanced mock operational, real API integration ready
 **Achievement**: Both real GitHub API and enhanced mock fallback fully operational
 
-### 3. Real-time Event System Integration (NEXT PRIORITY)
+### 4. Real-time Event System Integration
 **Status**: Not Started  
 **Effort**: 3-4 days  
 **ADRs**: ADR-008 (Event-Driven Architecture), ADR-005 (GraphQL-First)  
@@ -289,9 +375,10 @@ This document tracks future work items for the h1b-visa-analysis project. When a
 ## Meta GOTHIC Implementation Roadmap
 
 ### Phase 1: Foundation (Current - 2 weeks)
-1. ✅ **GitHub API Integration** (Critical #1 - COMPLETE)
-2. **Real-time Event System** (Critical #3 - Next Priority)
-3. **Automated Publishing Flow** (High #6 - Next Priority)
+1. **Real GitHub API Enforcement** (Critical #1 - URGENT Next Sprint)
+2. ✅ **GitHub API Integration** (Critical #2 - COMPLETE)
+3. ✅ **GitHub Service Dependencies** (Critical #3 - COMPLETE)
+4. **Real-time Event System** (Critical #4 - Next Priority)
 
 ### Phase 2: Core Features (2-4 weeks)
 1. **SDLC State Machine UI** (High #3)
