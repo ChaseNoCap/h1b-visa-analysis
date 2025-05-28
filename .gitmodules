@@ -46,3 +46,6 @@
 [submodule "packages/sdlc-engine"]
 	path = packages/sdlc-engine
 	url = https://github.com/ChaseNoCap/sdlc-engine.git
+[submodule "packages/context-aggregator"]
+	path = packages/context-aggregator
+	url = https://github.com/ChaseNoCap/context-aggregator.git
