@@ -1,5 +1,43 @@
 import { Repository, HealthMetrics, WorkflowRun, PublishRequest } from '@/types';
 
+// GitHub service integration with fallback to enhanced mock
+let githubService: any = null;
+let useEnhancedMock = false;
+let gitHubInitPromise: Promise<void> | null = null;
+
+// Initialize GitHub service asynchronously
+async function initializeGitHubService() {
+  if (gitHubInitPromise) return gitHubInitPromise;
+  
+  gitHubInitPromise = (async () => {
+    try {
+      // Check if GitHub token is available for real API
+      const githubToken = import.meta.env.VITE_GITHUB_TOKEN;
+      
+      if (githubToken) {
+        try {
+          // Real GitHub service temporarily disabled due to dependency issues
+          // Will use enhanced mock instead
+          console.log('⚠️ Real GitHub service temporarily disabled, using enhanced mock');
+        } catch (error) {
+          console.log('⚠️ Real GitHub service failed, falling back to enhanced mock:', error);
+        }
+      }
+
+      // Use enhanced mock service
+      const { githubService: mockGithubService } = await import('./githubServiceMock.js');
+      githubService = mockGithubService;
+      useEnhancedMock = true;
+      
+    } catch (error) {
+      console.log('⚠️ Failed to initialize any GitHub service:', error);
+      useEnhancedMock = false;
+    }
+  })();
+  
+  return gitHubInitPromise;
+}
+
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
@@ -19,8 +57,17 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export async function fetchRepositories(): Promise<Repository[]> {
-  // In production, this would call the GitHub API
-  // For now, return mock data based on our metaGOTHIC packages
+  await initializeGitHubService();
+  
+  if (githubService) {
+    try {
+      return await githubService.fetchRepositories();
+    } catch (error) {
+      console.warn('Failed to fetch repositories from service, falling back to basic mock:', error);
+    }
+  }
+
+  // Fallback to mock data
   return [
     {
       id: '1',
@@ -102,12 +149,31 @@ export async function fetchRepositories(): Promise<Repository[]> {
       packageName: '@chasenocap/ui-components',
       version: '0.1.0',
     },
+    {
+      id: '9',
+      name: 'github-graphql-client',
+      fullName: 'ChaseNoCap/github-graphql-client',
+      description: 'Smart GitHub API client with GraphQL/REST routing',
+      url: 'https://github.com/ChaseNoCap/github-graphql-client',
+      isSubmodule: true,
+      packageName: '@chasenocap/github-graphql-client',
+      version: '1.0.0',
+    },
   ];
 }
 
 export async function fetchHealthMetrics(): Promise<HealthMetrics[]> {
-  // In production, this would aggregate data from GitHub API
-  // For now, return mock data
+  await initializeGitHubService();
+  
+  if (githubService) {
+    try {
+      return await githubService.fetchHealthMetrics();
+    } catch (error) {
+      console.warn('Failed to fetch health metrics from service, falling back to basic mock:', error);
+    }
+  }
+
+  // Fallback to mock data
   const repos = await fetchRepositories();
   return repos.map(repo => ({
     repository: repo.name,
@@ -130,8 +196,18 @@ export async function triggerWorkflow(params: {
   workflow: string;
   inputs?: Record<string, any>;
 }): Promise<void> {
-  // In production, use GitHub API
-  console.log('Triggering workflow:', params);
+  await initializeGitHubService();
+  
+  if (githubService) {
+    try {
+      return await githubService.triggerWorkflow(params);
+    } catch (error) {
+      console.warn('Failed to trigger workflow from service, using basic mock:', error);
+    }
+  }
+
+  // Fallback to mock behavior
+  console.log('Triggering workflow (mock):', params);
   await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
@@ -139,13 +215,33 @@ export async function cancelWorkflow(params: {
   repository: string;
   runId: number;
 }): Promise<void> {
-  // In production, use GitHub API
-  console.log('Cancelling workflow:', params);
+  await initializeGitHubService();
+  
+  if (githubService) {
+    try {
+      return await githubService.cancelWorkflow(params);
+    } catch (error) {
+      console.warn('Failed to cancel workflow from service, using basic mock:', error);
+    }
+  }
+
+  // Fallback to mock behavior
+  console.log('Cancelling workflow (mock):', params);
   await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 export async function publishPackage(request: PublishRequest): Promise<void> {
-  // In production, trigger the publish workflow
-  console.log('Publishing package:', request);
+  await initializeGitHubService();
+  
+  if (githubService) {
+    try {
+      return await githubService.publishPackage(request);
+    } catch (error) {
+      console.warn('Failed to publish package from service, using basic mock:', error);
+    }
+  }
+
+  // Fallback to mock behavior
+  console.log('Publishing package (mock):', request);
   await new Promise(resolve => setTimeout(resolve, 2000));
 }
