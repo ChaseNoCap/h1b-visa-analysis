@@ -26,6 +26,7 @@ This catalog documents all packages in the meta repository, managed as Git submo
 | prompt-toolkit | github.com/ChaseNoCap/prompt-toolkit | @chasenocap/prompt-toolkit | 1500 lines | 100% | XML template system |
 | sdlc-config | github.com/ChaseNoCap/sdlc-config | @chasenocap/sdlc-config | 1200 lines | 93% | SDLC configuration management |
 | context-aggregator | github.com/ChaseNoCap/context-aggregator | @chasenocap/context-aggregator | 4500 lines | 100% | Intelligent context management |
+| github-graphql-client | github.com/ChaseNoCap/github-graphql-client | @chasenocap/github-graphql-client | 800 lines | 85%+ | Smart GitHub API client with routing |
 
 All packages are Git submodules integrated via `.gitmodules` configuration
 
