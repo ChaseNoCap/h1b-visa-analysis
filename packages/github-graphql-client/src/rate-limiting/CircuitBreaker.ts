@@ -111,11 +111,7 @@ export class CircuitBreaker implements ICircuitBreaker {
       state.state = 'OPEN';
       state.nextAttemptTime = Date.now() + this.timeout;
       
-      this.logger.error('Circuit breaker transitioned to OPEN due to failure threshold', { 
-        context, 
-        failureCount: state.failureCount,
-        threshold: this.failureThreshold
-      });
+      this.logger.error('Circuit breaker transitioned to OPEN due to failure threshold', new Error(`Circuit breaker failed for ${context}. Failure count: ${state.failureCount}, threshold: ${this.failureThreshold}`));
     }
   }
 

@@ -51,8 +51,8 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@chasenocap/cache": "^1.0.0",
-    "@chasenocap/logger": "^1.0.0",
+    "@chasenocap/cache": "file:../cache",
+    "@chasenocap/logger": "file:../logger",
     "@octokit/core": "^6.1.2",
     "@octokit/graphql": "^8.1.1",
     "@octokit/rest": "^21.0.2",
@@ -62,8 +62,8 @@
     "reflect-metadata": "^0.2.1"
   },
   "devDependencies": {
-    "@chasenocap/test-helpers": "^0.1.0",
-    "@chasenocap/test-mocks": "^0.1.0",
+    "@chasenocap/test-helpers": "file:../test-helpers",
+    "@chasenocap/test-mocks": "file:../test-mocks",
     "@types/node": "^22.10.5",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",

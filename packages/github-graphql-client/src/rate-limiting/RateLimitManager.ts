@@ -59,7 +59,7 @@ export class RateLimitManager implements IRateLimitManager {
 
   async getStatus(resource = 'core'): Promise<RateLimitInfo | null> {
     const key = `${this.cachePrefix}${resource}`;
-    return await this.cache.get<RateLimitInfo>(key);
+    return await this.cache.get(key) as RateLimitInfo | null;
   }
 
   async getDelay(resource = 'core'): Promise<number> {

@@ -17,7 +17,7 @@ export class CacheManager {
   async get<T>(key: string): Promise<T | null> {
     try {
       const fullKey = this.getCacheKey(key);
-      const result = await this.cache.get<T>(fullKey);
+      const result = await this.cache.get(fullKey) as T | null;
       
       if (result !== null) {
         this.logger.debug('Cache hit', { key: fullKey });
