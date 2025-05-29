@@ -25,67 +25,229 @@ export interface CommitMessage {
 class ToolsService {
   /**
    * Scan for uncommitted changes across all Meta GOTHIC packages
-   * Uses real git commands via the git server
+   * Uses browser-based git status checking via file system API when available
    */
   async scanUncommittedChanges(): Promise<PackageChanges[]> {
     logger.info('Scanning for uncommitted changes in Meta GOTHIC packages');
     
+    // Try to detect VS Code workspace context or current working directory
     try {
-      // Try to use the real git service first
-      const response = await fetch('/api/git/scan-all');
+      // In browser context, we need to simulate git status checking
+      // This would ideally connect to a VS Code extension or backend API
+      logger.info('Detecting workspace context for git scanning');
       
-      if (!response.ok) {
-        throw new Error(`Git scan failed: ${response.statusText}`);
+      // Get all actual uncommitted changes from workspace
+      const allChanges = await this.detectCurrentChanges();
+      
+      if (allChanges.length === 0) {
+        return [];
       }
       
-      const results = await response.json();
+      // Organize changes by package/location
+      const changesByPackage = this.organizeChangesByPackage(allChanges);
+      logger.info('Organized changes by package:', changesByPackage);
       
-      // Transform the results to match our interface
-      return results.map((result: any) => ({
-        package: result.package,
-        path: result.path,
-        changes: result.changes?.map((change: any) => ({
-          file: change.file,
-          status: change.status as ChangeItem['status']
-        })) || [],
-        diff: result.diff
-      }));
+      return changesByPackage;
+      
     } catch (error) {
-      logger.warn('Git service unavailable, falling back to mock data:', error);
+      logger.warn('Git scanning failed, returning empty array:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Detect current changes in the workspace using real git status
+   * NO STATIC DATA - calls backend API or VS Code extension for real git status
+   */
+  private async detectCurrentChanges(): Promise<ChangeItem[]> {
+    try {
+      // Get the workspace root first
+      const workspaceRoot = await this.detectWorkspaceRoot();
+      logger.info(`Scanning for real git changes in: ${workspaceRoot}`);
       
-      // Fallback to mock data if git service is not running
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Try to call backend API for real git status
+      const response = await fetch('/api/git/status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workspacePath: workspaceRoot
+        })
+      });
+
+      if (response.ok) {
+        const gitStatus = await response.json();
+        logger.info('Retrieved real git status from backend:', gitStatus);
+        const parsedChanges = this.parseGitStatusOutput(gitStatus.output || '');
+        logger.info('Parsed changes:', parsedChanges);
+        return parsedChanges;
+      } else {
+        logger.warn('Backend git API not available, trying VS Code extension');
+        return await this.tryVSCodeExtension(workspaceRoot);
+      }
+    } catch (error) {
+      logger.error('Failed to get real git status:', error as Error);
+      // Return empty array instead of fallback data to avoid stale data
+      return [];
+    }
+  }
+
+  /**
+   * Try to use VS Code extension API for git status
+   */
+  private async tryVSCodeExtension(workspacePath: string): Promise<ChangeItem[]> {
+    try {
+      // Check if VS Code extension API is available
+      if (typeof window !== 'undefined' && (window as any).vscode) {
+        const vscode = (window as any).vscode;
+        logger.info('Using VS Code extension for git status');
+        
+        // Send message to VS Code extension
+        const gitStatus = await vscode.postMessage({
+          command: 'git.status',
+          workspacePath
+        });
+        
+        return this.parseGitStatusOutput(gitStatus);
+      } else {
+        logger.warn('VS Code extension not available');
+        return [];
+      }
+    } catch (error) {
+      logger.error('VS Code extension call failed:', error as Error);
+      return [];
+    }
+  }
+
+  /**
+   * Organize changes by package/location 
+   */
+  private organizeChangesByPackage(changes: ChangeItem[]): PackageChanges[] {
+    const packageMap = new Map<string, ChangeItem[]>();
+    
+    changes.forEach(change => {
+      // Determine which package this change belongs to
+      const { packageName, relativePath } = this.categorizeFile(change.file);
       
-      const mockChanges: PackageChanges[] = [
-        {
-          package: 'ui-components',
-          path: 'packages/ui-components',
-          changes: [
-            { file: 'src/pages/Tools.tsx', status: 'A' },
-            { file: 'src/components/Tools/UncommittedChangesAnalyzer.tsx', status: 'A' },
-            { file: 'src/App.tsx', status: 'M' },
-            { file: 'src/services/toolsService.ts', status: 'A' }
-          ]
-        },
-        {
-          package: 'prompt-toolkit',
-          path: 'packages/prompt-toolkit',
-          changes: [
-            { file: 'src/templates/commit-message.xml', status: 'M' },
-            { file: 'src/utils/parser.ts', status: 'M' }
-          ]
-        },
-        {
-          package: 'sdlc-engine',
-          path: 'packages/sdlc-engine',
-          changes: [
-            { file: 'src/stateMachine.ts', status: 'M' },
-            { file: 'tests/stateMachine.test.ts', status: 'M' }
-          ]
+      if (!packageMap.has(packageName)) {
+        packageMap.set(packageName, []);
+      }
+      
+      // Add change with relative path within the package
+      packageMap.get(packageName)!.push({
+        ...change,
+        file: relativePath
+      });
+    });
+    
+    // Convert map to PackageChanges array
+    return Array.from(packageMap.entries()).map(([packageName, changes]) => ({
+      package: packageName,
+      path: this.getPackagePath(packageName),
+      changes
+    }));
+  }
+
+  /**
+   * Categorize a file path to determine package and relative path
+   */
+  private categorizeFile(filePath: string): { packageName: string; relativePath: string } {
+    // Remove meta-gothic-framework prefix if present
+    const cleanPath = filePath.replace(/^meta-gothic-framework\//, '');
+    
+    // Check if it's in a package directory
+    if (cleanPath.startsWith('packages/')) {
+      const pathParts = cleanPath.split('/');
+      if (pathParts.length >= 2) {
+        const packageName = pathParts[1]; // e.g., 'ui-components'
+        const relativePath = pathParts.slice(2).join('/'); // e.g., 'src/services/toolsService.ts'
+        return { packageName, relativePath };
+      }
+    }
+    
+    // Root level files (like tsconfig.json, test-change-detection.md)
+    return {
+      packageName: 'meta-gothic-framework',
+      relativePath: cleanPath
+    };
+  }
+
+  /**
+   * Get the display path for a package
+   */
+  private getPackagePath(packageName: string): string {
+    if (packageName === 'meta-gothic-framework') {
+      return '.';
+    }
+    return `packages/${packageName}`;
+  }
+
+  /**
+   * Parse git status porcelain output into ChangeItem array
+   */
+  private parseGitStatusOutput(gitOutput: string): ChangeItem[] {
+    if (!gitOutput.trim()) {
+      return [];
+    }
+
+    return gitOutput
+      .split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        const status = line.substring(0, 2);
+        const file = line.substring(3);
+        
+        // Parse git status codes
+        let changeStatus: ChangeItem['status'];
+        if (status === '??') {
+          changeStatus = '??';
+        } else if (status.includes('M')) {
+          changeStatus = 'M';
+        } else if (status.includes('A')) {
+          changeStatus = 'A';
+        } else if (status.includes('D')) {
+          changeStatus = 'D';
+        } else {
+          changeStatus = 'M'; // Default to modified
         }
-      ];
+
+        return {
+          file,
+          status: changeStatus
+        };
+      });
+  }
+
+  /**
+   * Detect the VS Code workspace root directory
+   * Uses browser location and path analysis to determine workspace
+   */
+  private async detectWorkspaceRoot(): Promise<string> {
+    try {
+      // Try to detect from browser URL or environment
+      if (typeof window !== 'undefined') {
+        // In development, we know we're in meta-gothic-framework
+        // In production, this would query VS Code extension or use file dialogs
+        const currentUrl = window.location.pathname;
+        logger.info(`Browser path: ${currentUrl}`);
+      }
       
-      return mockChanges;
+      // Check if VS Code workspace API is available
+      if (typeof window !== 'undefined' && (window as any).vscode) {
+        const vscode = (window as any).vscode;
+        const workspaceFolders = await vscode.getWorkspaceFolders();
+        if (workspaceFolders && workspaceFolders.length > 0) {
+          return workspaceFolders[0].uri.fsPath;
+        }
+      }
+      
+      // Default to meta-gothic-framework root
+      // In a real implementation, this would be configurable or detected
+      return '/Users/josh/Documents/h1b-visa-analysis/meta-gothic-framework';
+    } catch (error) {
+      logger.warn('Failed to detect workspace root, using default:', error as Error);
+      return '/Users/josh/Documents/h1b-visa-analysis/meta-gothic-framework';
     }
   }
 

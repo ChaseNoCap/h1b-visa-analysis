@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 
-const express = require('express');
-const { exec } = require('child_process');
-const { promisify } = require('util');
-const path = require('path');
-const cors = require('cors');
+import express from 'express';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import path from 'path';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const execAsync = promisify(exec);
 const app = express();
@@ -63,6 +67,46 @@ app.post('/api/git/exec', async (req, res) => {
     res.text(output);
   } catch (error) {
     res.status(500).text(error.message);
+  }
+});
+
+// Get git status for a specific workspace
+app.post('/api/git/status', async (req, res) => {
+  const { workspacePath } = req.body;
+  
+  // Default to meta-gothic-framework root if no workspace provided
+  const targetPath = workspacePath || path.join(__dirname, '../../..');
+  const resolvedPath = path.resolve(targetPath);
+  
+  // Security: validate path is within the meta-gothic-framework
+  const basePath = path.resolve(path.join(__dirname, '../../..'));
+  
+  if (!resolvedPath.startsWith(basePath)) {
+    return res.status(403).json({ error: 'Access denied: path outside of meta-gothic-framework' });
+  }
+
+  try {
+    console.log(`Getting git status for workspace: ${resolvedPath}`);
+    
+    // Get status using porcelain format
+    const statusOutput = await execGitCommand(resolvedPath, ['status', '--porcelain=v1']);
+    
+    res.json({
+      success: true,
+      output: statusOutput,
+      workspacePath: resolvedPath,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error(`Failed to get git status for ${resolvedPath}:`, error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      output: '',
+      workspacePath: resolvedPath,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
@@ -139,6 +183,7 @@ app.listen(PORT, () => {
   console.log(`Git server running on http://localhost:${PORT}`);
   console.log('Available endpoints:');
   console.log('  POST /api/git/exec - Execute git command');
+  console.log('  POST /api/git/status - Get git status for workspace');
   console.log('  GET  /api/git/scan-all - Scan all packages');
   console.log('  GET  /api/git/health - Health check');
 });
