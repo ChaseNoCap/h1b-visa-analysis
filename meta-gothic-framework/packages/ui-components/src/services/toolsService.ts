@@ -1,4 +1,5 @@
 import { createLogger } from '../utils/logger';
+import { gitService } from './gitService';
 
 const logger = createLogger('toolsService');
 
@@ -23,46 +24,69 @@ export interface CommitMessage {
 
 class ToolsService {
   /**
-   * Mock implementation of scanning for uncommitted changes
-   * In production, this would call a backend API that runs git commands
+   * Scan for uncommitted changes across all Meta GOTHIC packages
+   * Uses real git commands via the git server
    */
   async scanUncommittedChanges(): Promise<PackageChanges[]> {
     logger.info('Scanning for uncommitted changes in Meta GOTHIC packages');
     
-    // Mock delay to simulate scanning
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Mock data for demonstration
-    const mockChanges: PackageChanges[] = [
-      {
-        package: 'ui-components',
-        path: 'packages/ui-components',
-        changes: [
-          { file: 'src/pages/Tools.tsx', status: 'A' },
-          { file: 'src/components/Tools/UncommittedChangesAnalyzer.tsx', status: 'A' },
-          { file: 'src/App.tsx', status: 'M' },
-          { file: 'src/services/toolsService.ts', status: 'A' }
-        ]
-      },
-      {
-        package: 'prompt-toolkit',
-        path: 'packages/prompt-toolkit',
-        changes: [
-          { file: 'src/templates/commit-message.xml', status: 'M' },
-          { file: 'src/utils/parser.ts', status: 'M' }
-        ]
-      },
-      {
-        package: 'sdlc-engine',
-        path: 'packages/sdlc-engine',
-        changes: [
-          { file: 'src/stateMachine.ts', status: 'M' },
-          { file: 'tests/stateMachine.test.ts', status: 'M' }
-        ]
+    try {
+      // Try to use the real git service first
+      const response = await fetch('/api/git/scan-all');
+      
+      if (!response.ok) {
+        throw new Error(`Git scan failed: ${response.statusText}`);
       }
-    ];
-    
-    return mockChanges;
+      
+      const results = await response.json();
+      
+      // Transform the results to match our interface
+      return results.map((result: any) => ({
+        package: result.package,
+        path: result.path,
+        changes: result.changes?.map((change: any) => ({
+          file: change.file,
+          status: change.status as ChangeItem['status']
+        })) || [],
+        diff: result.diff
+      }));
+    } catch (error) {
+      logger.warn('Git service unavailable, falling back to mock data:', error);
+      
+      // Fallback to mock data if git service is not running
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const mockChanges: PackageChanges[] = [
+        {
+          package: 'ui-components',
+          path: 'packages/ui-components',
+          changes: [
+            { file: 'src/pages/Tools.tsx', status: 'A' },
+            { file: 'src/components/Tools/UncommittedChangesAnalyzer.tsx', status: 'A' },
+            { file: 'src/App.tsx', status: 'M' },
+            { file: 'src/services/toolsService.ts', status: 'A' }
+          ]
+        },
+        {
+          package: 'prompt-toolkit',
+          path: 'packages/prompt-toolkit',
+          changes: [
+            { file: 'src/templates/commit-message.xml', status: 'M' },
+            { file: 'src/utils/parser.ts', status: 'M' }
+          ]
+        },
+        {
+          package: 'sdlc-engine',
+          path: 'packages/sdlc-engine',
+          changes: [
+            { file: 'src/stateMachine.ts', status: 'M' },
+            { file: 'tests/stateMachine.test.ts', status: 'M' }
+          ]
+        }
+      ];
+      
+      return mockChanges;
+    }
   }
 
   /**

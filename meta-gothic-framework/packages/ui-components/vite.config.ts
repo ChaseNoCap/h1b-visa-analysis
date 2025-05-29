@@ -16,6 +16,10 @@ export default defineConfig({
     strictPort: false,
     open: false,
     proxy: {
+      '/api/git': {
+        target: 'http://localhost:3003',
+        changeOrigin: true,
+      },
       '/api': {
         target: process.env.VITE_API_URL || 'http://localhost:4000',
         changeOrigin: true,

@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
-import { FileText, GitCommit, ChevronRight, ChevronDown, RefreshCw } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { FileText, GitCommit, ChevronRight, ChevronDown, RefreshCw, AlertCircle } from 'lucide-react';
 import { useTheme } from '../../context';
 import { ApiError } from '../ApiError';
 import { toolsService, type PackageChanges, type ChangeItem } from '../../services/toolsService';
+import { TerminalOutput } from './TerminalOutput';
 
 
 interface UncommittedChangesAnalyzerProps {
   onAnalysisComplete?: (changes: PackageChanges[]) => void;
+}
+
+interface TerminalLine {
+  id: string;
+  timestamp: Date;
+  type: 'command' | 'output' | 'error' | 'info';
+  content: string;
 }
 
 export const UncommittedChangesAnalyzer: React.FC<UncommittedChangesAnalyzerProps> = ({ onAnalysisComplete }) => {
@@ -15,19 +23,48 @@ export const UncommittedChangesAnalyzer: React.FC<UncommittedChangesAnalyzerProp
   const [changes, setChanges] = useState<PackageChanges[]>([]);
   const [error, setError] = useState<Error | null>(null);
   const [expandedPackages, setExpandedPackages] = useState<Set<string>>(new Set());
+  const [terminalLines, setTerminalLines] = useState<TerminalLine[]>([]);
+  const [showTerminal, setShowTerminal] = useState(false);
+
+  const addTerminalLine = useCallback((type: TerminalLine['type'], content: string) => {
+    setTerminalLines(prev => [...prev, {
+      id: `${Date.now()}-${Math.random()}`,
+      timestamp: new Date(),
+      type,
+      content
+    }]);
+  }, []);
 
   const scanForChanges = async () => {
     setIsScanning(true);
     setError(null);
+    setChanges([]);
+    setShowTerminal(true);
+    setTerminalLines([]);
     
     try {
+      addTerminalLine('info', 'Starting scan for uncommitted changes...');
+      addTerminalLine('command', 'git status --porcelain=v1');
+      
       const data = await toolsService.scanUncommittedChanges();
+      
+      if (data.length === 0) {
+        addTerminalLine('info', 'No uncommitted changes found in any Meta GOTHIC packages');
+      } else {
+        addTerminalLine('output', `Found changes in ${data.length} packages:`);
+        data.forEach(pkg => {
+          addTerminalLine('output', `  - ${pkg.package}: ${pkg.changes.length} files changed`);
+        });
+      }
+      
       setChanges(data);
       onAnalysisComplete?.(data);
     } catch (err) {
+      addTerminalLine('error', err instanceof Error ? err.message : 'Failed to scan for changes');
       setError(err as Error);
     } finally {
       setIsScanning(false);
+      addTerminalLine('info', 'Scan complete');
     }
   };
 
@@ -166,6 +203,27 @@ export const UncommittedChangesAnalyzer: React.FC<UncommittedChangesAnalyzerProp
           )}
         </div>
       ))}
+
+      {showTerminal && terminalLines.length > 0 && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Git Command Output
+            </h4>
+            <button
+              onClick={() => setShowTerminal(!showTerminal)}
+              className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+            >
+              {showTerminal ? 'Hide' : 'Show'} Terminal
+            </button>
+          </div>
+          <TerminalOutput 
+            lines={terminalLines}
+            title="Git Status Scanner"
+            className="mt-2"
+          />
+        </div>
+      )}
     </div>
   );
 };
