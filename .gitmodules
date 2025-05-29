@@ -1,6 +1,6 @@
 # Active Git Submodules
-[submodule "packages/sdlc-config"]
-	path = packages/sdlc-config
+[submodule "meta-gothic-framework/packages/sdlc-config"]
+	path = meta-gothic-framework/packages/sdlc-config
 	url = https://github.com/ChaseNoCap/sdlc-config.git
 [submodule "packages/di-framework"]
 	path = packages/di-framework
@@ -11,11 +11,11 @@
 [submodule "packages/cache"]
 	path = packages/cache
 	url = https://github.com/ChaseNoCap/cache.git
-[submodule "packages/claude-client"]
-	path = packages/claude-client
+[submodule "meta-gothic-framework/packages/claude-client"]
+	path = meta-gothic-framework/packages/claude-client
 	url = https://github.com/ChaseNoCap/claude-client.git
-[submodule "packages/context-aggregator"]
-	path = packages/context-aggregator
+[submodule "meta-gothic-framework/packages/context-aggregator"]
+	path = meta-gothic-framework/packages/context-aggregator
 	url = https://github.com/ChaseNoCap/context-aggregator.git
 [submodule "packages/event-system"]
 	path = packages/event-system
@@ -26,14 +26,14 @@
 [submodule "packages/github-graphql-client"]
 	path = packages/github-graphql-client
 	url = https://github.com/ChaseNoCap/github-graphql-client.git
-[submodule "packages/graphql-toolkit"]
-	path = packages/graphql-toolkit
+[submodule "meta-gothic-framework/packages/graphql-toolkit"]
+	path = meta-gothic-framework/packages/graphql-toolkit
 	url = https://github.com/ChaseNoCap/graphql-toolkit.git
 [submodule "packages/markdown-compiler"]
 	path = packages/markdown-compiler
 	url = https://github.com/ChaseNoCap/markdown-compiler.git
-[submodule "packages/prompt-toolkit"]
-	path = packages/prompt-toolkit
+[submodule "meta-gothic-framework/packages/prompt-toolkit"]
+	path = meta-gothic-framework/packages/prompt-toolkit
 	url = https://github.com/ChaseNoCap/prompt-toolkit.git
 [submodule "packages/prompts"]
 	path = packages/prompts
@@ -44,11 +44,11 @@
 [submodule "packages/report-templates"]
 	path = packages/report-templates
 	url = https://github.com/ChaseNoCap/report-templates.git
-[submodule "packages/sdlc-content"]
-	path = packages/sdlc-content
+[submodule "meta-gothic-framework/packages/sdlc-content"]
+	path = meta-gothic-framework/packages/sdlc-content
 	url = https://github.com/ChaseNoCap/sdlc-content.git
-[submodule "packages/sdlc-engine"]
-	path = packages/sdlc-engine
+[submodule "meta-gothic-framework/packages/sdlc-engine"]
+	path = meta-gothic-framework/packages/sdlc-engine
 	url = https://github.com/ChaseNoCap/sdlc-engine.git
 [submodule "packages/test-helpers"]
 	path = packages/test-helpers
