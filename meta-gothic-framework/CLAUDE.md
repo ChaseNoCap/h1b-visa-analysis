@@ -1,14 +1,16 @@
-# metaGOTHIC CLAUDE.md
+# metaGOTHIC Framework CLAUDE.md
 
-This is the nested meta repository for the metaGOTHIC framework - an AI-Guided Opinionated TypeScript Framework with High Intelligent Components.
+This is the metaGOTHIC framework - an AI-Guided Opinionated TypeScript Framework with High Intelligent Components.
+
+⚠️ **IMPORTANT**: This is the metaGOTHIC framework context. When working here, focus exclusively on AI-guided development tooling. This framework is independent and has no connection to any visa analysis systems.
 
 ## 🎯 Repository Purpose
 
-This nested meta repository consolidates all metaGOTHIC-specific packages to:
-1. **Simplify Management**: Keep metaGOTHIC packages separate from H1B analysis packages
-2. **Enable UI Development**: Provide a dedicated space for the metaGOTHIC dashboard
-3. **Monitor Health**: Real-time monitoring of all metaGOTHIC packages and CI/CD pipelines
-4. **Control Pipelines**: Centralized control for triggering builds, tests, and publishing
+The metaGOTHIC framework is a comprehensive AI-guided development platform that:
+1. **Guides Development**: AI-assisted development workflows with Claude integration
+2. **Monitors Health**: Real-time monitoring of all metaGOTHIC packages and CI/CD pipelines
+3. **Controls Pipelines**: Centralized control for triggering builds, tests, and publishing
+4. **Enables Dogfooding**: The framework uses itself for its own development
 
 ## 📦 Package Structure
 
@@ -27,6 +29,28 @@ metaGOTHIC/
 ├── docs/                       # metaGOTHIC-specific documentation
 └── scripts/                    # Automation scripts
 ```
+
+## 📊 Current State (May 2025)
+
+### Package Development Status
+- **8 packages created**: All core metaGOTHIC packages implemented
+- **UI Dashboard**: Fully operational with live GitHub API integration
+- **Real-time Data**: Repositories, workflows, metrics display live data
+- **Production Ready**: Running at http://localhost:3001 with comprehensive error handling
+
+### What's Working
+- ✅ **Health Monitoring**: Real-time package health, build status, test coverage
+- ✅ **Pipeline Control**: Trigger workflows, monitor runs, view logs
+- ✅ **Repository Browser**: View all ChaseNoCap repositories with live data
+- ✅ **Error Handling**: User-friendly setup guidance with retry mechanisms
+- ✅ **Browser Compatibility**: Resolved all Node.js dependency issues
+
+### What Needs Work
+- ❌ **Tools Page**: ThemeContext error prevents repository tools from loading
+- ❌ **Real Git Integration**: Tools page uses mock data, needs backend API
+- ❌ **AI Integration**: Commit message generation needs real Claude integration
+- ❌ **Event System**: Real-time updates not yet implemented
+- ❌ **GraphQL Federation**: Services not yet federated
 
 ## 🚀 UI Components Package
 
@@ -49,23 +73,41 @@ The `ui-components` package is the primary interface for metaGOTHIC, featuring:
 
 ### Initial Setup
 ```bash
-# Clone with submodules
-git clone --recurse-submodules <repo-url> metaGOTHIC
-cd metaGOTHIC
+# Clone the metaGOTHIC framework
+git clone --recurse-submodules https://github.com/ChaseNoCap/meta-gothic-framework
+cd meta-gothic-framework
 
 # Or initialize submodules after cloning
 git submodule update --init --recursive
 
 # Install dependencies
 npm install
+
+# Set up GitHub token for API access
+export VITE_GITHUB_TOKEN=your_github_token_here
 ```
 
 ### Running the Dashboard
 ```bash
-# Development mode
+# Development mode with live reload
 npm run dev
 
-# This runs the UI in development mode at http://localhost:3000
+# Dashboard runs at http://localhost:3001
+# Tools page (needs fix): http://localhost:3001/tools
+```
+
+### Current Development Focus
+```bash
+# 1. Fix Tools page ThemeContext issue
+cd packages/ui-components
+# Remove theme imports or create ThemeContext
+
+# 2. Test the fix
+npm run dev
+# Navigate to http://localhost:3001/tools
+
+# 3. Use the Tools page for dogfooding
+# Once fixed, use it to manage metaGOTHIC repos
 ```
 
 ### Working with Packages
@@ -91,11 +133,11 @@ git commit -m "chore: update prompt-toolkit submodule"
 
 ## 🏗️ Architecture Patterns
 
-### Nested Meta Repository Pattern
-This is our first implementation of a nested meta repository:
-- **Parent**: h1b-visa-analysis (contains both H1B and metaGOTHIC packages)
-- **Child**: metaGOTHIC (contains only metaGOTHIC packages)
-- **Benefits**: Clear separation of concerns, focused development environment
+### Meta Repository Pattern
+The metaGOTHIC framework uses a meta repository pattern with Git submodules:
+- **Meta Repository**: Orchestrates all metaGOTHIC packages
+- **Package Repositories**: Each package in its own GitHub repository
+- **Benefits**: Independent versioning, clear ownership, automated publishing
 
 ### UI Architecture
 - **React + TypeScript**: Type-safe component development
@@ -158,19 +200,38 @@ The dashboard currently uses mock data. Future integration will:
 - [ ] Automated issue creation
 - [ ] Integration with Claude for AI assistance
 
-## 🤖 AI Context Loading
+## 🤖 AI/Claude Development Guidelines
 
-When working with metaGOTHIC packages, load context progressively:
+### Working Within metaGOTHIC Context
 
-1. **Overview**: Load this CLAUDE.md for metaGOTHIC context
-2. **Package Details**: Load specific package CLAUDE.md files
-3. **Implementation**: Load source code as needed
+When Claude is asked to work on metaGOTHIC:
+
+1. **Focus on Framework**: This is an AI-guided development framework, not a visa analysis system
+2. **Embrace Dogfooding**: Use metaGOTHIC tools to develop metaGOTHIC itself
+3. **Prioritize Current Work**: Check `/docs/backlog.md` for current priorities
+4. **Fix Before Feature**: Address the Tools page ThemeContext issue before new features
+
+### Context Loading Strategy
+
+Load context progressively based on the task:
+
+1. **Overview**: Start with this CLAUDE.md for framework understanding
+2. **Current Priority**: Load `/docs/backlog.md` to see what's most important
+3. **Package Work**: Load specific package CLAUDE.md and source files
+4. **Architecture**: Load relevant ADRs from `/docs/ADR-*.md`
 
 ### Quick Commands for Claude
+- "What's the current priority?" → Check backlog.md and Tools page issue
 - "Show metaGOTHIC health" → Load dashboard components
+- "Fix Tools page" → Focus on ThemeContext error in ui-components
 - "Update package X" → Load package submodule
-- "Add new metaGOTHIC feature" → Load relevant architecture docs
-- "Fix pipeline issue" → Load pipeline control components
+- "Add metaGOTHIC feature" → Check backlog first, then architecture docs
+
+### Development Principles
+1. **Framework First**: All work should advance the metaGOTHIC framework
+2. **Real Integration**: Prefer real implementations over mocks
+3. **User Experience**: Ensure smooth developer experience
+4. **Self-Testing**: Test features by using them on metaGOTHIC itself
 
 ## 🚦 Status Indicators
 
@@ -202,10 +263,44 @@ When working with metaGOTHIC packages, load context progressively:
 - Maintain high test coverage
 - Update CLAUDE.md with changes
 
-## 🔄 Integration with Parent Meta Repository
+## 🚨 Current Priority: Tools Page ThemeContext Fix
 
-This nested repository maintains its independence while staying connected:
-- Parent tracks this entire directory as a unit
-- Changes here don't affect H1B packages
-- Shared dependencies use published versions
-- Clear boundary between frameworks
+**IMMEDIATE TASK**: The Tools page at `/tools` has a runtime error due to missing ThemeContext.
+
+### Issue Details
+- **Error**: Components import `ThemeContext` that doesn't exist
+- **Location**: `/packages/ui-components/src/pages/Tools.tsx` and related components
+- **Impact**: Tools page crashes on load preventing repository management features
+
+### Fix Options
+1. **Quick Fix**: Remove theme imports from Tools components
+2. **Proper Fix**: Create ThemeContext provider with dark/light mode support
+3. **Best Fix**: Integrate with existing Tailwind dark mode classes
+
+The Tools page implements critical features for the dogfooding principle:
+- Uncommitted changes analysis across all repos
+- AI-powered commit message generation
+- Automated git operations
+- Real-time repository status monitoring
+
+## 🐕 Dogfooding Principle
+
+metaGOTHIC follows the dogfooding principle - we use our own framework to develop the framework itself:
+
+### What This Means
+1. **Self-Development**: metaGOTHIC tools are used to develop metaGOTHIC
+2. **Real-world Testing**: Every feature is battle-tested by our own use
+3. **Continuous Improvement**: Pain points are immediately addressed
+4. **Authenticity**: We experience what our users experience
+
+### Current Dogfooding Features
+- **UI Dashboard**: Monitor metaGOTHIC package health
+- **Pipeline Control**: Manage our own CI/CD workflows
+- **Tools Page**: Automate our own git operations
+- **AI Integration**: Use Claude to help develop Claude integration
+
+### Benefits
+- Immediate feedback on tool effectiveness
+- Natural prioritization of important features
+- Authentic understanding of developer needs
+- Rapid iteration based on real usage

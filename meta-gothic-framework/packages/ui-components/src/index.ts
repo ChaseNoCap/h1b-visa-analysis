@@ -20,6 +20,7 @@ export {
 
 // Export contexts
 export { TokenValidationProvider, useTokenValidation } from './contexts';
+export { ThemeProvider, useTheme } from './context';
 
 // Export hooks
 export { useGitHubToken } from './hooks';
