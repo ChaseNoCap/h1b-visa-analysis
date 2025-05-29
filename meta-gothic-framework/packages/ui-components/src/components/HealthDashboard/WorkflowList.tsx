@@ -14,10 +14,12 @@ export const WorkflowList: React.FC<WorkflowListProps> = ({ metrics }) => {
     m.workflows.map(w => ({ ...w, repository: m.repository }))
   );
 
-  // Sort by most recent
-  const sortedWorkflows = allWorkflows.sort((a, b) => 
-    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  ).slice(0, 10); // Show only 10 most recent
+  // Sort by most recent with safe date parsing
+  const sortedWorkflows = allWorkflows.sort((a, b) => {
+    const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+    const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+    return dateB - dateA;
+  }).slice(0, 10); // Show only 10 most recent
 
   const statusIcons = {
     queued: <Clock className="h-4 w-4 text-gray-400" />,
@@ -83,7 +85,10 @@ export const WorkflowList: React.FC<WorkflowListProps> = ({ metrics }) => {
                   {workflow.conclusion || workflow.status}
                 </span>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  {formatDistanceToNow(new Date(workflow.updatedAt), { addSuffix: true })}
+                  {workflow.updatedAt ? 
+                    formatDistanceToNow(new Date(workflow.updatedAt), { addSuffix: true }) : 
+                    'Unknown time'
+                  }
                 </span>
               </div>
             </div>

@@ -62,12 +62,28 @@ class GitHubService {
     this.logger.debug('🔄 Cache miss: repositories, fetching...');
 
     try {
-      // Fetch repositories from the ChaseNoCap organization
-      const repos = await this.request('/orgs/ChaseNoCap/repos');
+      // Fetch repositories from the user's personal account
+      const repos = await this.request('/user/repos');
       
       // Transform to our format
       const repositories: Repository[] = repos
-        .filter((repo: any) => repo.name.includes('chasenocap') || repo.topics?.includes('metagothic'))
+        .filter((repo: any) => 
+          // Include metaGOTHIC packages and H1B packages
+          repo.name.includes('claude-client') || 
+          repo.name.includes('prompt-toolkit') ||
+          repo.name.includes('sdlc-') ||
+          repo.name.includes('graphql-toolkit') ||
+          repo.name.includes('context-aggregator') ||
+          repo.name.includes('ui-components') ||
+          repo.name.includes('github-graphql-client') ||
+          repo.name.includes('cache') ||
+          repo.name.includes('logger') ||
+          repo.name.includes('di-framework') ||
+          repo.name.includes('event-system') ||
+          repo.name.includes('file-system') ||
+          repo.topics?.includes('metagothic') ||
+          repo.topics?.includes('h1b-analysis')
+        )
         .map((repo: any) => ({
           id: repo.id.toString(),
           name: repo.name,
@@ -93,7 +109,7 @@ class GitHubService {
   async fetchHealthMetrics(): Promise<HealthMetrics[]> {
     const cacheKey = 'health-metrics';
     
-    // Try cache first
+    // Try cache first  
     const cached = await this.cache.get<HealthMetrics[]>(cacheKey);
     if (cached) {
       this.logger.debug('💾 Cache hit: health-metrics');
@@ -137,7 +153,18 @@ class GitHubService {
                 openPRs: prs.length || 0,
                 dependencyStatus: Math.random() > 0.7 ? 'outdated' : 'up-to-date',
               },
-              workflows: workflows.workflow_runs?.slice(0, 3) || [],
+              workflows: workflows.workflow_runs?.slice(0, 3).map((run: any) => ({
+                id: run.id,
+                name: run.name || run.workflow?.name || 'Unknown Workflow',
+                status: run.status,
+                conclusion: run.conclusion,
+                createdAt: run.created_at,
+                updatedAt: run.updated_at,
+                headSha: run.head_sha,
+                headBranch: run.head_branch,
+                event: run.event,
+                repository: repoName,
+              })) || [],
             };
           } catch (error) {
             this.logger.warn(`Failed to fetch metrics for ${repoName}`, error as Error);
