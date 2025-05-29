@@ -1,40 +1,44 @@
 import { Repository, HealthMetrics, WorkflowRun, PublishRequest } from '@/types';
 
-// GitHub service integration with fallback to enhanced mock
+// GitHub service integration - PRODUCTION MODE (Real API Only)
 let githubService: any = null;
-let useEnhancedMock = false;
+let isTestEnvironment = false;
 let gitHubInitPromise: Promise<void> | null = null;
 
-// Initialize GitHub service asynchronously
+// Initialize GitHub service with strict real API enforcement
 async function initializeGitHubService() {
   if (gitHubInitPromise) return gitHubInitPromise;
   
   gitHubInitPromise = (async () => {
-    try {
-      // Check if GitHub token is available for real API
-      const githubToken = import.meta.env.VITE_GITHUB_TOKEN;
-      
-      if (githubToken) {
-        try {
-          // Try to initialize real GitHub service
-          const { githubService: realGithubService } = await import('./githubService.js');
-          githubService = realGithubService;
-          useEnhancedMock = false;
-          console.log('✅ Using real GitHub API with token');
-          return; // Exit early if real service works
-        } catch (error) {
-          console.log('⚠️ Real GitHub service failed, falling back to enhanced mock:', error);
-        }
-      }
-
-      // Use enhanced mock service
+    // Check if we're in test environment
+    isTestEnvironment = import.meta.env.NODE_ENV === 'test' || import.meta.env.VITEST;
+    
+    if (isTestEnvironment) {
+      // Only use mock in test environment
       const { githubService: mockGithubService } = await import('./githubServiceMock.js');
       githubService = mockGithubService;
-      useEnhancedMock = true;
-      
+      console.log('🧪 Using mock GitHub service in test environment');
+      return;
+    }
+    
+    // PRODUCTION: Try to use real GitHub service, but gracefully fallback
+    const githubToken = import.meta.env.VITE_GITHUB_TOKEN;
+    
+    if (!githubToken) {
+      console.warn('⚠️ No GitHub token provided - API calls will fail with user-friendly errors');
+      // Don't throw here - let the API calls handle this gracefully
+      githubService = null;
+      return;
+    }
+    
+    try {
+      // Initialize real GitHub service
+      const { githubService: realGithubService } = await import('./githubServiceSimple.js');
+      githubService = realGithubService;
+      console.log('✅ Using real GitHub API with token');
     } catch (error) {
-      console.log('⚠️ Failed to initialize any GitHub service:', error);
-      useEnhancedMock = false;
+      console.warn('⚠️ Failed to initialize GitHub service - API calls will show errors:', error);
+      githubService = null;
     }
   })();
   
@@ -60,18 +64,21 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export async function fetchRepositories(): Promise<Repository[]> {
-  await initializeGitHubService();
-  
-  if (githubService) {
-    try {
-      return await githubService.fetchRepositories();
-    } catch (error) {
-      console.warn('Failed to fetch repositories from service, falling back to basic mock:', error);
+  try {
+    await initializeGitHubService();
+    
+    if (!githubService) {
+      // Create a user-friendly error that the UI can display
+      const error = new Error('GitHub API not available. Please configure VITE_GITHUB_TOKEN to access real repository data.');
+      (error as any).code = 'GITHUB_TOKEN_MISSING';
+      throw error;
     }
-  }
-
-  // Fallback to mock data
-  return [
+    
+    return await githubService.fetchRepositories();
+  } catch (error) {
+    if (isTestEnvironment) {
+      // In test environment, return basic mock data
+      return [
     {
       id: '1',
       name: 'claude-client',
@@ -162,36 +169,55 @@ export async function fetchRepositories(): Promise<Repository[]> {
       packageName: '@chasenocap/github-graphql-client',
       version: '1.0.0',
     },
-  ];
+      ];
+    }
+    
+    // In production, re-throw the error for UI to handle
+    // Add error code if not already present
+    if (error instanceof Error && !(error as any).code) {
+      (error as any).code = 'API_ERROR';
+    }
+    throw error;
+  }
 }
 
 export async function fetchHealthMetrics(): Promise<HealthMetrics[]> {
-  await initializeGitHubService();
-  
-  if (githubService) {
-    try {
-      return await githubService.fetchHealthMetrics();
-    } catch (error) {
-      console.warn('Failed to fetch health metrics from service, falling back to basic mock:', error);
+  try {
+    await initializeGitHubService();
+    
+    if (!githubService) {
+      const error = new Error('GitHub API not available. Please configure VITE_GITHUB_TOKEN to access real health metrics.');
+      (error as any).code = 'GITHUB_TOKEN_MISSING';
+      throw error;
     }
+    
+    return await githubService.fetchHealthMetrics();
+  } catch (error) {
+    if (isTestEnvironment) {
+      // In test environment, return mock data
+      const repos = await fetchRepositories();
+      return repos.map(repo => ({
+        repository: repo.name,
+        status: Math.random() > 0.8 ? 'warning' : 'healthy',
+        lastUpdate: new Date().toISOString(),
+        metrics: {
+          buildStatus: Math.random() > 0.9 ? 'failing' : 'passing',
+          testCoverage: Math.random() * 40 + 60,
+          lastPublish: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+          openIssues: Math.floor(Math.random() * 10),
+          openPRs: Math.floor(Math.random() * 5),
+          dependencyStatus: Math.random() > 0.7 ? 'outdated' : 'up-to-date',
+        },
+        workflows: [],
+      }));
+    }
+    
+    // In production, re-throw the error for UI to handle
+    if (error instanceof Error && !(error as any).code) {
+      (error as any).code = 'API_ERROR';
+    }
+    throw error;
   }
-
-  // Fallback to mock data
-  const repos = await fetchRepositories();
-  return repos.map(repo => ({
-    repository: repo.name,
-    status: Math.random() > 0.8 ? 'warning' : 'healthy',
-    lastUpdate: new Date().toISOString(),
-    metrics: {
-      buildStatus: Math.random() > 0.9 ? 'failing' : 'passing',
-      testCoverage: Math.random() * 40 + 60,
-      lastPublish: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-      openIssues: Math.floor(Math.random() * 10),
-      openPRs: Math.floor(Math.random() * 5),
-      dependencyStatus: Math.random() > 0.7 ? 'outdated' : 'up-to-date',
-    },
-    workflows: [],
-  }));
 }
 
 export async function triggerWorkflow(params: {
@@ -199,52 +225,85 @@ export async function triggerWorkflow(params: {
   workflow: string;
   inputs?: Record<string, any>;
 }): Promise<void> {
-  await initializeGitHubService();
-  
-  if (githubService) {
-    try {
-      return await githubService.triggerWorkflow(params);
-    } catch (error) {
-      console.warn('Failed to trigger workflow from service, using basic mock:', error);
+  try {
+    await initializeGitHubService();
+    
+    if (!githubService) {
+      const error = new Error('GitHub API not available. Please configure VITE_GITHUB_TOKEN to trigger workflows.');
+      (error as any).code = 'GITHUB_TOKEN_MISSING';
+      throw error;
     }
+    
+    return await githubService.triggerWorkflow(params);
+  } catch (error) {
+    if (isTestEnvironment) {
+      // In test environment, use mock behavior
+      console.log('Triggering workflow (test mock):', params);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      return;
+    }
+    
+    // In production, re-throw the error for UI to handle
+    if (error instanceof Error && !(error as any).code) {
+      (error as any).code = 'API_ERROR';
+    }
+    throw error;
   }
-
-  // Fallback to mock behavior
-  console.log('Triggering workflow (mock):', params);
-  await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 export async function cancelWorkflow(params: {
   repository: string;
   runId: number;
 }): Promise<void> {
-  await initializeGitHubService();
-  
-  if (githubService) {
-    try {
-      return await githubService.cancelWorkflow(params);
-    } catch (error) {
-      console.warn('Failed to cancel workflow from service, using basic mock:', error);
+  try {
+    await initializeGitHubService();
+    
+    if (!githubService) {
+      const error = new Error('GitHub API not available. Please configure VITE_GITHUB_TOKEN to cancel workflows.');
+      (error as any).code = 'GITHUB_TOKEN_MISSING';
+      throw error;
     }
+    
+    return await githubService.cancelWorkflow(params);
+  } catch (error) {
+    if (isTestEnvironment) {
+      // In test environment, use mock behavior
+      console.log('Cancelling workflow (test mock):', params);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      return;
+    }
+    
+    // In production, re-throw the error for UI to handle
+    if (error instanceof Error && !(error as any).code) {
+      (error as any).code = 'API_ERROR';
+    }
+    throw error;
   }
-
-  // Fallback to mock behavior
-  console.log('Cancelling workflow (mock):', params);
-  await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 export async function publishPackage(request: PublishRequest): Promise<void> {
-  await initializeGitHubService();
-  
-  if (githubService) {
-    try {
-      return await githubService.publishPackage(request);
-    } catch (error) {
-      console.warn('Failed to publish package from service, using basic mock:', error);
+  try {
+    await initializeGitHubService();
+    
+    if (!githubService) {
+      const error = new Error('GitHub API not available. Please configure VITE_GITHUB_TOKEN to publish packages.');
+      (error as any).code = 'GITHUB_TOKEN_MISSING';
+      throw error;
     }
+    
+    return await githubService.publishPackage(request);
+  } catch (error) {
+    if (isTestEnvironment) {
+      // In test environment, use mock behavior
+      console.log('Publishing package (test mock):', request);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      return;
+    }
+    
+    // In production, re-throw the error for UI to handle
+    if (error instanceof Error && !(error as any).code) {
+      (error as any).code = 'API_ERROR';
+    }
+    throw error;
   }
-
-  // Fallback to mock behavior
-  console.log('Publishing package (mock):', request);
-  await new Promise(resolve => setTimeout(resolve, 2000));
 }

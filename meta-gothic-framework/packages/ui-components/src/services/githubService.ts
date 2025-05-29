@@ -1,8 +1,10 @@
-import type { IGitHubClient } from '@chasenocap/github-graphql-client';
-import { createGitHubContainer, GITHUB_TYPES } from '@chasenocap/github-graphql-client';
-import { createLogger } from '@chasenocap/logger';
-import type { ICache } from '@chasenocap/cache';
-import { MemoryCache } from '@chasenocap/cache';
+// GitHub client interfaces - fallback when package is not available
+interface IGitHubClient {
+  request(query: string, variables?: any): Promise<any>;
+}
+import { createLogger } from '@/utils/logger';
+import type { ICache } from '@/utils/cache';
+import { MemoryCache } from '@/utils/cache';
 import type { Repository, HealthMetrics, WorkflowRun } from '@/types';
 
 // GitHub API service using the real GitHub GraphQL client
@@ -19,7 +21,7 @@ class GitHubService {
     
     if (!githubToken) {
       this.logger.warn('No GitHub token provided, service will not be functional');
-      throw new Error('GitHub token required for real API access');
+      throw new Error('GitHub token required for real API access. Please set VITE_GITHUB_TOKEN environment variable.');
     }
 
     try {
@@ -28,17 +30,76 @@ class GitHubService {
       // Initialize memory cache for GitHub responses
       this.cache = new MemoryCache();
       
-      const container = createGitHubContainer(
-        { token: githubToken },
-        logger,
-        this.cache
-      );
+      // Simple GitHub client implementation for token validation
+      this.client = {
+        request: async (queryOrUrl: string, variables?: any) => {
+          const isGraphQL = queryOrUrl.includes('query') || queryOrUrl.includes('mutation');
+          
+          if (isGraphQL) {
+            // GraphQL request
+            const response = await fetch('https://api.github.com/graphql', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${githubToken}`,
+                'Content-Type': 'application/json',
+                'User-Agent': 'metaGOTHIC-Dashboard/1.0.0'
+              },
+              body: JSON.stringify({ query: queryOrUrl, variables })
+            });
+            
+            if (!response.ok) {
+              throw new Error(`GraphQL request failed: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            if (result.errors) {
+              throw new Error(`GraphQL errors: ${result.errors.map((e: any) => e.message).join(', ')}`);
+            }
+            
+            return result.data;
+          } else {
+            // REST API request
+            const url = queryOrUrl.startsWith('GET ') || queryOrUrl.startsWith('POST ') 
+              ? `https://api.github.com${queryOrUrl.substring(4)}`
+              : queryOrUrl;
+            
+            const method = queryOrUrl.startsWith('POST ') ? 'POST' : 'GET';
+            
+            const response = await fetch(url, {
+              method,
+              headers: {
+                'Authorization': `token ${githubToken}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'metaGOTHIC-Dashboard/1.0.0',
+                ...(method === 'POST' ? { 'Content-Type': 'application/json' } : {})
+              },
+              ...(method === 'POST' && variables ? { body: JSON.stringify(variables) } : {})
+            });
+            
+            if (!response.ok) {
+              throw new Error(`REST API request failed: ${response.status}`);
+            }
+            
+            return await response.json();
+          }
+        }
+      };
       
-      this.client = container.get<IGitHubClient>(GITHUB_TYPES.IGitHubClient);
       this.logger.info('GitHub service initialized successfully with caching');
     } catch (error) {
       this.logger.error('Failed to initialize GitHub client', error as Error);
-      throw error;
+      
+      // Enhance error messages for better UX
+      if (error instanceof Error) {
+        if (error.message.includes('token')) {
+          throw new Error('GitHub token authentication failed. Please check your VITE_GITHUB_TOKEN environment variable.');
+        }
+        if (error.message.includes('network') || error.message.includes('fetch')) {
+          throw new Error('Network error while connecting to GitHub API. Please check your internet connection.');
+        }
+      }
+      
+      throw new Error(`Failed to initialize GitHub service: ${(error as Error).message}`);
     }
   }
 
@@ -335,13 +396,15 @@ class GitHubService {
     }, {
       fallback: {
         repository: repo.name,
-        status: 'critical',
+        status: 'critical' as const,
         lastUpdate: new Date().toISOString(),
         metrics: {
-          buildStatus: 'unknown',
+          buildStatus: 'unknown' as const,
+          testCoverage: undefined,
+          lastPublish: undefined,
           openIssues: 0,
           openPRs: 0,
-          dependencyStatus: 'up-to-date',
+          dependencyStatus: 'up-to-date' as const,
         },
         workflows: [],
       },
@@ -456,7 +519,7 @@ class GitHubService {
         return cached;
       }
     } catch (error) {
-      this.logger.warn(`Cache get failed for ${cacheKey}:`, error);
+      this.logger.warn(`Cache get failed for ${cacheKey}`, { error });
     }
     
     // Cache miss, fetch fresh data
@@ -465,10 +528,10 @@ class GitHubService {
     
     try {
       // Store in cache with TTL
-      await this.cache.set(cacheKey, result, ttlSeconds);
+      await this.cache.set(cacheKey, result);
       this.logger.debug(`Cached result for ${cacheKey} with TTL ${ttlSeconds}s`);
     } catch (error) {
-      this.logger.warn(`Cache set failed for ${cacheKey}:`, error);
+      this.logger.warn(`Cache set failed for ${cacheKey}`, { error });
     }
     
     return result;

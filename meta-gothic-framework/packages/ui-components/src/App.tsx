@@ -1,10 +1,13 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Activity, GitBranch, Home, Settings } from 'lucide-react';
+import { Activity, GitBranch } from 'lucide-react';
 import { HealthDashboard } from './components/HealthDashboard';
 import { PipelineControl } from './components/PipelineControl';
+import { GitHubErrorBoundary } from './components/ErrorBoundary';
+import { GitHubTokenBanner, TokenStatusIndicator } from './components/TokenValidation';
+import { TokenValidationProvider, useTokenValidation } from './contexts';
 import clsx from 'clsx';
 
 const queryClient = new QueryClient({
@@ -17,6 +20,8 @@ const queryClient = new QueryClient({
 });
 
 const Navigation: React.FC = () => {
+  const { status, isValidating, retryValidation } = useTokenValidation();
+  
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     clsx(
       'flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors',
@@ -46,25 +51,58 @@ const Navigation: React.FC = () => {
               </NavLink>
             </div>
           </div>
+          <div className="flex items-center">
+            <TokenStatusIndicator 
+              status={status}
+              isValidating={isValidating}
+              onRefresh={retryValidation}
+              showDetails={true}
+            />
+          </div>
         </div>
       </div>
     </nav>
   );
 };
 
+const DashboardContent: React.FC = () => {
+  const { error, isValidating, retryValidation, dismissError, isDismissed } = useTokenValidation();
+  
+  const shouldShowBanner = error && !isDismissed;
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Navigation />
+      
+      {/* Token validation banner */}
+      {shouldShowBanner && (
+        <GitHubTokenBanner 
+          error={error}
+          onRetry={retryValidation}
+          onDismiss={dismissError}
+          isRetrying={isValidating}
+        />
+      )}
+      
+      <Routes>
+        <Route path="/" element={<HealthDashboard />} />
+        <Route path="/pipelines" element={<PipelineControl />} />
+      </Routes>
+    </div>
+  );
+};
+
 export const App: React.FC = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-          <Navigation />
-          <Routes>
-            <Route path="/" element={<HealthDashboard />} />
-            <Route path="/pipelines" element={<PipelineControl />} />
-          </Routes>
-        </div>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </Router>
-    </QueryClientProvider>
+    <GitHubErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TokenValidationProvider>
+          <Router>
+            <DashboardContent />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </Router>
+        </TokenValidationProvider>
+      </QueryClientProvider>
+    </GitHubErrorBoundary>
   );
 };

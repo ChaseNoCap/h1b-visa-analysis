@@ -6,6 +6,13 @@ import { fetchHealthMetrics, fetchRepositories } from '@/services/api';
 import { RepositoryCard } from './RepositoryCard';
 import { MetricsOverview } from './MetricsOverview';
 import { WorkflowList } from './WorkflowList';
+import { QueryErrorBoundary } from '../ErrorBoundary';
+import { 
+  RepositoryCardSkeleton, 
+  MetricsOverviewSkeleton, 
+  WorkflowListSkeleton,
+  LoadingTimeout 
+} from '../Skeleton';
 
 export const HealthDashboard: React.FC = () => {
   const { data: repositories, isLoading: reposLoading } = useQuery({
@@ -64,40 +71,74 @@ export const HealthDashboard: React.FC = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <Clock className="h-8 w-8 animate-spin text-gray-400" />
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {/* Metrics Overview */}
-            <MetricsOverview metrics={healthMetrics || []} />
+        <div className="space-y-8">
+          {/* Metrics Overview */}
+          <QueryErrorBoundary>
+            <LoadingTimeout 
+              isLoading={metricsLoading} 
+              timeout={30000}
+              onTimeout={() => console.warn('Metrics loading timed out after 30 seconds')}
+            >
+              {metricsLoading ? (
+                <MetricsOverviewSkeleton />
+              ) : (
+                <MetricsOverview metrics={healthMetrics || []} />
+              )}
+            </LoadingTimeout>
+          </QueryErrorBoundary>
 
-            {/* Repository Grid */}
-            <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Repositories
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {repositories?.map((repo) => (
-                  <RepositoryCard
-                    key={repo.id}
-                    repository={repo}
-                    metrics={healthMetrics?.find(m => m.repository === repo.name)}
-                  />
-                ))}
-              </div>
-            </section>
+          {/* Repository Grid */}
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Repositories
+            </h2>
+            <QueryErrorBoundary>
+              <LoadingTimeout 
+                isLoading={reposLoading} 
+                timeout={30000}
+                onTimeout={() => console.warn('Repository loading timed out after 30 seconds')}
+              >
+                {reposLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array.from({ length: 8 }).map((_, index) => (
+                      <RepositoryCardSkeleton key={index} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {repositories?.map((repo) => (
+                      <RepositoryCard
+                        key={repo.id}
+                        repository={repo}
+                        metrics={healthMetrics?.find(m => m.repository === repo.name)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </LoadingTimeout>
+            </QueryErrorBoundary>
+          </section>
 
-            {/* Recent Workflows */}
-            <section>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Recent Workflow Runs
-              </h2>
-              <WorkflowList metrics={healthMetrics || []} />
-            </section>
-          </div>
-        )}
+          {/* Recent Workflows */}
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Recent Workflow Runs
+            </h2>
+            <QueryErrorBoundary>
+              <LoadingTimeout 
+                isLoading={metricsLoading} 
+                timeout={30000}
+                onTimeout={() => console.warn('Workflow loading timed out after 30 seconds')}
+              >
+                {metricsLoading ? (
+                  <WorkflowListSkeleton />
+                ) : (
+                  <WorkflowList metrics={healthMetrics || []} />
+                )}
+              </LoadingTimeout>
+            </QueryErrorBoundary>
+          </section>
+        </div>
       </main>
     </div>
   );
