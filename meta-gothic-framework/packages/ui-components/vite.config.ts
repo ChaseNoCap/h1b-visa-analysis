@@ -20,6 +20,10 @@ export default defineConfig({
         target: 'http://localhost:3003',
         changeOrigin: true,
       },
+      '/api/claude': {
+        target: 'http://localhost:3003',
+        changeOrigin: true,
+      },
       '/api': {
         target: process.env.VITE_API_URL || 'http://localhost:4000',
         changeOrigin: true,

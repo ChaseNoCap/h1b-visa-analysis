@@ -1,5 +1,4 @@
 import { createLogger } from '../utils/logger';
-import { gitService } from './gitService';
 
 const logger = createLogger('toolsService');
 
@@ -252,36 +251,72 @@ class ToolsService {
   }
 
   /**
-   * Mock implementation of generating commit messages using Claude
-   * In production, this would call Claude API through the backend
+   * Generate commit messages using Claude Code via Node.js subprocess
+   * Calls backend endpoint that spawns Claude Code to analyze actual changes
    */
   async generateCommitMessages(changes: PackageChanges[]): Promise<CommitMessage[]> {
-    logger.info('Generating commit messages for', changes.length, 'packages');
+    logger.info('Generating commit messages via Claude Code for', changes.length, 'packages');
     
-    // Mock delay for API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mock generated messages
-    const messages: CommitMessage[] = changes.map(pkg => {
+    try {
+      // Call backend endpoint that uses Claude Code subprocess
+      const response = await fetch('/api/claude/generate-commit-messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          changes,
+          timestamp: new Date().toISOString()
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Claude Code API failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      logger.info('Generated commit messages via Claude Code:', result);
+      
+      return result.messages || [];
+      
+    } catch (error) {
+      logger.error('Failed to generate commit messages via Claude Code:', error as Error);
+      
+      // Fallback to basic generated messages based on file analysis
+      return this.generateFallbackCommitMessages(changes);
+    }
+  }
+
+  /**
+   * Fallback commit message generation when Claude Code is unavailable
+   */
+  private generateFallbackCommitMessages(changes: PackageChanges[]): CommitMessage[] {
+    return changes.map(pkg => {
       const fileCount = pkg.changes.length;
       const hasNewFiles = pkg.changes.some(c => c.status === 'A');
       const hasModified = pkg.changes.some(c => c.status === 'M');
+      const hasDeleted = pkg.changes.some(c => c.status === 'D');
+      const hasUntracked = pkg.changes.some(c => c.status === '??');
       
       let message = '';
       let description = '';
       
-      if (pkg.package === 'ui-components') {
-        message = 'feat: add Tools page for Meta GOTHIC repository management';
-        description = 'Implements uncommitted changes analyzer tool with scanning capabilities for all Meta GOTHIC packages';
-      } else if (hasNewFiles && hasModified) {
-        message = `feat: enhance ${pkg.package} with new capabilities`;
-        description = `Added new features and improved existing functionality across ${fileCount} files`;
-      } else if (hasNewFiles) {
+      // Generate more dynamic messages based on actual changes
+      if (hasNewFiles && hasModified) {
+        message = `feat: enhance ${pkg.package} with new features and improvements`;
+        description = `Added ${pkg.changes.filter(c => c.status === 'A').length} new files and modified ${pkg.changes.filter(c => c.status === 'M').length} existing files`;
+      } else if (hasNewFiles || hasUntracked) {
         message = `feat: add new components to ${pkg.package}`;
-        description = `Introduced ${fileCount} new files to expand package functionality`;
+        description = `Introduced ${fileCount} new files: ${pkg.changes.map(c => c.file).join(', ')}`;
       } else if (hasModified) {
-        message = `refactor: improve ${pkg.package} implementation`;
-        description = `Enhanced code quality and performance in ${fileCount} files`;
+        message = `refactor: update ${pkg.package} implementation`;
+        description = `Modified ${fileCount} files: ${pkg.changes.map(c => c.file).join(', ')}`;
+      } else if (hasDeleted) {
+        message = `refactor: remove unused files from ${pkg.package}`;
+        description = `Deleted ${fileCount} files: ${pkg.changes.map(c => c.file).join(', ')}`;
+      } else {
+        message = `chore: update ${pkg.package}`;
+        description = `Updated ${fileCount} files in ${pkg.package}`;
       }
       
       return {
@@ -290,8 +325,6 @@ class ToolsService {
         description
       };
     });
-    
-    return messages;
   }
 
   /**

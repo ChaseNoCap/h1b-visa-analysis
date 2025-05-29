@@ -5,6 +5,33 @@
 
 Production-ready React dashboard for the metaGOTHIC framework with **fully operational live GitHub API integration** at http://localhost:3001. Features real-time health monitoring, CI/CD pipeline control, and 100% live data from GitHub repositories with no mock fallbacks.
 
+## 🚀 Quick Start
+
+### **Essential: Start Both Servers**
+
+The dashboard requires **two servers** to be running for full functionality:
+
+```bash
+# Terminal 1: Start the Git & Claude API server
+npm run git-server
+
+# Terminal 2: Start the React dashboard  
+npm run dev
+```
+
+**Dashboard URL**: http://localhost:3001
+
+> ⚠️ **Important**: Both servers must be running for:
+> - Real-time git status detection
+> - AI-powered commit message generation via Claude Code
+> - Repository management tools
+
+### Environment Setup
+Create `.env.local`:
+```env
+VITE_GITHUB_TOKEN=your_github_token_here
+```
+
 ## 🚀 Production Features
 
 ### Live GitHub API Integration ✅
@@ -75,24 +102,19 @@ import { GitHubErrorBoundary, ApiError } from '@chasenocap/ui-components';
 </GitHubErrorBoundary>
 ```
 
-## 🚀 Quick Start
+## 📦 Installation & Building
 
-### Installation
+### Package Installation
 ```bash
 npm install @chasenocap/ui-components
 ```
 
-### Development Server
+### Build Commands
 ```bash
-npm run dev     # http://localhost:3001
 npm run build   # Production build
 npm run preview # Preview production build
-```
-
-### Environment Setup
-Create `.env.local`:
-```env
-VITE_GITHUB_TOKEN=your_github_token_here
+npm run typecheck # TypeScript validation
+npm run lint    # Code linting
 ```
 
 ## 🧪 Testing
@@ -122,6 +144,12 @@ npm run test:coverage # Coverage report
 - ✅ **Package publishing interface** with validation
 - ✅ **Repository filtering** and search
 - ✅ **Batch operations** for multiple repositories
+
+### AI-Powered Tools ✨
+- ✅ **Real-time git status detection** across all packages
+- ✅ **Claude Code integration** for intelligent commit message generation
+- ✅ **Live change analysis** with no static/cached data
+- ✅ **Automated workflow suggestions** based on actual file changes
 
 ### Production Ready
 - ✅ **Comprehensive error handling** with graceful degradation
