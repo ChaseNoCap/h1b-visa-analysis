@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FileText, GitCommit, ChevronRight, ChevronDown, RefreshCw } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../context';
 import { ApiError } from '../ApiError';
 import { toolsService, type PackageChanges, type ChangeItem } from '../../services/toolsService';
 
@@ -66,7 +66,6 @@ export const UncommittedChangesAnalyzer: React.FC<UncommittedChangesAnalyzerProp
         error={error}
         onRetry={scanForChanges}
         title="Failed to scan for changes"
-        suggestion="Ensure you have git installed and the Meta GOTHIC repository is properly initialized."
       />
     );
   }

@@ -2,13 +2,14 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Activity, GitBranch, Wrench } from 'lucide-react';
+import { Activity, GitBranch, Wrench, Moon, Sun } from 'lucide-react';
 import { HealthDashboard } from './components/HealthDashboard';
 import { PipelineControl } from './components/PipelineControl';
 import { Tools } from './pages/Tools';
 import { GitHubErrorBoundary } from './components/ErrorBoundary';
 import { GitHubTokenBanner, TokenStatusIndicator } from './components/TokenValidation';
 import { TokenValidationProvider, useTokenValidation } from './contexts';
+import { ThemeProvider, useTheme } from './context';
 import clsx from 'clsx';
 
 const queryClient = new QueryClient({
@@ -22,6 +23,7 @@ const queryClient = new QueryClient({
 
 const Navigation: React.FC = () => {
   const { status, isValidating, retryValidation } = useTokenValidation();
+  const { theme, toggleTheme } = useTheme();
   
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     clsx(
@@ -56,7 +58,18 @@ const Navigation: React.FC = () => {
               </NavLink>
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-md text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
             <TokenStatusIndicator 
               status={status}
               isValidating={isValidating}
@@ -101,14 +114,16 @@ const DashboardContent: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <GitHubErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <TokenValidationProvider>
-          <Router>
-            <DashboardContent />
-            <ReactQueryDevtools initialIsOpen={false} />
-          </Router>
-        </TokenValidationProvider>
-      </QueryClientProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <TokenValidationProvider>
+            <Router>
+              <DashboardContent />
+              <ReactQueryDevtools initialIsOpen={false} />
+            </Router>
+          </TokenValidationProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </GitHubErrorBoundary>
   );
 };

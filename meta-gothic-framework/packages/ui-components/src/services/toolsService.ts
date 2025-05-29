@@ -1,4 +1,6 @@
-import { logger } from '../utils/logger';
+import { createLogger } from '../utils/logger';
+
+const logger = createLogger('toolsService');
 
 export interface ChangeItem {
   file: string;

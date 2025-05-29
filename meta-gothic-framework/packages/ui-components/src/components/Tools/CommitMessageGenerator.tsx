@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Edit2, Check, X } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../context';
 import { toolsService, type PackageChanges, type CommitMessage } from '../../services/toolsService';
 import { ApiError } from '../ApiError';
 
@@ -64,7 +64,6 @@ export const CommitMessageGenerator: React.FC<CommitMessageGeneratorProps> = ({
         error={error}
         onRetry={generateMessages}
         title="Failed to generate commit messages"
-        suggestion="Please try again. If the problem persists, you can write commit messages manually."
       />
     );
   }
