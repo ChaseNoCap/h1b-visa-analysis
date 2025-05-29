@@ -2,9 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Activity, GitBranch } from 'lucide-react';
+import { Activity, GitBranch, Wrench } from 'lucide-react';
 import { HealthDashboard } from './components/HealthDashboard';
 import { PipelineControl } from './components/PipelineControl';
+import { Tools } from './pages/Tools';
 import { GitHubErrorBoundary } from './components/ErrorBoundary';
 import { GitHubTokenBanner, TokenStatusIndicator } from './components/TokenValidation';
 import { TokenValidationProvider, useTokenValidation } from './contexts';
@@ -49,6 +50,10 @@ const Navigation: React.FC = () => {
                 <GitBranch className="h-4 w-4" />
                 <span>Pipeline Control</span>
               </NavLink>
+              <NavLink to="/tools" className={navLinkClass}>
+                <Wrench className="h-4 w-4" />
+                <span>Tools</span>
+              </NavLink>
             </div>
           </div>
           <div className="flex items-center">
@@ -87,6 +92,7 @@ const DashboardContent: React.FC = () => {
       <Routes>
         <Route path="/" element={<HealthDashboard />} />
         <Route path="/pipelines" element={<PipelineControl />} />
+        <Route path="/tools" element={<Tools />} />
       </Routes>
     </div>
   );
